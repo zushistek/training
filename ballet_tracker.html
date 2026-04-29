@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Train">
+<meta name="theme-color" content="#0f0f0e">
+<title>Ballet Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0e;
+  --bg2: #181816;
+  --bg3: #212120;
+  --bg4: #2a2a28;
+  --border: #2e2e2c;
+  --border2: #3a3a38;
+  --text: #f0ede8;
+  --text2: #a8a49e;
+  --text3: #6b6762;
+  --amber: #e8a020;
+  --amber-dim: #2a1f08;
+  --amber-mid: #4a3510;
+  --green: #3da882;
+  --green-dim: #0a1f18;
+  --purple: #7b6fe0;
+  --purple-dim: #16143a;
+  --coral: #e06b4a;
+  --coral-dim: #2a1410;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', system-ui, sans-serif; overflow: hidden; }
+input, textarea, button { font-family: inherit; }
+
+/* Layout */
+#app { height: 100dvh; display: flex; flex-direction: column; }
+#header { 
+  background: var(--bg); 
+  border-bottom: 1px solid var(--border);
+  padding: calc(var(--safe-top) + 12px) 18px 0;
+  flex-shrink: 0;
+}
+.header-top { display: flex; align-items: baseline; gap: 8px; padding-bottom: 4px; }
+.header-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+.header-sub { font-size: 11px; color: var(--text3); letter-spacing: 0.02em; }
+.tabs { display: flex; gap: 0; margin: 0 -18px; }
+.tab { 
+  flex: 1; padding: 11px 0 10px; font-size: 12px; font-weight: 500; 
+  color: var(--text3); border: none; background: none; 
+  border-bottom: 2px solid transparent; transition: all .15s; letter-spacing: 0.01em;
+}
+.tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+
+#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  margin: 0 16px 10px; overflow: hidden;
+}
+.card-header { 
+  padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.card-body { padding: 14px; }
+.card-row { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.card-row:last-child { border-bottom: none; }
+
+/* Badges */
+.badge { 
+  display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 5px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em; font-family: 'DM Mono', monospace;
+}
+.badge-a { background: var(--purple-dim); color: var(--purple); }
+.badge-b { background: var(--green-dim); color: var(--green); }
+.badge-c { background: var(--amber-dim); color: var(--amber); }
+.badge-d { background: var(--coral-dim); color: var(--coral); }
+
+/* Inputs */
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.label { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: block; letter-spacing: 0.03em; font-weight: 500; }
+input[type=text], input[type=number], textarea {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 10px 12px; font-size: 15px; color: var(--text);
+  outline: none; -webkit-appearance: none; transition: border-color .15s;
+}
+input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: var(--amber); }
+textarea { resize: none; min-height: 60px; line-height: 1.4; }
+
+/* Number inputs */
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Rating buttons */
+.rating { display: flex; gap: 6px; }
+.rate-btn {
+  flex: 1; padding: 10px 0; border-radius: 8px; border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text2); font-size: 14px; font-weight: 500;
+  transition: all .15s; font-family: 'DM Mono', monospace;
+}
+.rate-btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 600; }
+
+/* Primary button */
+.btn-primary {
+  width: 100%; background: var(--amber); color: var(--bg); border: none;
+  border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600;
+  letter-spacing: -0.2px; transition: opacity .15s; margin: 4px 0;
+}
+.btn-primary:active { opacity: 0.8; }
+.btn-ghost {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 10px 14px; font-size: 13px; color: var(--text2); font-weight: 500; transition: all .15s;
+}
+.btn-ghost:active { opacity: 0.7; }
+.btn-dashed {
+  width: 100%; background: none; border: 1px dashed var(--border2); border-radius: 8px;
+  padding: 10px; color: var(--text3); font-size: 13px; transition: all .15s; margin-top: 6px;
+}
+.btn-dashed:active { background: var(--bg3); }
+
+/* Utility */
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 11px; }
+.text-muted { color: var(--text2); }
+.text-dim { color: var(--text3); }
+.text-amber { color: var(--amber); }
+.fw-600 { font-weight: 600; }
+.fw-500 { font-weight: 500; }
+.mono { font-family: 'DM Mono', monospace; }
+.flex { display: flex; }
+.ai-center { align-items: center; }
+.jc-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-1 { gap: 4px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 14px; }
+.mb-1 { margin-bottom: 4px; }
+.section-head { 
+  font-size: 10px; font-weight: 600; color: var(--text3); 
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 18px 18px 8px;
+}
+
+/* Set row */
+.set-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+.set-num { 
+  width: 22px; height: 22px; background: var(--bg4); border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0;
+}
+.set-input { 
+  flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: 7px;
+  padding: 9px 8px; font-size: 14px; color: var(--text); text-align: center;
+  outline: none; -webkit-appearance: none; font-family: 'DM Mono', monospace;
+}
+.set-input:focus { border-color: var(--amber); }
+.set-input::placeholder { color: var(--text3); }
+
+/* Exercise accordion */
+.ex-header {
+  padding: 13px 14px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; border-bottom: 1px solid transparent; transition: border-color .15s;
+}
+.ex-header.open { border-bottom-color: var(--border); }
+.ex-body { padding: 12px 14px; background: var(--bg); }
+.chevron { 
+  width: 16px; height: 16px; color: var(--text3); transition: transform .2s; flex-shrink: 0;
+}
+.chevron.open { transform: rotate(90deg); }
+
+/* Week day card */
+.day-rec { 
+  margin: 0 16px 8px; padding: 13px 14px; background: var(--bg2); 
+  border: 1px solid var(--border); border-radius: 11px;
+}
+.day-rec-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.rec-note { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+.rec-skip { opacity: 0.5; }
+
+/* History entry */
+.hist-entry { 
+  margin: 0 16px 10px; background: var(--bg2); border: 1px solid var(--border); 
+  border-radius: 12px; overflow: hidden; 
+}
+.hist-header { padding: 12px 14px; display: flex; justify-content: space-between; align-items: flex-start; }
+.hist-body { padding: 0 14px 12px; }
+.hist-ex { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
+.hist-ex span { color: var(--text2); }
+
+/* Empty state */
+.empty { text-align: center; padding: 60px 24px; }
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.3; }
+.empty-title { font-size: 15px; font-weight: 500; color: var(--text2); }
+.empty-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+/* Bottom padding for safe area */
+.bottom-pad { height: calc(var(--safe-bottom) + 12px); }
+
+/* Notice banner */
+.notice { 
+  margin: 0 16px 10px; padding: 11px 13px; 
+  background: var(--amber-dim); border: 1px solid var(--amber-mid); 
+  border-radius: 10px; font-size: 12px; color: var(--amber); line-height: 1.5;
+}
+.notice strong { font-weight: 600; display: block; margin-bottom: 2px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 0 16px 10px; }
+
+/* Success animation */
+@keyframes success-pop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.success-state { text-align: center; padding: 80px 24px; animation: success-pop .3s ease; }
+.success-icon { 
+  width: 64px; height: 64px; background: #1a3d2e; border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px;
+}
+.success-title { font-size: 18px; font-weight: 600; }
+.success-sub { font-size: 13px; color: var(--text3); margin-top: 5px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div class="header-top">
+      <span class="header-title">Training Intelligence</span>
+      <span class="header-sub">Ballet + Gym</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showPage('plan', this)">Plan Week</button>
+      <button class="tab" onclick="showPage('log', this)">Log Session</button>
+      <button class="tab" onclick="showPage('history', this)">History</button>
+    </div>
+  </div>
+
+  <div id="content">
+    <!-- PLAN PAGE -->
+    <div id="page-plan" class="page active">
+      <div id="plan-content"></div>
+    </div>
+
+    <!-- LOG PAGE -->
+    <div id="page-log" class="page">
+      <div id="log-content"></div>
+    </div>
+
+    <!-- HISTORY PAGE -->
+    <div id="page-history" class="page">
+      <div id="history-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Program Data ─────────────────────────────────────────────────────────────
+const PROGRAM = {
+  A: {
+    name: 'Full Body Strength',
+    fullName: 'Day A — Full Body Strength (Push + Pull)',
+    badgeClass: 'badge-a',
+    color: '#7b6fe0',
+    exercises: [
+      { name: 'Overhead Barbell Press', prescribed: '3 × 4–5', rpe: '7–8' },
+      { name: 'Weighted Pull-Ups', prescribed: '3 × 4–5', rpe: '7–8' },
+      { name: 'Nordic Hamstring Curl', prescribed: '3 × 4–6', rpe: '6–7', isNew: true },
+      { name: 'Half-Kneeling Single-Arm DB Press', prescribed: '2 × 8 ea', rpe: '6', isNew: true },
+      { name: 'Serratus Wall Slides', prescribed: '2 × 10–12', rpe: '5–6' },
+      { name: 'Copenhagen Plank', prescribed: '2 × 20–30s ea', rpe: '6' },
+    ]
+  },
+  B: {
+    name: 'Posterior Chain',
+    fullName: 'Day B — Posterior Chain, Unilateral & Trunk',
+    badgeClass: 'badge-b',
+    color: '#3da882',
+    exercises: [
+      { name: 'Romanian Deadlift', prescribed: '3 × 5–6', rpe: '7' },
+      { name: 'Bulgarian Split Squat', prescribed: '3 × 6–8 ea', rpe: '6–7' },
+      { name: 'Single-Leg RDL', prescribed: '2 × 6–8 ea', rpe: '6' },
+      { name: 'Hip External Rotation (cable)', prescribed: '3 × 12–15', rpe: '5–6', isNew: true },
+      { name: 'Pallof Press', prescribed: '3 × 10–12 ea', rpe: '5–6' },
+      { name: 'Tibialis Raises + Foot Work', prescribed: '8–10 min', rpe: '5', isNew: true },
+    ]
+  },
+  C: {
+    name: 'Power & Plyometrics',
+    fullName: 'Day C — Power & Plyometrics',
+    badgeClass: 'badge-c',
+    color: '#e8a020',
+    exercises: [
+      { name: 'Box Jumps (max height intent)', prescribed: '4 × 3–4', rpe: '6–7' },
+      { name: 'Pogos', prescribed: '3 × 20–25', rpe: '5–6' },
+      { name: 'Broad Jumps', prescribed: '2 × 4', rpe: '6' },
+      { name: 'Seated Cable Row (1-sec pause)', prescribed: '2 × 8–10', rpe: '6' },
+      { name: 'Face Pulls', prescribed: '2 × 12–15', rpe: '5–6' },
+      { name: "Farmer's Carries", prescribed: '2 × 25s', rpe: '6–7' },
+    ]
+  },
+  D: {
+    name: 'Hypertrophy (Optional)',
+    fullName: 'Day D — Hypertrophy / Aesthetics (Optional)',
+    badgeClass: 'badge-d',
+    color: '#e06b4a',
+    exercises: [
+      { name: 'Incline DB Press', prescribed: '3 × 8–10', rpe: '7' },
+      { name: 'Cable Lateral Raises', prescribed: '3 × 12–15', rpe: '6–7' },
+      { name: 'Rear Delt Fly', prescribed: '3 × 12–15', rpe: '6–7' },
+      { name: 'Hammer Curls + Rope Pushdowns', prescribed: '2–3 × 10–12', rpe: '6–7' },
+      { name: 'Adductor Machine', prescribed: '2 × 12–15', rpe: '6' },
+    ]
+  }
+};
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_GYM = { Monday: 'A', Wednesday: 'B', Friday: 'C', Saturday: 'D' };
+
+// ── Storage Helpers ───────────────────────────────────────────────────────────
+function saveData(key, val) { try { localStorage.setItem('bt_' + key, JSON.stringify(val)); } catch(e) {} }
+function loadData(key) { try { const v = localStorage.getItem('bt_' + key); return v ? JSON.parse(v) : null; } catch(e) { return null; } }
+
+// ── App State ─────────────────────────────────────────────────────────────────
+let weekPlan = loadData('weekPlan');
+let sessionLogs = loadData('logs') || [];
+let logState = { step: 'select', sessionType: null, exerciseLogs: [], feel: 3, notes: '' };
+let planStep = weekPlan ? 'review' : 'input';
+
+let balletSchedule = weekPlan?.balletSchedule || DAYS.map(d => ({ day: d, length: '', intensity: 3, insight: '' }));
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showPage(name, tabEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  tabEl.classList.add('active');
+  renderPage(name);
+}
+
+function renderPage(name) {
+  if (name === 'plan') renderPlan();
+  if (name === 'log') renderLog();
+  if (name === 'history') renderHistory();
+}
+
+// ── PLAN ──────────────────────────────────────────────────────────────────────
+function renderPlan() {
+  const el = document.getElementById('plan-content');
+  if (planStep === 'input') {
+    el.innerHTML = renderPlanInput();
+    bindPlanInputs();
+  } else {
+    el.innerHTML = renderPlanReview();
+  }
+}
+
+function renderPlanInput() {
+  const dayCards = DAYS.map((day, idx) => {
+    const d = balletSchedule[idx];
+    const gymDay = DEFAULT_GYM[day];
+    const ratingBtns = [1,2,3,4,5].map(v =>
+      `<button class="rate-btn${d.intensity === v ? ' active' : ''}" onclick="setIntensity(${idx},${v})">${v}</button>`
+    ).join('');
+    return `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="fw-600 text-sm">${day}</div>
+          ${gymDay ? `<div class="text-xs text-dim mt-1">Default gym: Day ${gymDay}</div>` : '<div class="text-xs text-dim mt-1">Rest / ballet only</div>'}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label class="label">Rehearsal length (hours)</label>
+          <input type="number" step="0.5" min="0" max="10" value="${d.length}" placeholder="0" 
+            oninput="setBalletField(${idx},'length',this.value)">
+        </div>
+        <div class="field">
+          <label class="label">Intensity (1 = rest/light, 5 = heavy/show)</label>
+          <div class="rating">${ratingBtns}</div>
+        </div>
+        <div class="field">
+          <label class="label">Insight</label>
+          <input type="text" value="${d.insight}" placeholder="e.g. show night, full lifts, light class"
+            oninput="setBalletField(${idx},'insight',this.value)">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="section-head">Next week's ballet schedule</div>
+    <div class="notice">
+      <strong>Thursday planning workflow</strong>
+      Enter your company schedule for next week. The system will generate your optimized gym plan adapting to rehearsal load.
+    </div>
+    ${dayCards}
+    <div style="padding: 4px 16px 8px;">
+      <button class="btn-primary" onclick="generatePlan()">Generate Week Plan →</button>
+    </div>
+    <div class="bottom-pad"></div>`;
+}
+
+function bindPlanInputs() {}
+
+function setBalletField(idx, field, val) {
+  balletSchedule[idx][field] = field === 'intensity' ? parseInt(val) : val;
+}
+
+function setIntensity(idx, val) {
+  balletSchedule[idx].intensity = val;
+  renderPlan();
+}
+
+function generatePlan() {
+  const recs = {};
+  const showDays = balletSchedule.filter(d =>
+    d.insight.toLowerCase().includes('show') || d.insight.toLowerCase().includes('performance')
+  ).length;
+
+  DAYS.forEach((day, idx) => {
+    const d = balletSchedule[idx];
+    const gymDay = DEFAULT_GYM[day];
+    const hours = parseFloat(d.length) || 0;
+    const intensity = d.intensity;
+
+    if (!gymDay) {
+      recs[day] = { type: 'rest', label: null, note: 'Ballet class & rehearsal only' };
+      return;
+    }
+
+    if (showDays >= 2 && gymDay === 'D') {
+      recs[day] = { type: 'skip', label: 'SKIP', note: 'Show week — drop optional Day D entirely' };
+      return;
+    }
+    if (showDays >= 2 && gymDay === 'C') {
+      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Show week — 15 min power maintenance only (box jumps + pogos)' };
+      return;
+    }
+
+    if (hours >= 3 && intensity >= 4) {
+      if (gymDay === 'C') {
+        recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Heavy rehearsal — reduce to pogos + box jumps only (15 min). Gym after class.' };
+      } else {
+        recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Heavy rehearsal — halve sets, keep RPE. Gym after class.' };
+      }
+    } else if (hours >= 1.5 && intensity >= 3) {
+      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Moderate rehearsal — full session but monitor RPE closely. Gym after class.' };
+    } else {
+      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Light/no rehearsal — full session as prescribed.' };
+    }
+  });
+
+  weekPlan = { weekStart: nextMondayStr(), balletSchedule: [...balletSchedule], recommendations: recs, createdAt: new Date().toISOString() };
+  saveData('weekPlan', weekPlan);
+  planStep = 'review';
+  renderPlan();
+}
+
+function nextMondayStr() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = day === 0 ? 1 : 8 - day;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split('T')[0];
+}
+
+function renderPlanReview() {
+  if (!weekPlan) return '<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No plan yet</div><div class="empty-sub">Enter your schedule above</div></div>';
+
+  const dateStr = new Date(weekPlan.weekStart + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const dayCards = DAYS.map(day => {
+    const rec = weekPlan.recommendations[day];
+    const ballet = weekPlan.balletSchedule.find(d => d.day === day);
+    const isSkip = rec.type === 'skip' || rec.type === 'rest';
+    const gymType = rec.type !== 'skip' && rec.type !== 'rest' ? rec.type : null;
+
+    const balletInfo = ballet.length ? `${ballet.length}h rehearsal · Intensity ${ballet.intensity}/5${ballet.insight ? ' · ' + ballet.insight : ''}` : 'No rehearsal logged';
+
+    return `
+    <div class="day-rec${isSkip ? ' rec-skip' : ''}">
+      <div class="day-rec-row">
+        <div>
+          <div class="fw-600 text-sm">${day}</div>
+          <div class="text-xs text-dim mt-1">${balletInfo}</div>
+        </div>
+        ${gymType ? `<span class="badge badge-${gymType.toLowerCase()}">${rec.label}</span>` : (rec.type === 'skip' ? '<span class="badge" style="background:var(--bg4);color:var(--text3)">SKIP</span>' : '')}
+      </div>
+      <div class="rec-note">${rec.note}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="section-head">Week of ${dateStr}</div>
+    <div class="notice" style="background:var(--bg3);border-color:var(--border2);color:var(--text3)">
+      <strong style="color:var(--text2)">Gym always after ballet class</strong>
+      Minimum 4 hrs after class. Never before.
+    </div>
+    ${dayCards}
+    <div style="padding: 8px 16px 4px;">
+      <button class="btn-ghost" onclick="planStep='input';renderPlan()">← Edit schedule</button>
+    </div>
+    <div class="bottom-pad"></div>`;
+}
+
+// ── LOG ───────────────────────────────────────────────────────────────────────
+function renderLog() {
+  const el = document.getElementById('log-content');
+  if (logState.step === 'select') el.innerHTML = renderLogSelect();
+  else if (logState.step === 'logging') el.innerHTML = renderLogSession();
+  else if (logState.step === 'success') el.innerHTML = renderLogSuccess();
+}
+
+function renderLogSelect() {
+  const dayCards = Object.entries(PROGRAM).map(([key, prog]) => `
+    <div class="card" style="cursor:pointer" onclick="startLog('${key}')">
+      <div class="ex-header">
+        <div>
+          <span class="badge badge-${key.toLowerCase()}" style="margin-bottom:6px;display:inline-flex">Day ${key}</span>
+          <div class="fw-500 text-sm">${prog.name}</div>
+          <div class="text-xs text-dim mt-1">${prog.exercises.length} exercises</div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="section-head">Which session did you complete?</div>
+    ${dayCards}
+    <div class="bottom-pad"></div>`;
+}
+
+function startLog(type) {
+  logState.sessionType = type;
+  logState.exerciseLogs = PROGRAM[type].exercises.map(ex => ({ name: ex.name, sets: [] }));
+  logState.feel = 3;
+  logState.notes = '';
+  logState.openEx = null;
+  logState.step = 'logging';
+  renderLog();
+}
+
+function renderLogSession() {
+  const prog = PROGRAM[logState.sessionType];
+  const exCards = prog.exercises.map((ex, exIdx) => {
+    const loggedSets = logState.exerciseLogs[exIdx].sets;
+    const isOpen = logState.openEx === exIdx;
+
+    const setRows = loggedSets.map((set, si) => `
+      <div class="set-row">
+        <div class="set-num">${si + 1}</div>
+        <input class="set-input" type="number" placeholder="Reps" value="${set.reps || ''}"
+          oninput="updateSet(${exIdx},${si},'reps',this.value)">
+        <input class="set-input" type="number" step="0.5" placeholder="kg" value="${set.weight || ''}"
+          oninput="updateSet(${exIdx},${si},'weight',this.value)">
+        <input class="set-input" type="number" placeholder="RPE" value="${set.rpe || ''}"
+          oninput="updateSet(${exIdx},${si},'rpe',this.value)">
+      </div>`).join('');
+
+    const isNew = ex.isNew;
+    return `
+    <div class="card">
+      <div class="ex-header${isOpen ? ' open' : ''}" onclick="toggleEx(${exIdx})">
+        <div style="flex:1;min-width:0">
+          <div class="fw-500 text-sm">${ex.name}${isNew ? ' <span style="font-size:9px;color:var(--purple);font-weight:700;font-family:DM Mono,monospace;vertical-align:middle">NEW</span>' : ''}</div>
+          <div class="text-xs text-dim mt-1">${ex.prescribed} · RPE ${ex.rpe}${loggedSets.length > 0 ? ' · ' + loggedSets.length + ' set' + (loggedSets.length !== 1 ? 's' : '') + ' logged' : ''}</div>
+        </div>
+        <svg class="chevron${isOpen ? ' open' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
+      ${isOpen ? `<div class="ex-body">
+        <div class="flex gap-2" style="font-size:10px;color:var(--text3);font-family:DM Mono,monospace;margin-bottom:8px;padding:0 2px;">
+          <div style="width:22px;flex-shrink:0"></div>
+          <div style="flex:1;text-align:center">REPS</div>
+          <div style="flex:1;text-align:center">KG</div>
+          <div style="width:72px;text-align:center">RPE</div>
+        </div>
+        ${setRows}
+        <button class="btn-dashed" onclick="addSet(${exIdx})">+ Add Set</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  const feelBtns = [1,2,3,4,5].map(v =>
+    `<button class="rate-btn${logState.feel === v ? ' active' : ''}" onclick="setFeel(${v})">${v}</button>`
+  ).join('');
+
+  return `
+    <div style="padding:0 16px 8px;display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <button onclick="logState.step='select';renderLog()" style="background:none;border:none;color:var(--text3);font-size:13px;">← Back</button>
+      <span class="badge badge-${logState.sessionType.toLowerCase()}">Day ${logState.sessionType}</span>
+      <span class="text-sm fw-500">${prog.name}</span>
+    </div>
+    ${exCards}
+    <div class="card">
+      <div class="card-body">
+        <div class="label">Overall session feel</div>
+        <div class="rating">${feelBtns}</div>
+        <div class="text-xs text-dim mt-2" style="text-align:center">1 = Struggled hard · 3 = As expected · 5 = Felt strong</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="label">Session notes (optional)</div>
+        <textarea placeholder="Any observations, pain, unusual fatigue..." oninput="logState.notes=this.value">${logState.notes}</textarea>
+      </div>
+    </div>
+    <div style="padding: 0 16px 8px;">
+      <button class="btn-primary" onclick="completeLog()">Complete Session ✓</button>
+    </div>
+    <div class="bottom-pad"></div>`;
+}
+
+function renderLogSuccess() {
+  return `
+    <div class="success-state">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Session logged</div>
+      <div class="success-sub">Your next session will adapt accordingly</div>
+    </div>`;
+}
+
+function toggleEx(idx) {
+  logState.openEx = logState.openEx === idx ? null : idx;
+  renderLog();
+}
+
+function addSet(exIdx) {
+  logState.exerciseLogs[exIdx].sets.push({ reps: '', weight: '', rpe: '' });
+  renderLog();
+}
+
+function updateSet(exIdx, si, field, val) {
+  logState.exerciseLogs[exIdx].sets[si][field] = val;
+}
+
+function setFeel(val) {
+  logState.feel = val;
+  renderLog();
+}
+
+function completeLog() {
+  const log = {
+    date: new Date().toISOString(),
+    sessionType: logState.sessionType,
+    exerciseLogs: logState.exerciseLogs,
+    feel: logState.feel,
+    notes: logState.notes
+  };
+  sessionLogs.unshift(log);
+  saveData('logs', sessionLogs);
+  logState.step = 'success';
+  renderLog();
+  setTimeout(() => { logState.step = 'select'; logState.sessionType = null; renderLog(); }, 2200);
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById('history-content');
+  if (sessionLogs.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No sessions logged yet</div><div class="empty-sub">Complete a workout to see your history here</div></div>`;
+    return;
+  }
+
+  const entries = sessionLogs.map(log => {
+    const type = log.sessionType;
+    const dateStr = new Date(log.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const timeStr = new Date(log.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+    const exLines = log.exerciseLogs.map(ex => {
+      const setsStr = ex.sets.length > 0
+        ? ex.sets.filter(s => s.reps || s.weight).map(s => `${s.reps || '?'}r${s.weight ? ' · ' + s.weight + 'kg' : ''}${s.rpe ? ' @' + s.rpe : ''}`).join(', ')
+        : 'logged';
+      return `<div class="hist-ex">${ex.name}: <span>${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''}${ex.sets.length > 0 ? ' — ' + setsStr : ''}</span></div>`;
+    }).join('');
+
+    const feelColor = log.feel >= 4 ? '#3da882' : log.feel <= 2 ? '#e06b4a' : 'var(--text2)';
+
+    return `
+    <div class="hist-entry">
+      <div class="hist-header">
+        <div>
+          <span class="badge badge-${type.toLowerCase()}" style="margin-bottom:6px;display:inline-flex">Day ${type}</span>
+          <div class="text-xs text-dim">${dateStr} · ${timeStr}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="text-xs text-dim mb-1">Feel</div>
+          <div class="mono fw-600" style="font-size:22px;color:${feelColor}">${log.feel}<span style="font-size:12px;color:var(--text3)">/5</span></div>
+        </div>
+      </div>
+      <div class="hist-body">${exLines}${log.notes ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);font-style:italic">${log.notes}</div>` : ''}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="section-head">${sessionLogs.length} session${sessionLogs.length !== 1 ? 's' : ''} logged</div>
+    ${entries}
+    <div class="bottom-pad"></div>`;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderPlan();
+</script>
+</body>
+</html>
