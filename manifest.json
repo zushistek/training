@@ -2,14 +2,15 @@
   "name": "Ballet Training Intelligence",
   "short_name": "Training",
   "description": "In-season gym program tracker for professional ballet dancers",
-  "start_url": "/",
+  "start_url": "/training/",
+  "scope": "/training/",
   "display": "standalone",
   "background_color": "#0f0f0e",
   "theme_color": "#0f0f0e",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon.svg",
+      "src": "/training/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
