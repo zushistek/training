@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Train">
+<meta name="apple-mobile-web-app-title" content="Training">
 <meta name="theme-color" content="#0f0f0e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
 <title>Ballet Training</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,8 +41,8 @@ input, textarea, button { font-family: inherit; }
 
 /* Layout */
 #app { height: 100dvh; display: flex; flex-direction: column; }
-#header { 
-  background: var(--bg); 
+#header {
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: calc(var(--safe-top) + 12px) 18px 0;
   flex-shrink: 0;
@@ -49,9 +51,9 @@ input, textarea, button { font-family: inherit; }
 .header-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
 .header-sub { font-size: 11px; color: var(--text3); letter-spacing: 0.02em; }
 .tabs { display: flex; gap: 0; margin: 0 -18px; }
-.tab { 
-  flex: 1; padding: 11px 0 10px; font-size: 12px; font-weight: 500; 
-  color: var(--text3); border: none; background: none; 
+.tab {
+  flex: 1; padding: 11px 0 10px; font-size: 12px; font-weight: 500;
+  color: var(--text3); border: none; background: none;
   border-bottom: 2px solid transparent; transition: all .15s; letter-spacing: 0.01em;
 }
 .tab.active { color: var(--amber); border-bottom-color: var(--amber); }
@@ -65,16 +67,14 @@ input, textarea, button { font-family: inherit; }
   background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
   margin: 0 16px 10px; overflow: hidden;
 }
-.card-header { 
+.card-header {
   padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid var(--border);
 }
 .card-body { padding: 14px; }
-.card-row { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-.card-row:last-child { border-bottom: none; }
 
 /* Badges */
-.badge { 
+.badge {
   display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 5px;
   font-size: 10px; font-weight: 600; letter-spacing: 0.05em; font-family: 'DM Mono', monospace;
 }
@@ -94,8 +94,6 @@ input[type=text], input[type=number], textarea {
 }
 input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: var(--amber); }
 textarea { resize: none; min-height: 60px; line-height: 1.4; }
-
-/* Number inputs */
 input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 /* Rating buttons */
@@ -107,7 +105,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 .rate-btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 600; }
 
-/* Primary button */
+/* Buttons */
 .btn-primary {
   width: 100%; background: var(--amber); color: var(--bg); border: none;
   border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600;
@@ -137,32 +135,29 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .flex { display: flex; }
 .ai-center { align-items: center; }
 .jc-between { justify-content: space-between; }
-.gap-2 { gap: 8px; }
-.gap-1 { gap: 4px; }
 .mt-1 { margin-top: 4px; }
 .mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 14px; }
 .mb-1 { margin-bottom: 4px; }
-.section-head { 
-  font-size: 10px; font-weight: 600; color: var(--text3); 
+.section-head {
+  font-size: 10px; font-weight: 600; color: var(--text3);
   letter-spacing: 0.08em; text-transform: uppercase;
   padding: 18px 18px 8px;
 }
 
 /* Set row */
 .set-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
-.set-num { 
-  width: 22px; height: 22px; background: var(--bg4); border-radius: 50%; 
+.set-num {
+  width: 22px; height: 22px; background: var(--bg4); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0;
 }
-.set-input { 
+.set-input {
   flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: 7px;
   padding: 9px 8px; font-size: 14px; color: var(--text); text-align: center;
   outline: none; -webkit-appearance: none; font-family: 'DM Mono', monospace;
 }
 .set-input:focus { border-color: var(--amber); }
-.set-input::placeholder { color: var(--text3); }
+.set-input::placeholder { color: var(--text3); font-size: 12px; }
 
 /* Exercise accordion */
 .ex-header {
@@ -171,29 +166,37 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 .ex-header.open { border-bottom-color: var(--border); }
 .ex-body { padding: 12px 14px; background: var(--bg); }
-.chevron { 
+.chevron {
   width: 16px; height: 16px; color: var(--text3); transition: transform .2s; flex-shrink: 0;
 }
 .chevron.open { transform: rotate(90deg); }
 
-/* Week day card */
-.day-rec { 
-  margin: 0 16px 8px; padding: 13px 14px; background: var(--bg2); 
+/* Week plan day cards */
+.day-rec {
+  margin: 0 16px 8px; padding: 13px 14px; background: var(--bg2);
   border: 1px solid var(--border); border-radius: 11px;
 }
 .day-rec-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .rec-note { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
-.rec-skip { opacity: 0.5; }
+.rec-skip { opacity: 0.45; }
 
-/* History entry */
-.hist-entry { 
-  margin: 0 16px 10px; background: var(--bg2); border: 1px solid var(--border); 
-  border-radius: 12px; overflow: hidden; 
+/* History */
+.hist-entry {
+  margin: 0 16px 10px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
 }
 .hist-header { padding: 12px 14px; display: flex; justify-content: space-between; align-items: flex-start; }
 .hist-body { padding: 0 14px 12px; }
 .hist-ex { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
 .hist-ex span { color: var(--text2); }
+
+/* Progression insight */
+.insight-card {
+  margin: 0 16px 10px; padding: 12px 14px; border-radius: 11px;
+  border-left: 3px solid var(--amber); background: var(--amber-dim);
+}
+.insight-title { font-size: 11px; font-weight: 600; color: var(--amber); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.insight-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
 /* Empty state */
 .empty { text-align: center; padding: 60px 24px; }
@@ -201,193 +204,182 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .empty-title { font-size: 15px; font-weight: 500; color: var(--text2); }
 .empty-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
 
-/* Bottom padding for safe area */
-.bottom-pad { height: calc(var(--safe-bottom) + 12px); }
+.bottom-pad { height: calc(var(--safe-bottom) + 20px); }
 
-/* Notice banner */
-.notice { 
-  margin: 0 16px 10px; padding: 11px 13px; 
-  background: var(--amber-dim); border: 1px solid var(--amber-mid); 
+/* Notice */
+.notice {
+  margin: 0 16px 10px; padding: 11px 13px;
+  background: var(--amber-dim); border: 1px solid var(--amber-mid);
   border-radius: 10px; font-size: 12px; color: var(--amber); line-height: 1.5;
 }
 .notice strong { font-weight: 600; display: block; margin-bottom: 2px; }
+.notice-dim {
+  margin: 0 16px 10px; padding: 11px 13px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 10px; font-size: 12px; color: var(--text3); line-height: 1.5;
+}
+.notice-dim strong { font-weight: 600; color: var(--text2); display: block; margin-bottom: 2px; }
 
-/* Divider */
-.divider { height: 1px; background: var(--border); margin: 0 16px 10px; }
-
-/* Success animation */
-@keyframes success-pop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-.success-state { text-align: center; padding: 80px 24px; animation: success-pop .3s ease; }
-.success-icon { 
-  width: 64px; height: 64px; background: #1a3d2e; border-radius: 50%; 
+/* Success */
+@keyframes pop { 0% { transform: scale(.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.success-state { text-align: center; padding: 80px 24px; animation: pop .3s ease; }
+.success-icon {
+  width: 64px; height: 64px; background: #1a3d2e; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px;
 }
 .success-title { font-size: 18px; font-weight: 600; }
 .success-sub { font-size: 13px; color: var(--text3); margin-top: 5px; }
+
+/* Deload week banner */
+.deload-banner {
+  margin: 0 16px 10px; padding: 11px 13px;
+  background: #1a1a2e; border: 1px solid #2a2a4a;
+  border-radius: 10px; font-size: 12px; color: #7b7bc4; line-height: 1.5;
+}
+.deload-banner strong { font-weight: 600; color: #a0a0e0; display: block; margin-bottom: 2px; }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="header">
     <div class="header-top">
-      <span class="header-title">Training Intelligence</span>
-      <span class="header-sub">Ballet + Gym</span>
+      <span class="header-title">Training</span>
+      <span class="header-sub">Ballet + Gym Intelligence</span>
     </div>
     <div class="tabs">
-      <button class="tab active" onclick="showPage('plan', this)">Plan Week</button>
-      <button class="tab" onclick="showPage('log', this)">Log Session</button>
-      <button class="tab" onclick="showPage('history', this)">History</button>
+      <button class="tab active" onclick="showPage('plan',this)">Plan Week</button>
+      <button class="tab" onclick="showPage('log',this)">Log Session</button>
+      <button class="tab" onclick="showPage('history',this)">History</button>
     </div>
   </div>
-
   <div id="content">
-    <!-- PLAN PAGE -->
-    <div id="page-plan" class="page active">
-      <div id="plan-content"></div>
-    </div>
-
-    <!-- LOG PAGE -->
-    <div id="page-log" class="page">
-      <div id="log-content"></div>
-    </div>
-
-    <!-- HISTORY PAGE -->
-    <div id="page-history" class="page">
-      <div id="history-content"></div>
-    </div>
+    <div id="page-plan" class="page active"></div>
+    <div id="page-log" class="page"></div>
+    <div id="page-history" class="page"></div>
   </div>
 </div>
 
 <script>
-// ── Program Data ─────────────────────────────────────────────────────────────
+// ── Program ───────────────────────────────────────────────────────────────────
 const PROGRAM = {
   A: {
-    name: 'Full Body Strength',
-    fullName: 'Day A — Full Body Strength (Push + Pull)',
-    badgeClass: 'badge-a',
-    color: '#7b6fe0',
+    name: 'Full Body Strength', fullName: 'Day A — Full Body Strength (Push + Pull)',
+    badgeClass: 'badge-a', color: '#7b6fe0',
     exercises: [
-      { name: 'Overhead Barbell Press', prescribed: '3 × 4–5', rpe: '7–8' },
-      { name: 'Weighted Pull-Ups', prescribed: '3 × 4–5', rpe: '7–8' },
-      { name: 'Nordic Hamstring Curl', prescribed: '3 × 4–6', rpe: '6–7', isNew: true },
-      { name: 'Half-Kneeling Single-Arm DB Press', prescribed: '2 × 8 ea', rpe: '6', isNew: true },
-      { name: 'Serratus Wall Slides', prescribed: '2 × 10–12', rpe: '5–6' },
-      { name: 'Copenhagen Plank', prescribed: '2 × 20–30s ea', rpe: '6' },
+      { name: 'Overhead Barbell Press',          prescribed: '3 × 4–5',      rpe: '7–8' },
+      { name: 'Weighted Pull-Ups',               prescribed: '3 × 4–5',      rpe: '7–8' },
+      { name: 'Nordic Hamstring Curl',           prescribed: '3 × 4–6',      rpe: '6–7',  isNew: true },
+      { name: 'Half-Kneeling Single-Arm DB Press', prescribed: '2 × 8 ea',   rpe: '6',    isNew: true },
+      { name: 'Serratus Wall Slides',            prescribed: '2 × 10–12',    rpe: '5–6' },
+      { name: 'Copenhagen Plank',                prescribed: '2 × 20–30s ea', rpe: '6' },
     ]
   },
   B: {
-    name: 'Posterior Chain',
-    fullName: 'Day B — Posterior Chain, Unilateral & Trunk',
-    badgeClass: 'badge-b',
-    color: '#3da882',
+    name: 'Posterior Chain', fullName: 'Day B — Posterior Chain, Unilateral & Trunk',
+    badgeClass: 'badge-b', color: '#3da882',
     exercises: [
-      { name: 'Romanian Deadlift', prescribed: '3 × 5–6', rpe: '7' },
-      { name: 'Bulgarian Split Squat', prescribed: '3 × 6–8 ea', rpe: '6–7' },
-      { name: 'Single-Leg RDL', prescribed: '2 × 6–8 ea', rpe: '6' },
-      { name: 'Hip External Rotation (cable)', prescribed: '3 × 12–15', rpe: '5–6', isNew: true },
-      { name: 'Pallof Press', prescribed: '3 × 10–12 ea', rpe: '5–6' },
-      { name: 'Tibialis Raises + Foot Work', prescribed: '8–10 min', rpe: '5', isNew: true },
+      { name: 'Romanian Deadlift',               prescribed: '3 × 5–6',      rpe: '7' },
+      { name: 'Bulgarian Split Squat',           prescribed: '3 × 6–8 ea',   rpe: '6–7' },
+      { name: 'Single-Leg RDL',                  prescribed: '2 × 6–8 ea',   rpe: '6' },
+      { name: 'Hip External Rotation (cable)',   prescribed: '3 × 12–15',    rpe: '5–6',  isNew: true },
+      { name: 'Pallof Press',                    prescribed: '3 × 10–12 ea', rpe: '5–6' },
+      { name: 'Tibialis Raises + Foot Work',     prescribed: '8–10 min',     rpe: '5',    isNew: true },
     ]
   },
   C: {
-    name: 'Power & Plyometrics',
-    fullName: 'Day C — Power & Plyometrics',
-    badgeClass: 'badge-c',
-    color: '#e8a020',
+    name: 'Power & Plyometrics', fullName: 'Day C — Power & Plyometrics',
+    badgeClass: 'badge-c', color: '#e8a020',
     exercises: [
-      { name: 'Box Jumps (max height intent)', prescribed: '4 × 3–4', rpe: '6–7' },
-      { name: 'Pogos', prescribed: '3 × 20–25', rpe: '5–6' },
-      { name: 'Broad Jumps', prescribed: '2 × 4', rpe: '6' },
-      { name: 'Seated Cable Row (1-sec pause)', prescribed: '2 × 8–10', rpe: '6' },
-      { name: 'Face Pulls', prescribed: '2 × 12–15', rpe: '5–6' },
-      { name: "Farmer's Carries", prescribed: '2 × 25s', rpe: '6–7' },
+      { name: 'Box Jumps (max height intent)',   prescribed: '4 × 3–4',      rpe: '6–7' },
+      { name: 'Pogos',                           prescribed: '3 × 20–25',    rpe: '5–6' },
+      { name: 'Broad Jumps',                     prescribed: '2 × 4',        rpe: '6' },
+      { name: 'Seated Cable Row (1-sec pause)',  prescribed: '2 × 8–10',     rpe: '6' },
+      { name: 'Face Pulls',                      prescribed: '2 × 12–15',    rpe: '5–6' },
+      { name: "Farmer's Carries",                prescribed: '2 × 25s',      rpe: '6–7' },
     ]
   },
   D: {
-    name: 'Hypertrophy (Optional)',
-    fullName: 'Day D — Hypertrophy / Aesthetics (Optional)',
-    badgeClass: 'badge-d',
-    color: '#e06b4a',
+    name: 'Hypertrophy (Optional)', fullName: 'Day D — Hypertrophy / Aesthetics (Optional)',
+    badgeClass: 'badge-d', color: '#e06b4a',
     exercises: [
-      { name: 'Incline DB Press', prescribed: '3 × 8–10', rpe: '7' },
-      { name: 'Cable Lateral Raises', prescribed: '3 × 12–15', rpe: '6–7' },
-      { name: 'Rear Delt Fly', prescribed: '3 × 12–15', rpe: '6–7' },
-      { name: 'Hammer Curls + Rope Pushdowns', prescribed: '2–3 × 10–12', rpe: '6–7' },
-      { name: 'Adductor Machine', prescribed: '2 × 12–15', rpe: '6' },
+      { name: 'Incline DB Press',                prescribed: '3 × 8–10',     rpe: '7' },
+      { name: 'Cable Lateral Raises',            prescribed: '3 × 12–15',    rpe: '6–7' },
+      { name: 'Rear Delt Fly',                   prescribed: '3 × 12–15',    rpe: '6–7' },
+      { name: 'Hammer Curls + Rope Pushdowns',   prescribed: '2–3 × 10–12',  rpe: '6–7' },
+      { name: 'Adductor Machine',                prescribed: '2 × 12–15',    rpe: '6' },
     ]
   }
 };
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const DEFAULT_GYM = { Monday: 'A', Wednesday: 'B', Friday: 'C', Saturday: 'D' };
+const DEFAULT_GYM = { Monday:'A', Wednesday:'B', Friday:'C', Saturday:'D' };
 
-// ── Storage Helpers ───────────────────────────────────────────────────────────
-function saveData(key, val) { try { localStorage.setItem('bt_' + key, JSON.stringify(val)); } catch(e) {} }
-function loadData(key) { try { const v = localStorage.getItem('bt_' + key); return v ? JSON.parse(v) : null; } catch(e) { return null; } }
+// ── Storage ───────────────────────────────────────────────────────────────────
+const save = (k,v) => { try { localStorage.setItem('bt_'+k, JSON.stringify(v)); } catch(e){} };
+const load = k => { try { const v=localStorage.getItem('bt_'+k); return v?JSON.parse(v):null; } catch(e){return null;} };
 
-// ── App State ─────────────────────────────────────────────────────────────────
-let weekPlan = loadData('weekPlan');
-let sessionLogs = loadData('logs') || [];
-let logState = { step: 'select', sessionType: null, exerciseLogs: [], feel: 3, notes: '' };
-let planStep = weekPlan ? 'review' : 'input';
-
-let balletSchedule = weekPlan?.balletSchedule || DAYS.map(d => ({ day: d, length: '', intensity: 3, insight: '' }));
+// ── State ─────────────────────────────────────────────────────────────────────
+let weekPlan     = load('weekPlan');
+let sessionLogs  = load('logs') || [];
+let weekCount    = load('weekCount') || 0;
+let planStep     = weekPlan ? 'review' : 'input';
+let balletSched  = weekPlan?.balletSchedule || DAYS.map(d => ({ day:d, length:'', intensity:3, insight:'' }));
+let logState     = { step:'select', sessionType:null, exerciseLogs:[], feel:3, notes:'', openEx:null };
 
 // ── Navigation ────────────────────────────────────────────────────────────────
 function showPage(name, tabEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
   tabEl.classList.add('active');
-  renderPage(name);
+  render(name);
 }
-
-function renderPage(name) {
-  if (name === 'plan') renderPlan();
-  if (name === 'log') renderLog();
-  if (name === 'history') renderHistory();
+function render(name) {
+  if (name==='plan')    renderPlan();
+  if (name==='log')     renderLog();
+  if (name==='history') renderHistory();
 }
 
 // ── PLAN ──────────────────────────────────────────────────────────────────────
 function renderPlan() {
-  const el = document.getElementById('plan-content');
-  if (planStep === 'input') {
-    el.innerHTML = renderPlanInput();
-    bindPlanInputs();
-  } else {
-    el.innerHTML = renderPlanReview();
-  }
+  document.getElementById('page-plan').innerHTML =
+    planStep === 'input' ? buildPlanInput() : buildPlanReview();
 }
 
-function renderPlanInput() {
+function buildPlanInput() {
+  const isDeload = weekCount > 0 && (weekCount + 1) % 4 === 0;
+  const deloadBanner = isDeload
+    ? `<div class="deload-banner"><strong>⚠ Deload week recommended</strong>This is week ${weekCount+1} of your training block. Reduce all gym sets by ~40% this week — same exercises, same RPE, fewer sets. Keep ballet as normal.</div>`
+    : '';
+
   const dayCards = DAYS.map((day, idx) => {
-    const d = balletSchedule[idx];
+    const d = balletSched[idx];
     const gymDay = DEFAULT_GYM[day];
     const ratingBtns = [1,2,3,4,5].map(v =>
-      `<button class="rate-btn${d.intensity === v ? ' active' : ''}" onclick="setIntensity(${idx},${v})">${v}</button>`
+      `<button class="rate-btn${d.intensity===v?' active':''}" onclick="setIntensity(${idx},${v})">${v}</button>`
     ).join('');
     return `
     <div class="card">
       <div class="card-header">
         <div>
           <div class="fw-600 text-sm">${day}</div>
-          ${gymDay ? `<div class="text-xs text-dim mt-1">Default gym: Day ${gymDay}</div>` : '<div class="text-xs text-dim mt-1">Rest / ballet only</div>'}
+          <div class="text-xs text-dim mt-1">${gymDay ? 'Default gym: Day '+gymDay : 'Rest / ballet only'}</div>
         </div>
       </div>
       <div class="card-body">
         <div class="field">
           <label class="label">Rehearsal length (hours)</label>
-          <input type="number" step="0.5" min="0" max="10" value="${d.length}" placeholder="0" 
-            oninput="setBalletField(${idx},'length',this.value)">
+          <input type="number" step="0.5" min="0" max="12" value="${d.length}" placeholder="0"
+            oninput="balletSched[${idx}].length=this.value">
         </div>
         <div class="field">
-          <label class="label">Intensity (1 = rest/light, 5 = heavy/show)</label>
+          <label class="label">Intensity — 1 rest · 3 moderate · 5 show/heavy</label>
           <div class="rating">${ratingBtns}</div>
         </div>
         <div class="field">
-          <label class="label">Insight</label>
+          <label class="label">Insight (optional)</label>
           <input type="text" value="${d.insight}" placeholder="e.g. show night, full lifts, light class"
-            oninput="setBalletField(${idx},'insight',this.value)">
+            oninput="balletSched[${idx}].insight=this.value">
         </div>
       </div>
     </div>`;
@@ -397,128 +389,131 @@ function renderPlanInput() {
     <div class="section-head">Next week's ballet schedule</div>
     <div class="notice">
       <strong>Thursday planning workflow</strong>
-      Enter your company schedule for next week. The system will generate your optimized gym plan adapting to rehearsal load.
+      Enter your company schedule. The system generates your optimized gym plan adapted to rehearsal load.
     </div>
+    ${deloadBanner}
     ${dayCards}
-    <div style="padding: 4px 16px 8px;">
+    <div style="padding:4px 16px 8px">
       <button class="btn-primary" onclick="generatePlan()">Generate Week Plan →</button>
     </div>
     <div class="bottom-pad"></div>`;
 }
 
-function bindPlanInputs() {}
-
-function setBalletField(idx, field, val) {
-  balletSchedule[idx][field] = field === 'intensity' ? parseInt(val) : val;
-}
-
 function setIntensity(idx, val) {
-  balletSchedule[idx].intensity = val;
+  balletSched[idx].intensity = val;
   renderPlan();
 }
 
 function generatePlan() {
   const recs = {};
-  const showDays = balletSchedule.filter(d =>
+  const showDays = balletSched.filter(d =>
     d.insight.toLowerCase().includes('show') || d.insight.toLowerCase().includes('performance')
   ).length;
+  const isDeload = weekCount > 0 && (weekCount + 1) % 4 === 0;
 
   DAYS.forEach((day, idx) => {
-    const d = balletSchedule[idx];
+    const d = balletSched[idx];
     const gymDay = DEFAULT_GYM[day];
     const hours = parseFloat(d.length) || 0;
-    const intensity = d.intensity;
+    const int = d.intensity;
 
-    if (!gymDay) {
-      recs[day] = { type: 'rest', label: null, note: 'Ballet class & rehearsal only' };
-      return;
-    }
-
-    if (showDays >= 2 && gymDay === 'D') {
-      recs[day] = { type: 'skip', label: 'SKIP', note: 'Show week — drop optional Day D entirely' };
-      return;
-    }
-    if (showDays >= 2 && gymDay === 'C') {
-      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Show week — 15 min power maintenance only (box jumps + pogos)' };
-      return;
-    }
-
-    if (hours >= 3 && intensity >= 4) {
-      if (gymDay === 'C') {
-        recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Heavy rehearsal — reduce to pogos + box jumps only (15 min). Gym after class.' };
-      } else {
-        recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Heavy rehearsal — halve sets, keep RPE. Gym after class.' };
-      }
-    } else if (hours >= 1.5 && intensity >= 3) {
-      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Moderate rehearsal — full session but monitor RPE closely. Gym after class.' };
+    if (!gymDay) { recs[day]={type:'rest',label:null,note:'Ballet class & rehearsal only.'}; return; }
+    if (showDays >= 2 && gymDay === 'D') { recs[day]={type:'skip',label:'SKIP',note:'Show week — drop Day D entirely.'}; return; }
+    if (isDeload) { recs[day]={type:gymDay,label:'Day '+gymDay+' (DELOAD)',note:'Deload week — keep same exercises & RPE but halve the number of sets.'}; return; }
+    if (showDays >= 2 && gymDay === 'C') { recs[day]={type:gymDay,label:'Day '+gymDay,note:'Show week — 15 min power maintenance only: box jumps + pogos.'}; return; }
+    if (hours >= 3 && int >= 4) {
+      recs[day]={type:gymDay,label:'Day '+gymDay, note: gymDay==='C'
+        ? 'Heavy rehearsal — reduce to pogos + box jumps only (15 min). Always gym after class.'
+        : 'Heavy rehearsal — halve sets, keep RPE. Gym after class minimum 4h gap.'};
+    } else if (hours >= 1.5 && int >= 3) {
+      recs[day]={type:gymDay,label:'Day '+gymDay,note:'Moderate rehearsal — full session, monitor RPE. Gym after class.'};
     } else {
-      recs[day] = { type: gymDay, label: `Day ${gymDay}`, note: 'Light/no rehearsal — full session as prescribed.' };
+      recs[day]={type:gymDay,label:'Day '+gymDay,note:'Light/no rehearsal — full session as prescribed.'};
     }
   });
 
-  weekPlan = { weekStart: nextMondayStr(), balletSchedule: [...balletSchedule], recommendations: recs, createdAt: new Date().toISOString() };
-  saveData('weekPlan', weekPlan);
+  weekCount++;
+  save('weekCount', weekCount);
+  weekPlan = { weekStart:nextMonday(), balletSchedule:[...balletSched], recommendations:recs, createdAt:new Date().toISOString() };
+  save('weekPlan', weekPlan);
   planStep = 'review';
   renderPlan();
 }
 
-function nextMondayStr() {
-  const d = new Date();
-  const day = d.getDay();
-  const diff = day === 0 ? 1 : 8 - day;
-  d.setDate(d.getDate() + diff);
-  return d.toISOString().split('T')[0];
+function nextMonday() {
+  const d=new Date(); const diff=d.getDay()===0?1:8-d.getDay();
+  d.setDate(d.getDate()+diff); return d.toISOString().split('T')[0];
 }
 
-function renderPlanReview() {
-  if (!weekPlan) return '<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No plan yet</div><div class="empty-sub">Enter your schedule above</div></div>';
+function buildPlanReview() {
+  if (!weekPlan) return `<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No plan yet</div></div>`;
+  const dateStr = new Date(weekPlan.weekStart+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 
-  const dateStr = new Date(weekPlan.weekStart + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  // Progression insight from logs
+  const insight = buildProgressionInsight();
 
   const dayCards = DAYS.map(day => {
     const rec = weekPlan.recommendations[day];
-    const ballet = weekPlan.balletSchedule.find(d => d.day === day);
-    const isSkip = rec.type === 'skip' || rec.type === 'rest';
-    const gymType = rec.type !== 'skip' && rec.type !== 'rest' ? rec.type : null;
-
-    const balletInfo = ballet.length ? `${ballet.length}h rehearsal · Intensity ${ballet.intensity}/5${ballet.insight ? ' · ' + ballet.insight : ''}` : 'No rehearsal logged';
-
+    const ballet = weekPlan.balletSchedule.find(d=>d.day===day);
+    const isSkip = rec.type==='skip'||rec.type==='rest';
+    const gymType = (!isSkip && rec.type) ? rec.type.charAt(0) : null;
+    const balletInfo = ballet.length ? `${ballet.length}h · Intensity ${ballet.intensity}/5${ballet.insight?' · '+ballet.insight:''}` : 'No rehearsal';
     return `
-    <div class="day-rec${isSkip ? ' rec-skip' : ''}">
+    <div class="day-rec${isSkip?' rec-skip':''}">
       <div class="day-rec-row">
         <div>
           <div class="fw-600 text-sm">${day}</div>
           <div class="text-xs text-dim mt-1">${balletInfo}</div>
         </div>
-        ${gymType ? `<span class="badge badge-${gymType.toLowerCase()}">${rec.label}</span>` : (rec.type === 'skip' ? '<span class="badge" style="background:var(--bg4);color:var(--text3)">SKIP</span>' : '')}
+        ${gymType?`<span class="badge badge-${gymType.toLowerCase()}">${rec.label||'Day '+gymType}</span>`
+          :rec.type==='skip'?'<span class="badge" style="background:var(--bg4);color:var(--text3)">SKIP</span>':''}
       </div>
       <div class="rec-note">${rec.note}</div>
     </div>`;
   }).join('');
 
   return `
-    <div class="section-head">Week of ${dateStr}</div>
-    <div class="notice" style="background:var(--bg3);border-color:var(--border2);color:var(--text3)">
-      <strong style="color:var(--text2)">Gym always after ballet class</strong>
-      Minimum 4 hrs after class. Never before.
-    </div>
+    <div class="section-head">Week of ${dateStr} · Block week ${weekCount}</div>
+    <div class="notice-dim"><strong>Gym always after ballet class</strong>Minimum 4h gap. Never before class — fatigued proprioception raises injury risk.</div>
+    ${insight}
     ${dayCards}
-    <div style="padding: 8px 16px 4px;">
+    <div style="padding:8px 16px 4px">
       <button class="btn-ghost" onclick="planStep='input';renderPlan()">← Edit schedule</button>
     </div>
     <div class="bottom-pad"></div>`;
 }
 
-// ── LOG ───────────────────────────────────────────────────────────────────────
-function renderLog() {
-  const el = document.getElementById('log-content');
-  if (logState.step === 'select') el.innerHTML = renderLogSelect();
-  else if (logState.step === 'logging') el.innerHTML = renderLogSession();
-  else if (logState.step === 'success') el.innerHTML = renderLogSuccess();
+function buildProgressionInsight() {
+  if (sessionLogs.length < 2) return '';
+  // Check last 3 sessions for feel trend
+  const recent = sessionLogs.slice(0,3);
+  const avgFeel = recent.reduce((s,l)=>s+l.feel,0)/recent.length;
+  // Check if any RPE data trending high
+  let highRPECount = 0;
+  recent.forEach(log => {
+    log.exerciseLogs.forEach(ex => {
+      ex.sets.forEach(s => { if (parseFloat(s.rpe) >= 8.5) highRPECount++; });
+    });
+  });
+  if (avgFeel <= 2.5 || highRPECount >= 3) {
+    return `<div class="insight-card"><div class="insight-title">⚠ Fatigue signal detected</div><div class="insight-body">Your last ${recent.length} sessions averaged a feel score of ${avgFeel.toFixed(1)}/5${highRPECount>=3?` with ${highRPECount} sets at RPE 8.5+`:''}.  Consider adding a rest day or reducing volume further this week even beyond what the schedule suggests.</div></div>`;
+  }
+  if (avgFeel >= 4.2) {
+    return `<div class="insight-card" style="border-color:var(--green);background:var(--green-dim)"><div class="insight-title" style="color:var(--green)">↑ Recovery looking good</div><div class="insight-body" style="color:var(--text2)">Last ${recent.length} sessions averaged ${avgFeel.toFixed(1)}/5. If load has felt manageable, this week is a good time to push the prescribed RPE ceiling.</div></div>`;
+  }
+  return '';
 }
 
-function renderLogSelect() {
-  const dayCards = Object.entries(PROGRAM).map(([key, prog]) => `
+// ── LOG ───────────────────────────────────────────────────────────────────────
+function renderLog() {
+  const el = document.getElementById('page-log');
+  if (logState.step==='select')  el.innerHTML = buildLogSelect();
+  if (logState.step==='logging') el.innerHTML = buildLogSession();
+  if (logState.step==='success') el.innerHTML = buildLogSuccess();
+}
+
+function buildLogSelect() {
+  const cards = Object.entries(PROGRAM).map(([key, prog]) => `
     <div class="card" style="cursor:pointer" onclick="startLog('${key}')">
       <div class="ex-header">
         <div>
@@ -529,70 +524,72 @@ function renderLogSelect() {
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
     </div>`).join('');
-
-  return `
-    <div class="section-head">Which session did you complete?</div>
-    ${dayCards}
-    <div class="bottom-pad"></div>`;
+  return `<div class="section-head">Which session did you complete?</div>${cards}<div class="bottom-pad"></div>`;
 }
 
 function startLog(type) {
   logState.sessionType = type;
-  logState.exerciseLogs = PROGRAM[type].exercises.map(ex => ({ name: ex.name, sets: [] }));
-  logState.feel = 3;
-  logState.notes = '';
-  logState.openEx = null;
-  logState.step = 'logging';
+  logState.exerciseLogs = PROGRAM[type].exercises.map(ex => ({ name:ex.name, sets:[] }));
+  logState.feel = 3; logState.notes = ''; logState.openEx = null; logState.step = 'logging';
   renderLog();
 }
 
-function renderLogSession() {
+function buildLogSession() {
   const prog = PROGRAM[logState.sessionType];
+
+  // Get previous session of same type for reference
+  const prevSession = sessionLogs.find(l => l.sessionType === logState.sessionType);
+
   const exCards = prog.exercises.map((ex, exIdx) => {
     const loggedSets = logState.exerciseLogs[exIdx].sets;
     const isOpen = logState.openEx === exIdx;
+    const prevEx = prevSession?.exerciseLogs?.[exIdx];
+    const prevRef = prevEx?.sets?.length > 0
+      ? `Last: ${prevEx.sets.map(s=>`${s.reps||'?'}r${s.weight?' · '+s.weight+'kg':''}`).join(', ')}`
+      : '';
 
     const setRows = loggedSets.map((set, si) => `
       <div class="set-row">
-        <div class="set-num">${si + 1}</div>
-        <input class="set-input" type="number" placeholder="Reps" value="${set.reps || ''}"
+        <div class="set-num">${si+1}</div>
+        <input class="set-input" type="number" placeholder="Reps" value="${set.reps||''}"
           oninput="updateSet(${exIdx},${si},'reps',this.value)">
-        <input class="set-input" type="number" step="0.5" placeholder="kg" value="${set.weight || ''}"
+        <input class="set-input" type="number" step="0.5" placeholder="kg" value="${set.weight||''}"
           oninput="updateSet(${exIdx},${si},'weight',this.value)">
-        <input class="set-input" type="number" placeholder="RPE" value="${set.rpe || ''}"
+        <input class="set-input" type="number" step="0.5" placeholder="RPE" value="${set.rpe||''}"
           oninput="updateSet(${exIdx},${si},'rpe',this.value)">
       </div>`).join('');
 
-    const isNew = ex.isNew;
     return `
     <div class="card">
-      <div class="ex-header${isOpen ? ' open' : ''}" onclick="toggleEx(${exIdx})">
+      <div class="ex-header${isOpen?' open':''}" onclick="toggleEx(${exIdx})">
         <div style="flex:1;min-width:0">
-          <div class="fw-500 text-sm">${ex.name}${isNew ? ' <span style="font-size:9px;color:var(--purple);font-weight:700;font-family:DM Mono,monospace;vertical-align:middle">NEW</span>' : ''}</div>
-          <div class="text-xs text-dim mt-1">${ex.prescribed} · RPE ${ex.rpe}${loggedSets.length > 0 ? ' · ' + loggedSets.length + ' set' + (loggedSets.length !== 1 ? 's' : '') + ' logged' : ''}</div>
+          <div class="fw-500 text-sm">${ex.name}${ex.isNew?' <span style="font-size:9px;color:var(--purple);font-weight:700;font-family:DM Mono,monospace">NEW</span>':''}</div>
+          <div class="text-xs text-dim mt-1">${ex.prescribed} · RPE ${ex.rpe}${loggedSets.length>0?' · '+loggedSets.length+' set'+(loggedSets.length!==1?'s':'')+'  logged':''}</div>
+          ${prevRef&&!isOpen?`<div class="text-xs mt-1" style="color:var(--text3);font-family:'DM Mono',monospace;font-size:10px">${prevRef}</div>`:''}
         </div>
-        <svg class="chevron${isOpen ? ' open' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+        <svg class="chevron${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
-      ${isOpen ? `<div class="ex-body">
-        <div class="flex gap-2" style="font-size:10px;color:var(--text3);font-family:DM Mono,monospace;margin-bottom:8px;padding:0 2px;">
-          <div style="width:22px;flex-shrink:0"></div>
+      ${isOpen?`<div class="ex-body">
+        ${prevRef?`<div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:10px;padding:6px 8px;background:var(--bg2);border-radius:6px">↩ ${prevRef}</div>`:''}
+        <div class="flex" style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px;padding:0 2px">
+          <div style="width:26px;flex-shrink:0"></div>
           <div style="flex:1;text-align:center">REPS</div>
           <div style="flex:1;text-align:center">KG</div>
-          <div style="width:72px;text-align:center">RPE</div>
+          <div style="width:68px;text-align:center">RPE</div>
         </div>
         ${setRows}
         <button class="btn-dashed" onclick="addSet(${exIdx})">+ Add Set</button>
-      </div>` : ''}
+      </div>`:''}
     </div>`;
   }).join('');
 
   const feelBtns = [1,2,3,4,5].map(v =>
-    `<button class="rate-btn${logState.feel === v ? ' active' : ''}" onclick="setFeel(${v})">${v}</button>`
+    `<button class="rate-btn${logState.feel===v?' active':''}" onclick="setFeel(${v})">${v}</button>`
   ).join('');
 
   return `
-    <div style="padding:0 16px 8px;display:flex;align-items:center;gap:10px;margin-top:6px;">
-      <button onclick="logState.step='select';renderLog()" style="background:none;border:none;color:var(--text3);font-size:13px;">← Back</button>
+    <div style="padding:0 16px 8px;display:flex;align-items:center;gap:10px;margin-top:6px">
+      <button onclick="logState.step='select';renderLog()" style="background:none;border:none;color:var(--text3);font-size:13px">← Back</button>
       <span class="badge badge-${logState.sessionType.toLowerCase()}">Day ${logState.sessionType}</span>
       <span class="text-sm fw-500">${prog.name}</span>
     </div>
@@ -601,91 +598,60 @@ function renderLogSession() {
       <div class="card-body">
         <div class="label">Overall session feel</div>
         <div class="rating">${feelBtns}</div>
-        <div class="text-xs text-dim mt-2" style="text-align:center">1 = Struggled hard · 3 = As expected · 5 = Felt strong</div>
+        <div class="text-xs text-dim mt-1" style="text-align:center">1 = Struggled hard · 3 = Expected · 5 = Felt strong</div>
       </div>
     </div>
     <div class="card">
       <div class="card-body">
         <div class="label">Session notes (optional)</div>
-        <textarea placeholder="Any observations, pain, unusual fatigue..." oninput="logState.notes=this.value">${logState.notes}</textarea>
+        <textarea placeholder="Fatigue, pain, notable observations..." oninput="logState.notes=this.value">${logState.notes}</textarea>
       </div>
     </div>
-    <div style="padding: 0 16px 8px;">
+    <div style="padding:0 16px 8px">
       <button class="btn-primary" onclick="completeLog()">Complete Session ✓</button>
     </div>
     <div class="bottom-pad"></div>`;
 }
 
-function renderLogSuccess() {
-  return `
-    <div class="success-state">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Session logged</div>
-      <div class="success-sub">Your next session will adapt accordingly</div>
-    </div>`;
+function buildLogSuccess() {
+  return `<div class="success-state"><div class="success-icon">✓</div><div class="success-title">Session logged</div><div class="success-sub">Your next session will adapt accordingly</div></div>`;
 }
 
-function toggleEx(idx) {
-  logState.openEx = logState.openEx === idx ? null : idx;
-  renderLog();
-}
-
-function addSet(exIdx) {
-  logState.exerciseLogs[exIdx].sets.push({ reps: '', weight: '', rpe: '' });
-  renderLog();
-}
-
-function updateSet(exIdx, si, field, val) {
-  logState.exerciseLogs[exIdx].sets[si][field] = val;
-}
-
-function setFeel(val) {
-  logState.feel = val;
-  renderLog();
-}
+function toggleEx(idx) { logState.openEx = logState.openEx===idx ? null : idx; renderLog(); }
+function addSet(exIdx) { logState.exerciseLogs[exIdx].sets.push({reps:'',weight:'',rpe:''}); renderLog(); }
+function updateSet(exIdx, si, field, val) { logState.exerciseLogs[exIdx].sets[si][field]=val; }
+function setFeel(val) { logState.feel=val; renderLog(); }
 
 function completeLog() {
-  const log = {
-    date: new Date().toISOString(),
-    sessionType: logState.sessionType,
-    exerciseLogs: logState.exerciseLogs,
-    feel: logState.feel,
-    notes: logState.notes
-  };
+  const log = { date:new Date().toISOString(), sessionType:logState.sessionType, exerciseLogs:logState.exerciseLogs, feel:logState.feel, notes:logState.notes };
   sessionLogs.unshift(log);
-  saveData('logs', sessionLogs);
-  logState.step = 'success';
+  save('logs', sessionLogs);
+  logState.step='success';
   renderLog();
-  setTimeout(() => { logState.step = 'select'; logState.sessionType = null; renderLog(); }, 2200);
+  setTimeout(()=>{ logState.step='select'; logState.sessionType=null; renderLog(); }, 2200);
 }
 
 // ── HISTORY ───────────────────────────────────────────────────────────────────
 function renderHistory() {
-  const el = document.getElementById('history-content');
-  if (sessionLogs.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No sessions logged yet</div><div class="empty-sub">Complete a workout to see your history here</div></div>`;
+  const el = document.getElementById('page-history');
+  if (!sessionLogs.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No sessions yet</div><div class="empty-sub">Log a workout to see your history</div></div>`;
     return;
   }
-
   const entries = sessionLogs.map(log => {
-    const type = log.sessionType;
-    const dateStr = new Date(log.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-    const timeStr = new Date(log.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-
+    const t = log.sessionType;
+    const dateStr = new Date(log.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    const timeStr = new Date(log.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const feelColor = log.feel>=4?'var(--green)':log.feel<=2?'var(--coral)':'var(--text2)';
     const exLines = log.exerciseLogs.map(ex => {
-      const setsStr = ex.sets.length > 0
-        ? ex.sets.filter(s => s.reps || s.weight).map(s => `${s.reps || '?'}r${s.weight ? ' · ' + s.weight + 'kg' : ''}${s.rpe ? ' @' + s.rpe : ''}`).join(', ')
-        : 'logged';
-      return `<div class="hist-ex">${ex.name}: <span>${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''}${ex.sets.length > 0 ? ' — ' + setsStr : ''}</span></div>`;
+      const setsStr = ex.sets.filter(s=>s.reps||s.weight).map(s=>`${s.reps||'?'}r${s.weight?' · '+s.weight+'kg':''}${s.rpe?' @'+s.rpe:''}`).join(', ');
+      return `<div class="hist-ex">${ex.name}: <span>${ex.sets.length} set${ex.sets.length!==1?'s':''}${setsStr?' — '+setsStr:''}</span></div>`;
     }).join('');
-
-    const feelColor = log.feel >= 4 ? '#3da882' : log.feel <= 2 ? '#e06b4a' : 'var(--text2)';
-
     return `
     <div class="hist-entry">
       <div class="hist-header">
         <div>
-          <span class="badge badge-${type.toLowerCase()}" style="margin-bottom:6px;display:inline-flex">Day ${type}</span>
+          <span class="badge badge-${t.toLowerCase()}" style="margin-bottom:6px;display:inline-flex">Day ${t}</span>
           <div class="text-xs text-dim">${dateStr} · ${timeStr}</div>
         </div>
         <div style="text-align:right">
@@ -693,14 +659,16 @@ function renderHistory() {
           <div class="mono fw-600" style="font-size:22px;color:${feelColor}">${log.feel}<span style="font-size:12px;color:var(--text3)">/5</span></div>
         </div>
       </div>
-      <div class="hist-body">${exLines}${log.notes ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);font-style:italic">${log.notes}</div>` : ''}</div>
+      <div class="hist-body">${exLines}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);font-style:italic">${log.notes}</div>`:''}</div>
     </div>`;
   }).join('');
 
-  el.innerHTML = `
-    <div class="section-head">${sessionLogs.length} session${sessionLogs.length !== 1 ? 's' : ''} logged</div>
-    ${entries}
-    <div class="bottom-pad"></div>`;
+  el.innerHTML=`<div class="section-head">${sessionLogs.length} session${sessionLogs.length!==1?'s':''} logged</div>${entries}<div class="bottom-pad"></div>`;
+}
+
+// ── Service Worker ────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
