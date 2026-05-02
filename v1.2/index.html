@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Training">
+<meta name="theme-color" content="#0d0d0c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Training v1.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0c;--bg2:#161614;--bg3:#1e1e1c;--bg4:#272724;
+  --bd:#2b2b28;--bd2:#363633;
+  --tx:#eeebe4;--tx2:#a6a29b;--tx3:#66625c;
+  --am:#e8a020;--amd:#291e07;--amm:#48340e;
+  --gn:#3aaa80;--gnd:#091e16;
+  --pu:#7c6fdf;--pud:#151338;
+  --co:#df6b4a;--cod:#281209;
+  --rd:#e04444;--rdd:#280a0a;
+  --st:env(safe-area-inset-top,0px);
+  --sb:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
+input,textarea,button,select{font-family:inherit}
+button{cursor:pointer}
+
+/* Layout */
+#app{height:100dvh;display:flex;flex-direction:column}
+#hdr{background:var(--bg);border-bottom:1px solid var(--bd);padding:calc(var(--st) + 10px) 16px 0;flex-shrink:0}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:4px}
+.hdr-title{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.hdr-ver{font-size:9px;color:var(--tx3);font-family:'DM Mono',monospace}
+.tabs{display:flex;margin:0 -16px}
+.tab{flex:1;padding:10px 0 9px;font-size:12px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s}
+.tab.on{color:var(--am);border-bottom-color:var(--am)}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none}.page.on{display:block}
+
+/* Week nav */
+.week-nav{display:flex;align-items:center;padding:10px 16px;gap:6px;background:var(--bg2);border-bottom:1px solid var(--bd)}
+.wnav-btn{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:6px 10px;color:var(--tx2);font-size:16px;line-height:1;transition:all .15s;flex-shrink:0}
+.wnav-btn:active{opacity:.7}
+.wnav-btn:disabled{opacity:.3;pointer-events:none}
+.week-lbl{flex:1;text-align:center;font-size:13px;font-weight:500;color:var(--tx)}
+.week-tag{font-size:10px;color:var(--am);font-family:'DM Mono',monospace;display:block;text-align:center;margin-top:1px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;margin:0 16px 10px;overflow:hidden}
+.card-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.card-body{padding:14px}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.05em;font-family:'DM Mono',monospace}
+.ba{background:var(--pud);color:var(--pu)}
+.bb{background:var(--gnd);color:var(--gn)}
+.bc{background:var(--amd);color:var(--am)}
+.bd2cls{background:var(--cod);color:var(--co)}
+.bpre{background:var(--bg4);color:var(--tx2)}
+
+/* Day type selector */
+.dtype-row{display:flex;gap:5px;flex-wrap:wrap}
+.dtype-btn{padding:7px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s;flex:1;text-align:center;min-width:0}
+.dtype-btn.on-perf{background:#2a0d1e;color:#e060a0;border-color:#e060a0}
+.dtype-btn.on-off{background:var(--gnd);color:var(--gn);border-color:var(--gn)}
+.dtype-btn.on-reh{background:var(--amd);color:var(--am);border-color:var(--am)}
+.dtype-btn.on-per{background:var(--pud);color:var(--pu);border-color:var(--pu)}
+
+/* Intensity */
+.int-row{display:flex;gap:4px}
+.int-btn{flex:1;padding:8px 0;border-radius:7px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;font-family:'DM Mono',monospace;transition:all .15s}
+.int-btn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
+
+/* Week schedule grid */
+.week-grid{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.day-card{border-radius:11px;border:1px solid var(--bd);overflow:hidden;background:var(--bg2)}
+.day-card-hdr{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.day-card-hdr.tappable:active{background:var(--bg3)}
+.day-name{font-size:13px;font-weight:600}
+.day-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+.day-status{display:flex;align-items:center;gap:6px}
+.done-pill{background:var(--gnd);color:var(--gn);border:1px solid var(--gn);border-radius:20px;font-size:10px;font-weight:600;padding:2px 8px;font-family:'DM Mono',monospace}
+.rest-pill{background:var(--bg4);color:var(--tx3);border-radius:20px;font-size:10px;padding:2px 8px}
+.reason-text{font-size:11px;color:var(--tx3);padding:0 13px 10px;line-height:1.4;border-top:1px solid var(--bd);margin-top:0;padding-top:8px}
+
+/* Inputs */
+.field{margin-bottom:12px}.field:last-child{margin-bottom:0}
+.lbl{font-size:11px;color:var(--tx3);margin-bottom:6px;display:block;letter-spacing:.03em;font-weight:500}
+input[type=text],textarea{width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;-webkit-appearance:none;transition:border-color .15s}
+input:focus,textarea:focus{border-color:var(--am)}
+textarea{resize:none;min-height:60px;line-height:1.4}
+
+/* Rating */
+.rating{display:flex;gap:5px}
+.rbtn{flex:1;padding:10px 0;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;font-family:'DM Mono',monospace}
+.rbtn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
+
+/* Buttons */
+.btn-p{width:100%;background:var(--am);color:var(--bg);border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:600;letter-spacing:-.2px;transition:opacity .15s;margin:4px 0}
+.btn-p:active{opacity:.8}
+.btn-g{background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--tx2);font-weight:500;transition:all .15s}
+.btn-g:active{opacity:.7}
+.btn-d{width:100%;background:none;border:1px dashed var(--bd2);border-radius:8px;padding:10px;color:var(--tx3);font-size:13px;transition:all .15s;margin-top:6px}
+.btn-d:active{background:var(--bg3)}
+.btn-back{background:none;border:none;color:var(--tx3);font-size:13px;padding:4px 0;display:flex;align-items:center;gap:4px}
+.btn-skip{background:none;border:none;color:var(--tx3);font-size:12px;text-decoration:underline;padding:4px 0}
+
+/* Utility */
+.sm{font-size:13px}.xs{font-size:11px}.dim{color:var(--tx2)}.dimmer{color:var(--tx3)}
+.b6{font-weight:600}.b5{font-weight:500}.mono{font-family:'DM Mono',monospace}
+.mt1{margin-top:4px}.mt2{margin-top:8px}.mb1{margin-bottom:4px}
+.row{display:flex;align-items:center;gap:8px}.jcb{justify-content:space-between}
+.sec{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;padding:16px 18px 8px}
+.bpad{height:calc(var(--sb) + 24px)}
+
+/* Notice */
+.notice{margin:0 16px 10px;padding:11px 13px;background:var(--amd);border:1px solid var(--amm);border-radius:10px;font-size:12px;color:var(--am);line-height:1.5}
+.notice strong{font-weight:600;display:block;margin-bottom:2px}
+.ndim{margin:0 16px 10px;padding:11px 13px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;font-size:12px;color:var(--tx3);line-height:1.5}
+.ndim strong{font-weight:600;color:var(--tx2);display:block;margin-bottom:2px}
+.nred{margin:0 16px 10px;padding:11px 13px;background:var(--rdd);border:1px solid var(--rd);border-radius:10px;font-size:12px;color:var(--rd);line-height:1.5}
+.nred strong{font-weight:600;display:block;margin-bottom:2px}
+
+/* Tag chips */
+.tag-grp-lbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tag{padding:8px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:12px;font-weight:500;transition:all .15s}
+.tag.rec{background:var(--amd);color:var(--am);border-color:var(--am)}
+.tag.cau{background:var(--cod);color:var(--co);border-color:var(--co)}
+.tag.wrn{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
+
+/* Mod preview */
+.mod-box{padding:12px 14px;background:var(--bg);border:1px solid var(--amm);border-radius:10px;margin-bottom:12px}
+.mod-title{font-size:10px;font-weight:600;color:var(--am);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.mod-line{font-size:12px;color:var(--tx2);margin-bottom:4px;line-height:1.4;padding-left:8px;border-left:2px solid var(--amm)}
+
+/* Exercise accordion */
+.ex-hdr{padding:13px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:border-color .15s}
+.ex-hdr.open{border-bottom-color:var(--bd)}
+.ex-body{padding:12px 14px;background:var(--bg)}
+.chev{width:16px;height:16px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
+.chev.open{transform:rotate(90deg)}
+
+/* Accuracy */
+.acc{margin:0 16px 10px;padding:14px;border-radius:12px;border:1px solid var(--bd)}
+.acc.good{background:var(--gnd);border-color:var(--gn)}
+.acc.warn{background:var(--cod);border-color:var(--co)}
+.acc.note{background:var(--amd);border-color:var(--am)}
+.acc-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.acc.good .acc-title{color:var(--gn)}.acc.warn .acc-title{color:var(--co)}.acc.note .acc-title{color:var(--am)}
+.acc-detail{font-size:12px;color:var(--tx2);line-height:1.5}
+.acc-stat{font-size:11px;color:var(--tx3);margin-top:6px;font-family:'DM Mono',monospace}
+
+/* Insight strip */
+.insight{margin:0 16px 10px;padding:11px 13px;border-radius:10px;border-left:3px solid var(--am);background:var(--amd)}
+.insight.g{border-left-color:var(--gn);background:var(--gnd)}
+.ins-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--am);margin-bottom:3px}
+.insight.g .ins-t{color:var(--gn)}
+.ins-b{font-size:12px;color:var(--tx2);line-height:1.5}
+
+/* History */
+.hflt{display:flex;gap:6px;padding:10px 16px 4px}
+.flt{padding:6px 14px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s}
+.flt.on{background:var(--am);color:var(--bg);border-color:var(--am)}
+.hent{margin:0 16px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.hent-hdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer}
+.hent-hdr:active{background:var(--bg3)}
+.hent-body{padding:0 14px 12px}
+.hex{font-size:12px;color:var(--tx3);margin-bottom:2px}
+.hex span{color:var(--tx2)}
+.del-btn{background:none;border:1px solid transparent;border-radius:6px;color:var(--tx3);font-size:11px;padding:4px 8px;transition:all .15s}
+.del-btn:active{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
+.del-conf{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+
+/* Success */
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.success{text-align:center;padding:80px 24px;animation:pop .3s ease}
+.sico{width:64px;height:64px;background:#0f2d22;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+
+/* Empty */
+.empty{text-align:center;padding:60px 24px}
+.emi{font-size:40px;margin-bottom:12px;opacity:.3}
+.emt{font-size:15px;font-weight:500;color:var(--tx2)}
+.ems{font-size:13px;color:var(--tx3);margin-top:4px}
+
+/* ── SCROLL WHEEL PICKER ───────────────────────────── */
+.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
+.picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px)}
+.picker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd)}
+.picker-label{font-size:15px;font-weight:600}
+.picker-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:6px 16px;font-size:14px;font-weight:600}
+.picker-cols{display:flex;justify-content:center;gap:0;padding:0 16px}
+.picker-col{flex:1;position:relative;height:200px;overflow:hidden;max-width:120px}
+.picker-col-inner{overflow-y:scroll;height:200px;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;padding:80px 0;scrollbar-width:none}
+.picker-col-inner::-webkit-scrollbar{display:none}
+.picker-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:'DM Mono',monospace;color:var(--tx3);scroll-snap-align:center;font-weight:400;transition:color .1s}
+.picker-item.sel{color:var(--tx);font-weight:600}
+.picker-mask-top,.picker-mask-bot{position:absolute;left:0;right:0;height:80px;pointer-events:none;z-index:2}
+.picker-mask-top{top:0;background:linear-gradient(to bottom,var(--bg2) 0%,transparent 100%)}
+.picker-mask-bot{bottom:0;background:linear-gradient(to top,var(--bg2) 0%,transparent 100%)}
+.picker-line{position:absolute;left:10%;right:10%;top:50%;transform:translateY(-50%);height:40px;border-top:1px solid var(--bd2);border-bottom:1px solid var(--bd2);pointer-events:none;z-index:3}
+.picker-col-lbl{text-align:center;font-size:10px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase;padding:4px 0 8px;font-family:'DM Mono',monospace}
+
+/* Value display button (replaces text input) */
+.val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:11px 14px;transition:border-color .15s;cursor:pointer}
+.val-btn:active,.val-btn.active{border-color:var(--am)}
+.val-btn-num{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--tx)}
+.val-btn-unit{font-size:11px;color:var(--tx3)}
+.val-btn-empty{font-size:14px;color:var(--tx3)}
+
+/* Set row */
+.set-row{display:flex;gap:5px;margin-bottom:8px;align-items:center}
+.set-n{width:22px;height:22px;background:var(--bg4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--tx3);font-family:'DM Mono',monospace;flex-shrink:0}
+.plyo-done{flex:1;padding:10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;transition:all .15s;text-align:center}
+.plyo-done.done{background:var(--gnd);color:var(--gn);border-color:var(--gn)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hdr">
+    <div class="hdr-row">
+      <span class="hdr-title">Training</span>
+      <span class="hdr-ver">v1.2</span>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="nav('schedule',this)">Schedule</button>
+      <button class="tab"    onclick="nav('history',this)">History</button>
+    </div>
+  </div>
+  <div id="content">
+    <div id="page-schedule" class="page on"></div>
+    <div id="page-history"  class="page"></div>
+  </div>
+</div>
+
+<!-- Picker overlay -->
+<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)">
+  <div class="picker-sheet" onclick="event.stopPropagation()">
+    <div class="picker-hdr">
+      <span class="picker-label" id="picker-label">Select</span>
+      <button class="picker-done" onclick="pickerDone()">Done</button>
+    </div>
+    <div id="picker-cols" class="picker-cols"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// PROGRAM (loaded from program.json, fallback inline)
+// ═══════════════════════════════════════════════════════════
+let PROG = null;
+
+async function loadProgram() {
+  try {
+    const r = await fetch('program.json');
+    if (r.ok) { PROG = await r.json(); return; }
+  } catch(e) {}
+  // Inline fallback — same structure as program.json
+  PROG = {"meta":{"name":"Ballet Dancer In-Season Program","version":"1.0"},"sessions":{"A":{"name":"Full Body Strength","fullName":"Day A — Full Body Strength (Push + Pull)","color":"#7c6fdf","colorDim":"#151338","optional":false,"exercises":[{"id":"ohp","name":"Overhead Barbell Press","type":"loaded","prescribed":"3 × 4–5","rpe":"7–8","sets":3,"regions":["upper_push"]},{"id":"wpu","name":"Weighted Pull-Ups","type":"loaded","prescribed":"3 × 4–5","rpe":"7–8","sets":3,"regions":["upper_pull"]},{"id":"nhc","name":"Nordic Hamstring Curl","type":"loaded","prescribed":"3 × 4–6","rpe":"6–7","sets":3,"regions":["lower"],"note":"3-sec eccentric lower."},{"id":"hkp","name":"Half-Kneeling Single-Arm DB Press","type":"loaded","prescribed":"2 × 8 ea","rpe":"6","sets":2,"regions":["upper_push"]},{"id":"sws","name":"Serratus Wall Slides","type":"bodyweight","prescribed":"2 × 10–12","rpe":"5–6","sets":2,"regions":["upper_push"]},{"id":"cop","name":"Copenhagen Plank","type":"timed","prescribed":"2 × 20–30s ea","rpe":"6","sets":2,"regions":["lower_core"]}]},"B":{"name":"Posterior Chain","fullName":"Day B — Posterior Chain, Unilateral & Trunk","color":"#3aaa80","colorDim":"#091e16","optional":false,"exercises":[{"id":"rdl","name":"Romanian Deadlift","type":"loaded","prescribed":"3 × 5–6","rpe":"7","sets":3,"regions":["lower"]},{"id":"bss","name":"Bulgarian Split Squat","type":"loaded","prescribed":"3 × 6–8 ea","rpe":"6–7","sets":3,"regions":["lower"]},{"id":"slr","name":"Single-Leg RDL","type":"loaded","prescribed":"2 × 6–8 ea","rpe":"6","sets":2,"regions":["lower"]},{"id":"her","name":"Hip External Rotation (cable)","type":"loaded","prescribed":"3 × 12–15","rpe":"5–6","sets":3,"regions":["lower"]},{"id":"pal","name":"Pallof Press","type":"bodyweight","prescribed":"3 × 10–12 ea","rpe":"5–6","sets":3,"regions":["core"]},{"id":"tib","name":"Tibialis Raises + Foot Work","type":"timed","prescribed":"8–10 min","rpe":"5","sets":1,"regions":["lower_acc"]}]},"C":{"name":"Power & Plyometrics","fullName":"Day C — Power & Plyometrics","color":"#e8a020","colorDim":"#291e07","optional":false,"exercises":[{"id":"bxj","name":"Box Jumps (max height intent)","type":"plyo","prescribed":"4 × 3–4","rpe":"6–7","sets":4,"regions":["plyo"]},{"id":"pog","name":"Pogos","type":"plyo","prescribed":"3 × 20–25","rpe":"5–6","sets":3,"regions":["plyo"]},{"id":"brj","name":"Broad Jumps","type":"plyo","prescribed":"2 × 4","rpe":"6","sets":2,"regions":["plyo"]},{"id":"scr","name":"Seated Cable Row (1-sec pause)","type":"loaded","prescribed":"2 × 8–10","rpe":"6","sets":2,"regions":["upper_pull"]},{"id":"fpu","name":"Face Pulls","type":"loaded","prescribed":"2 × 12–15","rpe":"5–6","sets":2,"regions":["upper_pull"]},{"id":"fac","name":"Farmer's Carries","type":"carry","prescribed":"2 × 25s","rpe":"6–7","sets":2,"regions":["carry"]}]},"D":{"name":"Hypertrophy (Optional)","fullName":"Day D — Hypertrophy / Aesthetics (Optional)","color":"#df6b4a","colorDim":"#281209","optional":true,"exercises":[{"id":"idb","name":"Incline DB Press","type":"loaded","prescribed":"3 × 8–10","rpe":"7","sets":3,"regions":["upper_push"]},{"id":"clr","name":"Cable Lateral Raises","type":"loaded","prescribed":"3 × 12–15","rpe":"6–7","sets":3,"regions":["upper_push"]},{"id":"rdf","name":"Rear Delt Fly","type":"loaded","prescribed":"3 × 12–15","rpe":"6–7","sets":3,"regions":["upper_pull"]},{"id":"hcp","name":"Hammer Curls + Rope Pushdowns","type":"loaded","prescribed":"2–3 × 10–12","rpe":"6–7","sets":2,"regions":["upper_arm"]},{"id":"adm","name":"Adductor Machine","type":"loaded","prescribed":"2 × 12–15","rpe":"6","sets":2,"regions":["lower"]}]}},"tags":{"poor_sleep":{"label":"Poor sleep","emoji":"😴","group":"rec","affects":{"plyo":{"setReduction":1}},"note":"Reduce plyometric volume by 1 set."},"high_fatigue":{"label":"High fatigue","emoji":"🪫","group":"rec","affects":{"ALL":{"setReduction":1}},"note":"Drop 1 set from each exercise."},"low_energy":{"label":"Low energy","emoji":"🔋","group":"rec","affects":{},"rpeCap":7,"note":"Cap all exercises at RPE 7."},"heavy_legs":{"label":"Heavy legs","emoji":"🦵","group":"rec","affects":{"lower":{"setReduction":1},"plyo":{"setReduction":1},"lower_core":{"setReduction":1}},"note":"Reduce lower body & plyo by 1 set."},"upper_soreness":{"label":"Upper body soreness","emoji":"💪","group":"rec","affects":{"upper_push":{"setReduction":1},"upper_pull":{"setReduction":1},"upper_arm":{"setReduction":1}},"note":"Reduce upper body by 1 set."},"lower_soreness":{"label":"Lower body soreness","emoji":"🦵","group":"rec","affects":{"lower":{"setReduction":1},"lower_core":{"setReduction":1}},"note":"Reduce lower body by 1 set."},"hip_knee":{"label":"Hip / knee tightness","emoji":"⚠️","group":"cau","affects":{"lower":{"note":"Shorten ROM"},"plyo":{"setReduction":1}},"note":"Shorten ROM on lower body."},"shoulder":{"label":"Shoulder tightness","emoji":"⚠️","group":"cau","affects":{"upper_push":{"note":"Reduce load ~10–15%"},"upper_pull":{"note":"Bodyweight only"}},"note":"Reduce pressing load 10–15%."},"dull_ache":{"label":"Dull joint ache","emoji":"🔶","group":"cau","affects":{},"note":"Monitor during warm-up."},"sharp_pain":{"label":"Sharp / acute pain","emoji":"🚨","group":"warn","isWarning":true,"affects":{},"note":"Requires physiotherapist assessment."}},"assignmentRules":{"minGapSameLower":2,"minGapAnySession":1,"protectBeforePerformance":true,"plyoAvoidAdjacentFullRehearsal":true,"preferDayOff":true,"preferAfterDayOff":true}};
+}
+
+// ═══════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════
+const save = (k,v)=>{ try{localStorage.setItem('bt2_'+k,JSON.stringify(v))}catch(e){} };
+const load = k=>{ try{const v=localStorage.getItem('bt2_'+k);return v?JSON.parse(v):null}catch(e){return null} };
+
+// ═══════════════════════════════════════════════════════════
+// DATE HELPERS
+// ═══════════════════════════════════════════════════════════
+function getMondayOf(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day===0?-6:1-day;
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function weekKey(monday) {
+  return monday.toISOString().split('T')[0];
+}
+function fmtWeekLabel(monday) {
+  const sun = new Date(monday); sun.setDate(sun.getDate()+6);
+  const opts = {day:'numeric',month:'short'};
+  const ms = monday.toLocaleDateString('en-GB',opts);
+  const ss = sun.toLocaleDateString('en-GB',opts);
+  return `${ms} – ${ss}`;
+}
+function isCurrentWeek(monday) {
+  const cm = getMondayOf(new Date());
+  return weekKey(monday)===weekKey(cm);
+}
+function isNextWeek(monday) {
+  const nm = getMondayOf(new Date());
+  nm.setDate(nm.getDate()+7);
+  return weekKey(monday)===weekKey(nm);
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DSHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', per:'Personal Training' };
+const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
+const DTYPE_LOAD   = { perf:5, off:0, reh:3, per:2 }; // base load weight
+
+let viewMonday     = getMondayOf(new Date());
+let weeks          = load('weeks') || {};      // weekKey → { ballet, plan, logs }
+let histFilter     = 'all';
+let expandedHist   = null;
+let confirmDel     = null;
+
+// Log flow state
+let lf = null; // null = not in log flow
+
+// ═══════════════════════════════════════════════════════════
+// WEEK DATA HELPERS
+// ═══════════════════════════════════════════════════════════
+function getWeek(monday) {
+  const k = weekKey(monday);
+  if (!weeks[k]) weeks[k] = {
+    ballet: DAYS.map(d=>({ day:d, type:null, intensity:3, hours:'' })),
+    plan: null,
+    logs: {}
+  };
+  return weeks[k];
+}
+function saveWeeks() { save('weeks', weeks); }
+
+function defaultBallet() {
+  return DAYS.map(d=>({ day:d, type:null, intensity:3, hours:'' }));
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function nav(name, el) {
+  if (lf) { if (!confirm('Leave this session? Progress will be lost.')) return; lf=null; }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
+  el.classList.add('on');
+  if (name==='schedule') renderSchedule();
+  if (name==='history')  renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCHEDULE PAGE
+// ═══════════════════════════════════════════════════════════
+function renderSchedule() {
+  if (lf) { renderLogFlow(); return; }
+  const el = document.getElementById('page-schedule');
+  const wk  = getWeek(viewMonday);
+  const isCurrent = isCurrentWeek(viewMonday);
+  const isNext    = isNextWeek(viewMonday);
+  const label     = fmtWeekLabel(viewMonday);
+  const canGoNext = isCurrent || isNext; // max 1 week ahead
+  const canGoPrev = true;
+
+  const weekTag = isCurrent ? 'CURRENT WEEK' : isNext ? 'NEXT WEEK' : 'PAST WEEK';
+
+  const nav = `
+    <div class="week-nav">
+      <button class="wnav-btn" onclick="changeWeek(-1)">‹</button>
+      <div style="flex:1;text-align:center">
+        <div class="week-lbl">${label}</div>
+        <div class="week-tag">${weekTag}</div>
+      </div>
+      <button class="wnav-btn" onclick="changeWeek(1)" ${!canGoNext?'disabled':''}>›</button>
+    </div>`;
+
+  const hasPlan = !!wk.plan;
+  const isPast  = !isCurrent && !isNext;
+
+  let body = '';
+  if (!hasPlan) {
+    body = buildBalletInput(wk, isPast);
+  } else {
+    body = buildWeekView(wk, isCurrent);
+  }
+
+  el.innerHTML = nav + body;
+}
+
+function changeWeek(dir) {
+  const d = new Date(viewMonday);
+  d.setDate(d.getDate() + dir*7);
+  viewMonday = d;
+  renderSchedule();
+}
+
+// ── Ballet input form ──────────────────────────────────────
+function buildBalletInput(wk, isPast) {
+  const daycards = wk.ballet.map((d,i)=>{
+    const typebtns = Object.entries(DTYPE_LABELS).map(([k,lbl])=>`
+      <button class="dtype-btn${d.type===k?' '+DTYPE_CLASS[k]:''}" onclick="setDtype(${i},'${k}')">${lbl}</button>`
+    ).join('');
+    const intbtns = [1,2,3,4,5].map(v=>
+      `<button class="int-btn${d.intensity===v?' on':''}" onclick="setDint(${i},${v})">${v}</button>`
+    ).join('');
+    const showExtra = d.type && d.type!=='off';
+    return `
+    <div class="card">
+      <div class="card-hdr"><div class="sm b6">${d.day}</div></div>
+      <div class="card-body">
+        <div class="field">
+          <label class="lbl">Day type</label>
+          <div class="dtype-row">${typebtns}</div>
+        </div>
+        ${showExtra?`
+        <div class="field">
+          <label class="lbl">Intensity — 1 light · 3 moderate · 5 maximum</label>
+          <div class="int-row">${intbtns}</div>
+        </div>
+        <div class="field">
+          <label class="lbl">Duration (hours, optional)</label>
+          <input type="text" inputmode="decimal" value="${d.hours}" placeholder="e.g. 2.5" oninput="setDhours(${i},this.value)">
+        </div>`:
+        d.type==='off'?'<div class="xs dimmer" style="margin-top:-4px">Rest day — prime gym candidate.</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="sec">Ballet schedule</div>
+    <div class="notice"><strong>Enter this week's company schedule</strong>Day type and intensity guide the auto-assignment of gym sessions.</div>
+    ${daycards}
+    <div style="padding:4px 16px 8px">
+      <button class="btn-p" onclick="generatePlan()">Generate Gym Plan →</button>
+    </div>
+    <div class="bpad"></div>`;
+}
+
+function setDtype(i,v) { getWeek(viewMonday).ballet[i].type=v; saveWeeks(); renderSchedule(); }
+function setDint(i,v)  { getWeek(viewMonday).ballet[i].intensity=v; saveWeeks(); renderSchedule(); }
+function setDhours(i,v){ getWeek(viewMonday).ballet[i].hours=v; saveWeeks(); }
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-ASSIGNMENT ENGINE
+// ═══════════════════════════════════════════════════════════
+function assignGymDays(ballet) {
+  // Returns { A: dayIndex|null, B: dayIndex|null, C: dayIndex|null, D: dayIndex|null, reasons: {A,B,C,D} }
+  const sessions = Object.keys(PROG.sessions); // ['A','B','C','D']
+  const rules = PROG.assignmentRules;
+
+  // Score each day for each session
+  // Lower score = better candidate
+  function dayLoad(d) {
+    const base = DTYPE_LOAD[d.type] || 0;
+    const intMod = d.type && d.type!=='off' ? (d.intensity-1)*0.5 : 0;
+    const hoursMod = parseFloat(d.hours)||0;
+    return base + intMod + hoursMod*0.3;
+  }
+
+  const loads = ballet.map(dayLoad);
+  const isPerf = ballet.map(d=>d.type==='perf');
+  const isOff  = ballet.map(d=>d.type==='off');
+
+  // Protect day before performance
+  const protectedDays = new Set();
+  if (rules.protectBeforePerformance) {
+    ballet.forEach((d,i)=>{ if(d.type==='perf'){ if(i>0) protectedDays.add(i-1); protectedDays.add(i); } });
+  }
+
+  // Score function per session type
+  function scoreDay(sessionKey, dayIdx, alreadyAssigned) {
+    if (protectedDays.has(dayIdx)) return Infinity;
+    const d = ballet[dayIdx];
+    if (!d.type) return 999; // unset days are valid but not preferred
+
+    let score = loads[dayIdx];
+
+    // Prefer day off
+    if (isOff[dayIdx] && rules.preferDayOff) score -= 2;
+
+    // Prefer day after day off
+    if (dayIdx>0 && isOff[dayIdx-1] && rules.preferAfterDayOff) score -= 1;
+
+    // Plyo (C) avoid adjacent to full rehearsal
+    if (sessionKey==='C' && rules.plyoAvoidAdjacentFullRehearsal) {
+      const adjReh = (dayIdx>0 && ballet[dayIdx-1].type==='reh') || (dayIdx<6 && ballet[dayIdx+1].type==='reh');
+      if (adjReh) score += 3;
+    }
+
+    // Enforce min gaps from already assigned sessions
+    for (const [s, assignedIdx] of Object.entries(alreadyAssigned)) {
+      if (assignedIdx===null) continue;
+      const gap = Math.abs(dayIdx - assignedIdx);
+
+      // Same lower-body region gap (B and C both load lower)
+      const lowerSessions = ['B','C'];
+      if (lowerSessions.includes(sessionKey) && lowerSessions.includes(s)) {
+        if (gap < rules.minGapSameLower) return Infinity;
+      }
+      // No two sessions same day
+      if (gap < rules.minGapAnySession) return Infinity;
+    }
+
+    return score;
+  }
+
+  // Greedy assign mandatory sessions first (A, B, C), then optional (D)
+  const assigned = { A:null, B:null, C:null, D:null };
+  const reasons  = { A:'', B:'', C:'', D:'' };
+  const mandatory = sessions.filter(s=>!PROG.sessions[s].optional);
+  const optional  = sessions.filter(s=>PROG.sessions[s].optional);
+
+  for (const s of mandatory) {
+    let best = null, bestScore = Infinity;
+    for (let i=0; i<7; i++) {
+      const sc = scoreDay(s, i, assigned);
+      if (sc < bestScore) { bestScore=sc; best=i; }
+    }
+    assigned[s] = best;
+    reasons[s]  = buildReason(s, best, ballet, loads, protectedDays, assigned);
+  }
+
+  for (const s of optional) {
+    let best = null, bestScore = 999;
+    for (let i=0; i<7; i++) {
+      const sc = scoreDay(s, i, assigned);
+      if (sc < bestScore) { bestScore=sc; best=i; }
+    }
+    // Only assign optional if a good slot exists
+    if (bestScore <= 4) {
+      assigned[s] = best;
+      reasons[s]  = buildReason(s, best, ballet, loads, protectedDays, assigned);
+    } else {
+      assigned[s] = null;
+      reasons[s]  = 'No suitable slot this week — Day D skipped.';
+    }
+  }
+
+  return { assigned, reasons };
+}
+
+function buildReason(session, dayIdx, ballet, loads, protectedDays, allAssigned) {
+  if (dayIdx===null) return 'No suitable slot found.';
+  const d = ballet[dayIdx];
+  const dayName = DAYS[dayIdx];
+  const parts = [];
+
+  if (d.type==='off') parts.push(`${dayName} is a day off — lowest load`);
+  else if (loads[dayIdx] <= 2) parts.push(`${dayName} has light ballet load`);
+  else parts.push(`${dayName} has the best available load balance`);
+
+  if (session==='C') {
+    const adjReh = (dayIdx>0&&ballet[dayIdx-1].type==='reh')||(dayIdx<6&&ballet[dayIdx+1].type==='reh');
+    if (!adjReh) parts.push('not adjacent to full rehearsal — CNS demand managed');
+  }
+  if (session==='B'||session==='C') {
+    const other = session==='B'?'C':'B';
+    const otherIdx = allAssigned[other];
+    if (otherIdx!==null && otherIdx!==undefined) {
+      const gap = Math.abs(dayIdx-otherIdx);
+      parts.push(`${gap} days from Day ${other} — 48h lower body recovery respected`);
+    }
+  }
+
+  // Performance protection
+  const hasPerf = ballet.some(d=>d.type==='perf');
+  if (hasPerf && !protectedDays.has(dayIdx)) parts.push('clear of performance windows');
+
+  return parts.join(' · ') + '.';
+}
+
+function generatePlan() {
+  const wk = getWeek(viewMonday);
+  const { assigned, reasons } = assignGymDays(wk.ballet);
+
+  wk.plan = {
+    assigned,  // { A: dayIndex|null, ... }
+    reasons,
+    createdAt: new Date().toISOString()
+  };
+  saveWeeks();
+  renderSchedule();
+}
+
+// ── Week view (plan generated) ─────────────────────────────
+function buildWeekView(wk, isCurrent) {
+  const insight = buildProgressInsight();
+  const dayCards = DAYS.map((day,i)=>{
+    const ballet = wk.ballet[i];
+
+    // Find which session is assigned to this day
+    const sessionKey = Object.entries(wk.plan.assigned).find(([,idx])=>idx===i)?.[0] || null;
+    const log = sessionKey ? wk.logs[sessionKey] : null;
+    const isDone = !!log;
+
+    let gymContent = '';
+    if (sessionKey) {
+      const sess = PROG.sessions[sessionKey];
+      const reason = wk.plan.reasons[sessionKey];
+      const modNote = getModNote(ballet);
+
+      gymContent = `
+        <div class="day-card ${isDone?'':'tappable'}" onclick="${!isDone?`openLog('${sessionKey}',${i})`:'toggleHistEntry(\''+sessionKey+'\')'}">
+          <div class="day-card-hdr">
+            <div>
+              <div class="row"><span class="badge b${sessionKey.toLowerCase()}">${sessionKey}</span><span class="sm b5" style="margin-left:4px">${sess.name}</span></div>
+              <div class="day-meta">${day}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
+            </div>
+            <div class="day-status">
+              ${isDone?'<span class="done-pill">✓ Done</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'}
+            </div>
+          </div>
+          ${reason?`<div class="reason-text">🧠 ${reason}${modNote?'<br>'+modNote:''}</div>`:''}
+          ${isDone&&expandedHist===sessionKey?buildInlineLog(log,sessionKey):''}
+        </div>`;
+    } else {
+      const typeLabel = ballet.type ? DTYPE_LABELS[ballet.type] : '';
+      gymContent = `
+        <div class="day-card">
+          <div class="day-card-hdr">
+            <div>
+              <div class="sm b5" style="color:var(--tx3)">${day}</div>
+              <div class="day-meta">${typeLabel||'Not scheduled'}</div>
+            </div>
+            <span class="rest-pill">${ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
+          </div>
+        </div>`;
+    }
+    return gymContent;
+  }).join('');
+
+  return `
+    ${insight}
+    <div class="week-grid">${dayCards}</div>
+    <div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="editPlan()">← Edit schedule</button></div>
+    <div class="bpad"></div>`;
+}
+
+function getModNote(ballet) {
+  if (!ballet.type) return '';
+  if (ballet.type==='perf') return '⚠️ Performance day — gym not recommended.';
+  const load = DTYPE_LOAD[ballet.type||'off'] + (ballet.intensity||3)*0.4;
+  if (load >= 5) return '⚠️ Heavy ballet load — halve sets, keep RPE. Gym after class.';
+  if (load >= 3) return 'Moderate load — full session, monitor RPE. Gym after class.';
+  return '';
+}
+
+function editPlan() {
+  const wk = getWeek(viewMonday);
+  wk.plan = null;
+  saveWeeks();
+  renderSchedule();
+}
+
+function toggleHistEntry(key) {
+  expandedHist = expandedHist===key ? null : key;
+  renderSchedule();
+}
+
+function buildInlineLog(log, sessionKey) {
+  if (!log) return '';
+  const prog = PROG.sessions[sessionKey];
+  const exLines = (log.exLogs||[]).map((el,i)=>{
+    const ex = prog.exercises[i];
+    if (!ex) return '';
+    const sStr = el.sets.map(s=>{
+      if (ex.type==='plyo') return s.done?'✓':'—';
+      if (ex.type==='timed'||ex.type==='carry') return s.dur?`${s.dur}s`:null;
+      if (ex.type==='bodyweight') return s.reps?`${s.reps}r @${s.rpe||'?'}`:null;
+      return s.reps?`${s.reps}r · ${s.weight||'?'}kg @${s.rpe||'?'}`:null;
+    }).filter(Boolean).join('  ');
+    return `<div class="hex">${ex.name}: <span>${el.sets.length} sets${sStr?' — '+sStr:''}</span></div>`;
+  }).join('');
+  const acc = log.accuracy;
+  const accColor = acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
+  return `
+    <div style="padding:0 14px 12px;border-top:1px solid var(--bd)">
+      ${exLines}
+      ${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${accColor}">
+        <div class="xs b6" style="color:${accColor}">${acc.verdict}</div>
+        <div class="xs dimmer mt1">${acc.detail}</div>
+      </div>`:''}
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn-g" style="flex:1;text-align:center;font-size:12px" onclick="openEditLog('${sessionKey}',event)">Edit log</button>
+        <button class="del-btn" onclick="promptDel('${sessionKey}',event)">Delete</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOG FLOW
+// ═══════════════════════════════════════════════════════════
+function openLog(sessionKey, dayIdx) {
+  const wk = getWeek(viewMonday);
+  const existingLog = wk.logs[sessionKey];
+  lf = {
+    sessionKey,
+    dayIdx,
+    step: 'presession',
+    tags: [],
+    mods: null,
+    modsAccepted: false,
+    exLogs: PROG.sessions[sessionKey].exercises.map(()=>({ sets:[] })),
+    openEx: null,
+    feel: 3,
+    notes: '',
+    accuracy: null,
+    isEdit: false,
+    presessionSaved: false
+  };
+  if (existingLog) {
+    // Edit mode
+    lf.isEdit = true;
+    lf.step = 'logging';
+    lf.exLogs = JSON.parse(JSON.stringify(existingLog.exLogs));
+    lf.feel = existingLog.feel;
+    lf.notes = existingLog.notes;
+    lf.mods = existingLog.mods||null;
+    lf.tags = existingLog.tags||[];
+  }
+  renderSchedule();
+}
+
+function openEditLog(sessionKey, e) {
+  e.stopPropagation();
+  const wk = getWeek(viewMonday);
+  const dayIdx = wk.plan.assigned[sessionKey];
+  openLog(sessionKey, dayIdx);
+}
+
+function renderLogFlow() {
+  const el = document.getElementById('page-schedule');
+  const steps = {
+    presession: buildPreSession,
+    logging:    buildLogSession,
+    accuracy:   buildAccuracyScreen
+  };
+  el.innerHTML = (steps[lf.step]||buildPreSession)();
+}
+
+// Back button — always returns to schedule safely
+function backToSchedule() {
+  lf = null;
+  expandedHist = null;
+  renderSchedule();
+}
+
+// ── Pre-session ────────────────────────────────────────────
+function buildPreSession() {
+  const sess = PROG.sessions[lf.sessionKey];
+  const tags = PROG.tags;
+  const recTags  = Object.entries(tags).filter(([,t])=>t.group==='rec');
+  const cauTags  = Object.entries(tags).filter(([,t])=>t.group==='cau'||t.group==='warn');
+  const count    = lf.tags.length;
+  const modPrev  = count>0 ? buildModPreview() : '';
+  const hasWarn  = lf.tags.includes('sharp_pain');
+
+  const tagBtn = (key, tag) => {
+    const isOn = lf.tags.includes(key);
+    const cls  = isOn ? (tag.group==='rec'?'rec':tag.group==='warn'?'wrn':'cau') : '';
+    const dis  = !isOn && count>=2;
+    return `<button class="tag${cls?' '+cls:''}" onclick="toggleTag('${key}')" ${dis?'style="opacity:.35;pointer-events:none"':''}>${tag.emoji} ${tag.label}</button>`;
+  };
+
+  return `
+    <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+      <button class="btn-back" onclick="backToSchedule()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+        Back
+      </button>
+      <button class="btn-skip" onclick="skipPresession()">Skip check-in →</button>
+    </div>
+    <div style="padding:0 16px 4px" class="row">
+      <span class="badge b${lf.sessionKey.toLowerCase()}" style="display:inline-flex">Day ${lf.sessionKey}</span>
+      <span class="sm b5">${sess.name}</span>
+    </div>
+    <div class="sec" style="padding-top:12px">Pre-session check-in</div>
+    <div class="card"><div class="card-body">
+      <div class="tag-grp-lbl">Recovery</div>
+      <div class="tags-wrap">${recTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
+      <div class="tag-grp-lbl">Caution</div>
+      <div class="tags-wrap">${cauTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
+      <div class="xs dimmer">${count>0?count+'/2 selected — tap to deselect':'Select up to 2 · or skip'}</div>
+    </div></div>
+    ${hasWarn?`<div class="nred"><strong>🚨 Sharp / acute pain flagged</strong>Do not train through sharp pain. Requires physiotherapist assessment before loading this pattern again.</div>`:''}
+    ${modPrev}
+    ${count>0&&!hasWarn?`<div style="padding:0 16px 8px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn-p" onclick="acceptMods()">Accept modifications & begin →</button>
+      <button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Train as prescribed</button>
+    </div>`:hasWarn?`<div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Proceed anyway (not recommended)</button></div>`:''}
+    <div class="bpad"></div>`;
+}
+
+function buildModPreview() {
+  const mods = computeMods(lf.tags, lf.sessionKey);
+  const sess = PROG.sessions[lf.sessionKey];
+  const lines = [];
+  sess.exercises.forEach((ex,i)=>{
+    const m = mods.exMods[i]; const parts=[];
+    if (m.setReduction>0) parts.push(`→ ${m.adjSets} sets (was ${ex.sets})`);
+    if (m.notes.length) parts.push(...m.notes);
+    if (mods.globalRPECap&&(ex.type==='loaded'||ex.type==='bodyweight')) parts.push(`cap RPE ${mods.globalRPECap}`);
+    if (parts.length) lines.push(`<div class="mod-line"><strong>${ex.name}</strong> — ${parts.join(' · ')}</div>`);
+  });
+  if (!lines.length) return '';
+  return `<div class="card"><div class="card-body"><div class="mod-box"><div class="mod-title">Today's modifications</div>${lines.join('')}</div></div></div>`;
+}
+
+function toggleTag(key) {
+  const idx = lf.tags.indexOf(key);
+  if (idx>-1) lf.tags.splice(idx,1);
+  else if (lf.tags.length<2) lf.tags.push(key);
+  renderSchedule();
+}
+function acceptMods() {
+  lf.mods = computeMods(lf.tags, lf.sessionKey);
+  lf.modsAccepted = true;
+  savePresession();
+  lf.step='logging';
+  renderSchedule();
+}
+function skipPresession() {
+  lf.mods = null;
+  lf.modsAccepted = false;
+  savePresession();
+  lf.step='logging';
+  renderSchedule();
+}
+function savePresession() {
+  if (lf.presessionSaved||lf.isEdit) return;
+  if (lf.tags.length===0) return;
+  const entry = { id:Date.now().toString(), type:'presession', date:new Date().toISOString(), sessionKey:lf.sessionKey, tags:[...lf.tags], modsAccepted:lf.modsAccepted, sessionNotes:lf.tags.map(t=>PROG.tags[t]?.note).filter(Boolean) };
+  const wk = getWeek(viewMonday);
+  if (!wk.presessionLogs) wk.presessionLogs = [];
+  wk.presessionLogs.push(entry);
+  lf.presessionSaved = true;
+  saveWeeks();
+}
+
+// ── Log session ────────────────────────────────────────────
+function buildLogSession() {
+  const sess = PROG.sessions[lf.sessionKey];
+  const prevWkMonday = new Date(viewMonday); prevWkMonday.setDate(prevWkMonday.getDate()-7);
+  const prevWk = weeks[weekKey(prevWkMonday)];
+  const prevLog = prevWk?.logs?.[lf.sessionKey];
+
+  const exCards = sess.exercises.map((ex,i)=>{
+    const exLog   = lf.exLogs[i];
+    const isOpen  = lf.openEx===i;
+    const mod     = lf.mods?.exMods?.[i];
+    const adjSets = mod?.adjSets ?? ex.sets;
+    const prevEx  = prevLog?.exLogs?.[i];
+    const prevRef = prevEx?.sets?.length>0 ? prevEx.sets.filter(s=>s.reps||s.weight||s.dur||s.done).map(s=>
+      ex.type==='plyo'?(s.done?'✓':'—'):ex.type==='timed'||ex.type==='carry'?`${s.dur||'?'}s`:ex.type==='bodyweight'?`${s.reps||'?'}r @${s.rpe||'?'}`:`${s.reps||'?'}r · ${s.weight||'?'}kg @${s.rpe||'?'}`
+    ).join('  ') : '';
+    const modNote = mod&&mod.setReduction>0?`<div class="xs" style="color:var(--am);margin-top:2px">↓ ${adjSets} sets today</div>`:'';
+    return `
+    <div class="card">
+      <div class="ex-hdr${isOpen?' open':''}" onclick="toggleEx(${i})">
+        <div style="flex:1;min-width:0">
+          <div class="sm b5">${ex.name}</div>
+          <div class="xs dimmer mt1">${ex.prescribed} · RPE ${ex.rpe}${exLog.sets.length?' · '+exLog.sets.length+' logged':''}</div>
+          ${modNote}
+          ${prevRef&&!isOpen?`<div class="xs mt1 mono" style="color:var(--tx3);font-size:10px">↩ ${prevRef}</div>`:''}
+        </div>
+        <svg class="chev${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
+      ${isOpen?`<div class="ex-body">
+        ${prevRef?`<div class="xs mono mb1" style="color:var(--tx3);padding:5px 8px;background:var(--bg2);border-radius:6px;font-size:10px">↩ Last: ${prevRef}</div>`:''}
+        ${buildSetRowsNew(ex, exLog, i, adjSets)}
+      </div>`:''}
+    </div>`;
+  }).join('');
+
+  const feelBtns = [1,2,3,4,5].map(v=>
+    `<button class="rbtn${lf.feel===v?' on':''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`
+  ).join('');
+
+  return `
+    <div style="padding:12px 16px 8px;display:flex;align-items:center;gap:10px">
+      <button class="btn-back" onclick="${lf.isEdit?'backToSchedule()':'lf.step=\'presession\';renderSchedule()'}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+        ${lf.isEdit?'Cancel':'Back'}
+      </button>
+      <span class="badge b${lf.sessionKey.toLowerCase()}">Day ${lf.sessionKey}</span>
+      <span class="sm b5">${sess.name}</span>
+    </div>
+    ${exCards}
+    <div class="card"><div class="card-body">
+      <div class="lbl">Overall session feel</div>
+      <div class="rating">${feelBtns}</div>
+      <div class="xs dimmer mt1" style="text-align:center">1 = Struggled · 3 = Expected · 5 = Strong</div>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <div class="lbl">Notes (optional)</div>
+      <textarea placeholder="Anything notable..." oninput="lf.notes=this.value">${lf.notes}</textarea>
+    </div></div>
+    <div style="padding:0 16px 8px">
+      <button class="btn-p" onclick="completeLog()">Save Session ✓</button>
+    </div>
+    <div class="bpad"></div>`;
+}
+
+// ── Set rows with picker ───────────────────────────────────
+function buildSetRowsNew(ex, exLog, exIdx, adjSets) {
+  const colLbls = ex.type==='loaded'?['REPS','KG','RPE']:
+    ex.type==='bodyweight'?['REPS','RPE']:
+    ex.type==='timed'||ex.type==='carry'?['SEC','RPE']:null;
+
+  const head = colLbls?`<div class="xs dimmer mono mb1" style="display:flex;gap:5px;padding-left:27px">
+    ${colLbls.map(l=>`<div style="flex:1;text-align:center">${l}</div>`).join('')}
+  </div>`:`<div class="xs dimmer mt1 mb1" style="padding-left:4px">Prescribed: ${ex.prescribed}</div>`;
+
+  const rows = exLog.sets.map((set,si)=>{
+    if (ex.type==='plyo') return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="plyo-done${set.done?' done':''}" onclick="updSet(${exIdx},${si},'done',${!set.done});renderSchedule()">${set.done?'✓ Done':'Tap to mark done'}</button>
+      </div>`;
+    if (ex.type==='loaded') return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='reps'?' active':''}" onclick="openPicker('reps',${exIdx},${si})" style="flex:1">
+          ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
+        </button>
+        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='weight'?' active':''}" onclick="openPicker('weight',${exIdx},${si})" style="flex:1">
+          ${set.weight!==undefined&&set.weight!==''?`<span class="val-btn-num">${set.weight}</span><span class="val-btn-unit">kg</span>`:'<span class="val-btn-empty">kg</span>'}
+        </button>
+        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='rpe'?' active':''}" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
+          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
+        </button>
+      </div>`;
+    if (ex.type==='bodyweight') return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="val-btn" onclick="openPicker('reps',${exIdx},${si})" style="flex:1">
+          ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
+        </button>
+        <button class="val-btn" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
+          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
+        </button>
+      </div>`;
+    // timed / carry
+    return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="val-btn" onclick="openPicker('sec',${exIdx},${si})" style="flex:1">
+          ${set.dur?`<span class="val-btn-num">${set.dur}</span><span class="val-btn-unit">sec</span>`:'<span class="val-btn-empty">Sec</span>'}
+        </button>
+        <button class="val-btn" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
+          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
+        </button>
+      </div>`;
+  }).join('');
+
+  const canAdd = exLog.sets.length < adjSets + 2;
+  return head + rows + (canAdd?`<button class="btn-d" onclick="addSet(${exIdx})">+ Add Set</button>`:'');
+}
+
+function toggleEx(i) { lf.openEx = lf.openEx===i?null:i; renderSchedule(); }
+function addSet(exIdx) {
+  const ex = PROG.sessions[lf.sessionKey].exercises[exIdx];
+  const empty = ex.type==='plyo'?{done:false}:ex.type==='timed'||ex.type==='carry'?{dur:'',rpe:''}:ex.type==='bodyweight'?{reps:'',rpe:''}:{reps:'',weight:'',rpe:''};
+  lf.exLogs[exIdx].sets.push(empty);
+  renderSchedule();
+}
+function updSet(ei,si,field,val) { lf.exLogs[ei].sets[si][field]=val; }
+
+// ── Complete log ───────────────────────────────────────────
+function completeLog() {
+  const acc = computeAccuracy(lf.exLogs, lf.sessionKey, lf.mods);
+  const entry = { id: Date.now().toString(), type:'training', date: new Date().toISOString(), sessionKey: lf.sessionKey, exLogs: lf.exLogs, feel: lf.feel, notes: lf.notes, accuracy: acc, tags: [...lf.tags], mods: lf.mods };
+  const wk = getWeek(viewMonday);
+  wk.logs[lf.sessionKey] = entry;
+  lf.accuracy = acc;
+  saveWeeks();
+  lf.step='accuracy';
+  renderSchedule();
+}
+
+function buildAccuracyScreen() {
+  const acc = lf.accuracy;
+  const cls = acc.level==='good'?'good':acc.level==='warn'?'warn':'note';
+  return `
+    <div style="padding:12px 16px 8px"><button class="btn-back" onclick="backToSchedule()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back to schedule</button>
+    </div>
+    <div class="sec">Session saved</div>
+    <div class="acc ${cls}">
+      <div class="acc-title">${acc.verdict}</div>
+      <div class="acc-detail">${acc.detail}</div>
+      <div class="acc-stat">${acc.totalDone}/${acc.totalPrescribed} sets · ${acc.rate}% volume · Feel ${lf.feel}/5</div>
+    </div>
+    ${lf.tags.length?`<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t=>PROG.tags[t]?.label||t).join(' · ')}</div>`:''}
+    <div style="padding:0 16px 8px"><button class="btn-p" onclick="backToSchedule()">Back to schedule ✓</button></div>
+    <div class="bpad"></div>`;
+}
+
+// ── Delete log from week view ──────────────────────────────
+function promptDel(sessionKey, e) {
+  e.stopPropagation();
+  confirmDel = sessionKey;
+  renderSchedule();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PICKER
+// ═══════════════════════════════════════════════════════════
+let pickerCtx = null;
+const PICKER_RANGES = {
+  reps:   { items: Array.from({length:30},(_,i)=>i+1),     label:'Reps' },
+  weight: { items: Array.from({length:201},(_,i)=>i),      label:'kg' },
+  rpe:    { items: Array.from({length:10},(_,i)=>i+1),     label:'RPE' },
+  sec:    { items: Array.from({length:120},(_,i)=>(i+1)*5),label:'Seconds' }
+};
+
+function openPicker(field, exIdx, si) {
+  pickerCtx = { field, exIdx, si };
+  const range = PICKER_RANGES[field];
+  const currentSet = lf.exLogs[exIdx].sets[si];
+  const storeKey = field==='sec' ? 'dur' : field;
+  const currentVal = currentSet[storeKey] !== undefined && currentSet[storeKey] !== '' ? Number(currentSet[storeKey]) : null;
+
+  document.getElementById('picker-label').textContent = range.label;
+
+  // Build column
+  const colHTML = `
+    <div>
+      <div class="picker-col-lbl">${range.label}</div>
+      <div class="picker-col" id="pc-main">
+        <div class="picker-mask-top"></div>
+        <div class="picker-mask-bot"></div>
+        <div class="picker-line"></div>
+        <div class="picker-col-inner" id="pci-main">
+          ${range.items.map(v=>`<div class="picker-item" data-val="${v}">${v}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('picker-cols').innerHTML = colHTML;
+  document.getElementById('picker-overlay').style.display = 'flex';
+
+  requestAnimationFrame(()=>{
+    const inner = document.getElementById('pci-main');
+    const items = inner.querySelectorAll('.picker-item');
+    const idx = currentVal !== null ? range.items.indexOf(currentVal) : Math.floor(range.items.length/2);
+    const targetIdx = Math.max(0, idx);
+    inner.scrollTop = targetIdx * 40;
+    updatePickerHighlight(inner);
+    inner.addEventListener('scroll', ()=>updatePickerHighlight(inner), { passive:true });
+  });
+}
+
+function updatePickerHighlight(inner) {
+  const scrollTop = inner.scrollTop;
+  const centerIdx = Math.round(scrollTop / 40);
+  inner.querySelectorAll('.picker-item').forEach((el,i)=>{
+    el.classList.toggle('sel', i===centerIdx);
+  });
+}
+
+function pickerDone() {
+  const inner = document.getElementById('pci-main');
+  if (!inner || !pickerCtx) { closePicker(); return; }
+  const centerIdx = Math.round(inner.scrollTop / 40);
+  const range = PICKER_RANGES[pickerCtx.field];
+  const val = range.items[Math.max(0,Math.min(centerIdx, range.items.length-1))];
+  const storeKey = pickerCtx.field==='sec' ? 'dur' : pickerCtx.field;
+  lf.exLogs[pickerCtx.exIdx].sets[pickerCtx.si][storeKey] = val;
+  closePicker();
+  renderSchedule();
+}
+
+function closePicker() {
+  document.getElementById('picker-overlay').style.display = 'none';
+  pickerCtx = null;
+}
+
+function pickerBgClick(e) {
+  if (e.target === document.getElementById('picker-overlay')) closePicker();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODS & ACCURACY
+// ═══════════════════════════════════════════════════════════
+function computeMods(tags, sessionKey) {
+  const sess = PROG.sessions[sessionKey];
+  const progTags = PROG.tags;
+  let globalRPECap = null;
+  const sessionNotes = tags.map(t=>progTags[t]?.note).filter(Boolean);
+
+  const exMods = sess.exercises.map(ex=>{
+    let setReduction=0; const notes=[];
+    tags.forEach(tagKey=>{
+      const tag = progTags[tagKey];
+      if (!tag||tag.isWarning) return;
+      if (tag.rpeCap) globalRPECap = globalRPECap?Math.min(globalRPECap,tag.rpeCap):tag.rpeCap;
+      const aff = tag.affects||{};
+      if (aff.ALL) setReduction=Math.max(setReduction,aff.ALL.setReduction||0);
+      ex.regions.forEach(r=>{
+        if (aff[r]) { setReduction=Math.max(setReduction,aff[r].setReduction||0); if(aff[r].note) notes.push(aff[r].note); }
+      });
+    });
+    return { setReduction, adjSets:Math.max(1,ex.sets-setReduction), notes, rpeCap:globalRPECap };
+  });
+  return { exMods, globalRPECap, sessionNotes };
+}
+
+function parseRPE(rpeStr) {
+  const p = String(rpeStr).replace('–','-').split('-').map(s=>parseFloat(s.trim()));
+  return p.length===1?{min:p[0],max:p[0]}:{min:p[0],max:p[1]};
+}
+
+function computeAccuracy(exLogs, sessionKey, mods) {
+  const sess = PROG.sessions[sessionKey];
+  let totalP=0,totalD=0,rpeHigh=0,rpeLow=0;
+  exLogs.forEach((el,i)=>{
+    const ex=sess.exercises[i];
+    const adj=mods?.exMods?.[i]?.adjSets??ex.sets;
+    totalP+=adj; totalD+=el.sets.length;
+    if (ex.type==='loaded'||ex.type==='bodyweight') {
+      const {min,max}=parseRPE(ex.rpe);
+      el.sets.forEach(s=>{ const r=parseFloat(s.rpe); if(!isNaN(r)){if(r>max+0.5)rpeHigh++;if(r<min-1)rpeLow++;} });
+    }
+  });
+  const rate=totalP>0?totalD/totalP:1;
+  let verdict,detail,level;
+  if (rate>=0.9&&rpeHigh===0&&rpeLow===0){verdict='Session on target';level='good';detail='Volume and intensity matched the prescription.';}
+  else if (rpeHigh>=2){verdict='Intensity exceeded prescription';level='warn';detail=`${rpeHigh} set${rpeHigh>1?'s':''} above prescribed RPE. Monitor recovery.`;}
+  else if (rate<0.75){verdict='Volume incomplete';level='note';detail=`${totalD}/${totalP} sets completed. If fatigue-driven, note in next week's plan.`;}
+  else if (rpeLow>=3){verdict='Session felt easy';level='note';detail='RPE consistently below target. Consider a small load increase.';}
+  else{verdict='Session solid';level='good';detail='Minor deviations within acceptable range.';}
+  return {verdict,detail,level,rate:Math.round(rate*100),totalDone:totalD,totalPrescribed:totalP};
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS INSIGHT
+// ═══════════════════════════════════════════════════════════
+function buildProgressInsight() {
+  // Collect recent training logs across all weeks
+  const allLogs = [];
+  Object.values(weeks).forEach(wk=>{ Object.values(wk.logs||{}).forEach(l=>allLogs.push(l)); });
+  allLogs.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const recent = allLogs.slice(0,3);
+  if (recent.length<2) return '';
+  const avg = recent.reduce((s,l)=>s+l.feel,0)/recent.length;
+  let highRPE=0;
+  recent.forEach(log=>log.exLogs.forEach(ex=>ex.sets.forEach(s=>{ if(parseFloat(s.rpe)>=9)highRPE++; })));
+  if (avg<=2.5||highRPE>=3) return `<div class="insight"><div class="ins-t">⚠ Fatigue signal</div><div class="ins-b">Last ${recent.length} sessions averaged ${avg.toFixed(1)}/5 feel. Consider reducing volume this week.</div></div>`;
+  if (avg>=4.2) return `<div class="insight g"><div class="ins-t">↑ Recovery solid</div><div class="ins-b">Averaging ${avg.toFixed(1)}/5 across recent sessions. Good week to push the RPE ceiling.</div></div>`;
+  return '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+function renderHistory() {
+  const el = document.getElementById('page-history');
+  // Collect all logs from all weeks
+  const allLogs = [];
+  Object.entries(weeks).forEach(([wk, data])=>{
+    Object.values(data.logs||{}).forEach(l=>allLogs.push({...l, weekKey:wk}));
+    (data.presessionLogs||[]).forEach(l=>allLogs.push({...l, weekKey:wk}));
+  });
+  allLogs.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const filtered = histFilter==='all'?allLogs:allLogs.filter(l=>l.type===histFilter);
+
+  if (!filtered.length) {
+    el.innerHTML=`<div class="hflt">${fltBtns()}</div><div class="empty"><div class="emi">📊</div><div class="emt">No logs yet</div><div class="ems">Complete a session to see history</div></div>`;
+    return;
+  }
+  el.innerHTML=`<div class="hflt">${fltBtns()}</div><div class="sec">${filtered.length} log${filtered.length!==1?'s':''}</div>${filtered.map(l=>buildHistEntry(l)).join('')}<div class="bpad"></div>`;
+}
+
+function fltBtns() {
+  return [{k:'all',l:'All'},{k:'training',l:'Training'},{k:'presession',l:'Pre-Session'}].map(({k,l})=>
+    `<button class="flt${histFilter===k?' on':''}" onclick="setHFilter('${k}')">${l}</button>`
+  ).join('');
+}
+function setHFilter(f) { histFilter=f; expandedHist=null; confirmDel=null; renderHistory(); }
+
+function buildHistEntry(log) {
+  const isExp   = expandedHist===log.id;
+  const isTrain = log.type==='training';
+  const ds = new Date(log.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  const ts = new Date(log.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+  const typeLabel = isTrain?'TRAINING LOG':'PRE-SESSION';
+  const dayBadge  = log.sessionKey?`<span class="badge b${log.sessionKey.toLowerCase()}">Day ${log.sessionKey}</span>`:'';
+
+  const right = isTrain
+    ?`<div style="text-align:right"><div class="xs dimmer mb1">Feel</div><div class="mono b6" style="font-size:20px;color:${log.feel>=4?'var(--gn)':log.feel<=2?'var(--co)':'var(--tx2)'}">${log.feel}<span style="font-size:11px;color:var(--tx3)">/5</span></div></div>`
+    :`<div class="xs dimmer">${log.tags?.length||0} tag${log.tags?.length!==1?'s':''}</div>`;
+
+  let body='';
+  if (isExp) {
+    if (isTrain) {
+      const sess = PROG.sessions[log.sessionKey];
+      const exLines = (log.exLogs||[]).map((el,i)=>{
+        const ex = sess?.exercises?.[i];
+        if (!ex) return '';
+        const sStr = el.sets.map(s=>ex.type==='plyo'?(s.done?'✓':'—'):ex.type==='timed'||ex.type==='carry'?`${s.dur||'?'}s`:ex.type==='bodyweight'?`${s.reps||'?'}r @${s.rpe||'?'}`:`${s.reps||'?'}r·${s.weight||'?'}kg @${s.rpe||'?'}`).filter(Boolean).join('  ');
+        return `<div class="hex">${ex.name}: <span>${el.sets.length} sets${sStr?' — '+sStr:''}</span></div>`;
+      }).join('');
+      const acc=log.accuracy;
+      const ac=acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
+      body=`<div class="hent-body">${exLines}${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}"><div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>`:''}
+        ${confirmDel===log.id
+          ?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`
+          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
+      </div>`;
+    } else {
+      const tList=(log.tags||[]).map(t=>`<span class="tag ${PROG.tags[t]?.group==='warn'?'wrn':'rec'}" style="margin:2px">${PROG.tags[t]?.emoji||''} ${PROG.tags[t]?.label||t}</span>`).join('');
+      body=`<div class="hent-body">${tList||'<div class="xs dimmer">No tags — check-in skipped.</div>'}${(log.sessionNotes||[]).map(n=>`<div class="xs dimmer mt1">· ${n}</div>`).join('')}<div class="xs dimmer mt2">Mods ${log.modsAccepted?'accepted':'not applied'}</div>
+        ${confirmDel===log.id
+          ?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`
+          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
+      </div>`;
+    }
+  }
+
+  return `
+    <div class="hent">
+      <div class="hent-hdr" onclick="expandedHist=expandedHist==='${log.id}'?null:'${log.id}';confirmDel=null;renderHistory()">
+        <div>
+          <div style="margin-bottom:5px"><span class="badge bpre" style="margin-right:4px">${typeLabel}</span>${dayBadge}</div>
+          <div class="xs dimmer">${ds} · ${ts}</div>
+        </div>
+        ${right}
+      </div>
+      ${body}
+    </div>`;
+}
+
+function doDelete(logId, wkKey) {
+  const wk = weeks[wkKey];
+  if (!wk) return;
+  // Remove from training logs
+  Object.keys(wk.logs||{}).forEach(k=>{ if(wk.logs[k].id===logId) delete wk.logs[k]; });
+  // Remove from presession logs
+  if (wk.presessionLogs) wk.presessionLogs = wk.presessionLogs.filter(l=>l.id!==logId);
+  saveWeeks();
+  confirmDel=null; expandedHist=null;
+  renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+loadProgram().then(()=>{
+  renderSchedule();
+});
+</script>
+</body>
+</html>
