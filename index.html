@@ -189,14 +189,14 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .ems{font-size:13px;color:var(--tx3);margin-top:4px}
 
 /* ── SCROLL WHEEL PICKER ───────────────────────────── */
-.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
-.picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px)}
+.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px);touch-action:none}
+.picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px);touch-action:none}
 .picker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd)}
 .picker-label{font-size:15px;font-weight:600}
 .picker-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:6px 16px;font-size:14px;font-weight:600}
 .picker-cols{display:flex;justify-content:center;gap:0;padding:0 16px}
 .picker-col{flex:1;position:relative;height:200px;overflow:hidden;max-width:120px}
-.picker-col-inner{overflow-y:scroll;height:200px;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;padding:80px 0;scrollbar-width:none}
+.picker-col-inner{overflow-y:scroll;height:200px;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;padding:80px 0;scrollbar-width:none;touch-action:pan-y}
 .picker-col-inner::-webkit-scrollbar{display:none}
 .picker-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:'DM Mono',monospace;color:var(--tx3);scroll-snap-align:center;font-weight:400;transition:color .1s}
 .picker-item.sel{color:var(--tx);font-weight:600}
@@ -239,7 +239,7 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 </div>
 
 <!-- Picker overlay -->
-<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)">
+<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)" ontouchmove="event.preventDefault()" ontouchstart="event.stopPropagation()">
   <div class="picker-sheet" onclick="event.stopPropagation()">
     <div class="picker-hdr">
       <span class="picker-label" id="picker-label">Select</span>
@@ -291,15 +291,7 @@ function fmtWeekLabel(monday) {
   const ss = sun.toLocaleDateString('en-GB',opts);
   return `${ms} – ${ss}`;
 }
-function isCurrentWeek(monday) {
-  const cm = getMondayOf(new Date());
-  return weekKey(monday)===weekKey(cm);
-}
-function isNextWeek(monday) {
-  const nm = getMondayOf(new Date());
-  nm.setDate(nm.getDate()+7);
-  return weekKey(monday)===weekKey(nm);
-}
+// weekKey and fmtWeekLabel defined above — isCurrentWeek/isNextWeek removed (unused)
 
 // ═══════════════════════════════════════════════════════════
 // STATE
@@ -357,30 +349,40 @@ function renderSchedule() {
   if (lf) { renderLogFlow(); return; }
   const el = document.getElementById('page-schedule');
   const wk  = getWeek(viewMonday);
-  const isCurrent = isCurrentWeek(viewMonday);
-  const isNext    = isNextWeek(viewMonday);
-  const label     = fmtWeekLabel(viewMonday);
-  const canGoNext = isCurrent || isNext; // max 1 week ahead
-  const canGoPrev = true;
 
-  const weekTag = isCurrent ? 'CURRENT WEEK' : isNext ? 'NEXT WEEK' : 'PAST WEEK';
+  // Reference points
+  const currentMonday = getMondayOf(new Date());
+  const nextMonday    = new Date(currentMonday); nextMonday.setDate(nextMonday.getDate()+7);
+  const vk = weekKey(viewMonday);
+  const ck = weekKey(currentMonday);
+  const nk = weekKey(nextMonday);
+
+  const isCurrent = vk === ck;
+  const isNext    = vk === nk;
+  const label     = fmtWeekLabel(viewMonday);
+
+  const weekTag = isCurrent ? 'CURRENT WEEK' : 'NEXT WEEK';
+
+  // Current week: only right arrow (→ next week)
+  // Next week: only left arrow (← current week)
+  const leftBtn  = isNext    ? `<button class="wnav-btn" onclick="changeWeek(-1)">‹</button>` : `<div style="width:37px"></div>`;
+  const rightBtn = isCurrent ? `<button class="wnav-btn" onclick="changeWeek(1)">›</button>`  : `<div style="width:37px"></div>`;
 
   const nav = `
     <div class="week-nav">
-      <button class="wnav-btn" onclick="changeWeek(-1)">‹</button>
+      ${leftBtn}
       <div style="flex:1;text-align:center">
         <div class="week-lbl">${label}</div>
         <div class="week-tag">${weekTag}</div>
       </div>
-      <button class="wnav-btn" onclick="changeWeek(1)" ${!canGoNext?'disabled':''}>›</button>
+      ${rightBtn}
     </div>`;
 
   const hasPlan = !!wk.plan;
-  const isPast  = !isCurrent && !isNext;
 
   let body = '';
   if (!hasPlan) {
-    body = buildBalletInput(wk, isPast);
+    body = buildBalletInput(wk);
   } else {
     body = buildWeekView(wk, isCurrent);
   }
@@ -389,14 +391,16 @@ function renderSchedule() {
 }
 
 function changeWeek(dir) {
-  const d = new Date(viewMonday);
-  d.setDate(d.getDate() + dir*7);
-  viewMonday = d;
+  const currentMonday = getMondayOf(new Date());
+  const nextMonday = new Date(currentMonday); nextMonday.setDate(nextMonday.getDate()+7);
+  // Clamp: only current and next week are valid
+  if (dir > 0) viewMonday = nextMonday;
+  else          viewMonday = currentMonday;
   renderSchedule();
 }
 
 // ── Ballet input form ──────────────────────────────────────
-function buildBalletInput(wk, isPast) {
+function buildBalletInput(wk) {
   const daycards = wk.ballet.map((d,i)=>{
     const typebtns = Object.entries(DTYPE_LABELS).map(([k,lbl])=>`
       <button class="dtype-btn${d.type===k?' '+DTYPE_CLASS[k]:''}" onclick="setDtype(${i},'${k}')">${lbl}</button>`
