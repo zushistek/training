@@ -189,22 +189,22 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .ems{font-size:13px;color:var(--tx3);margin-top:4px}
 
 /* ── SCROLL WHEEL PICKER ───────────────────────────── */
-.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px);touch-action:none}
-.picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px);touch-action:none}
+.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
+.picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px)}
 .picker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd)}
 .picker-label{font-size:15px;font-weight:600}
-.picker-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:6px 16px;font-size:14px;font-weight:600}
-.picker-cols{display:flex;justify-content:center;gap:0;padding:0 16px}
-.picker-col{flex:1;position:relative;height:200px;overflow:hidden;max-width:120px}
-.picker-col-inner{overflow-y:scroll;height:200px;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;padding:80px 0;scrollbar-width:none;touch-action:pan-y}
+.picker-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:8px 20px;font-size:15px;font-weight:600}
+.picker-cols{display:flex;justify-content:center;gap:0;padding:0 24px}
+.picker-col{flex:1;position:relative;height:280px;overflow:hidden}
+.picker-col-inner{overflow-y:scroll;height:280px;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;padding:120px 0;scrollbar-width:none;touch-action:pan-y}
 .picker-col-inner::-webkit-scrollbar{display:none}
-.picker-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:'DM Mono',monospace;color:var(--tx3);scroll-snap-align:center;font-weight:400;transition:color .1s}
-.picker-item.sel{color:var(--tx);font-weight:600}
-.picker-mask-top,.picker-mask-bot{position:absolute;left:0;right:0;height:80px;pointer-events:none;z-index:2}
+.picker-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;font-family:'DM Mono',monospace;color:var(--tx3);scroll-snap-align:center;font-weight:400}
+.picker-item.sel{color:var(--tx);font-weight:600;font-size:26px}
+.picker-mask-top,.picker-mask-bot{position:absolute;left:0;right:0;height:120px;pointer-events:none;z-index:2}
 .picker-mask-top{top:0;background:linear-gradient(to bottom,var(--bg2) 0%,transparent 100%)}
 .picker-mask-bot{bottom:0;background:linear-gradient(to top,var(--bg2) 0%,transparent 100%)}
-.picker-line{position:absolute;left:10%;right:10%;top:50%;transform:translateY(-50%);height:40px;border-top:1px solid var(--bd2);border-bottom:1px solid var(--bd2);pointer-events:none;z-index:3}
-.picker-col-lbl{text-align:center;font-size:10px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase;padding:4px 0 8px;font-family:'DM Mono',monospace}
+.picker-line{position:absolute;left:8%;right:8%;top:50%;transform:translateY(-50%);height:40px;border-top:1px solid var(--bd2);border-bottom:1px solid var(--bd2);pointer-events:none;z-index:3}
+.picker-col-lbl{text-align:center;font-size:10px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase;padding:4px 0 10px;font-family:'DM Mono',monospace}
 
 /* Value display button (replaces text input) */
 .val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:11px 14px;transition:border-color .15s;cursor:pointer}
@@ -239,7 +239,7 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 </div>
 
 <!-- Picker overlay -->
-<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)" ontouchmove="event.preventDefault()" ontouchstart="event.stopPropagation()">
+<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)">
   <div class="picker-sheet" onclick="event.stopPropagation()">
     <div class="picker-hdr">
       <span class="picker-label" id="picker-label">Select</span>
@@ -1028,9 +1028,8 @@ function openPicker(field, exIdx, si) {
 
   document.getElementById('picker-label').textContent = range.label;
 
-  // Build column
   const colHTML = `
-    <div>
+    <div style="flex:1">
       <div class="picker-col-lbl">${range.label}</div>
       <div class="picker-col" id="pc-main">
         <div class="picker-mask-top"></div>
@@ -1043,14 +1042,21 @@ function openPicker(field, exIdx, si) {
     </div>`;
 
   document.getElementById('picker-cols').innerHTML = colHTML;
-  document.getElementById('picker-overlay').style.display = 'flex';
+  const overlay = document.getElementById('picker-overlay');
+  overlay.style.display = 'flex';
+
+  // Smart touch containment — only block background scroll when touch is outside the picker column
+  overlay._touchHandler = (e) => {
+    const inner = document.getElementById('pci-main');
+    if (inner && inner.contains(e.target)) return; // let column scroll freely
+    e.preventDefault(); // block background page scroll
+  };
+  overlay.addEventListener('touchmove', overlay._touchHandler, { passive: false });
 
   requestAnimationFrame(()=>{
     const inner = document.getElementById('pci-main');
-    const items = inner.querySelectorAll('.picker-item');
     const idx = currentVal !== null ? range.items.indexOf(currentVal) : Math.floor(range.items.length/2);
-    const targetIdx = Math.max(0, idx);
-    inner.scrollTop = targetIdx * 40;
+    inner.scrollTop = Math.max(0, idx) * 40;
     updatePickerHighlight(inner);
     inner.addEventListener('scroll', ()=>updatePickerHighlight(inner), { passive:true });
   });
@@ -1077,7 +1083,12 @@ function pickerDone() {
 }
 
 function closePicker() {
-  document.getElementById('picker-overlay').style.display = 'none';
+  const overlay = document.getElementById('picker-overlay');
+  overlay.style.display = 'none';
+  if (overlay._touchHandler) {
+    overlay.removeEventListener('touchmove', overlay._touchHandler);
+    overlay._touchHandler = null;
+  }
   pickerCtx = null;
 }
 
