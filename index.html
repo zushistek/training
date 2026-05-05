@@ -717,7 +717,13 @@ function buildWeekView(wk, isCurrent) {
     <div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="editPlan()">← Edit schedule</button></div>
     <div class="bpad"></div>`;
 }
-
+// FIX v1.4 — missing load map (was causing crash on generatePlan)
+const DTYPE_LOAD = {
+  off: 0,
+  perf: 5,
+  reh: 3,
+  per: 2
+};
 function getModNote(ballet) {
   if (!ballet.type) return '';
   if (ballet.type==='perf') return '⚠️ Performance day — gym not recommended.';
