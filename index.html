@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0d0d0c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>Training v1.2</title>
+<title>Training v1.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -22,6 +22,8 @@
   --pu:#7c6fdf;--pud:#151338;
   --co:#df6b4a;--cod:#281209;
   --rd:#e04444;--rdd:#280a0a;
+  --bl:#4a9fd4;--bld:#0a1e2e;
+  --fl:#9b8fe8;--fld:#1a1835;
   --st:env(safe-area-inset-top,0px);
   --sb:env(safe-area-inset-bottom,0px);
 }
@@ -37,7 +39,7 @@ button{cursor:pointer}
 .hdr-title{font-size:17px;font-weight:600;letter-spacing:-.3px}
 .hdr-ver{font-size:9px;color:var(--tx3);font-family:'DM Mono',monospace}
 .tabs{display:flex;margin:0 -16px}
-.tab{flex:1;padding:10px 0 9px;font-size:12px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s}
+.tab{flex:1;padding:10px 0 9px;font-size:13px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s}
 .tab.on{color:var(--am);border-bottom-color:var(--am)}
 #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{display:none}.page.on{display:block}
@@ -62,6 +64,13 @@ button{cursor:pointer}
 .bc{background:var(--amd);color:var(--am)}
 .bd2cls{background:var(--cod);color:var(--co)}
 .bpre{background:var(--bg4);color:var(--tx2)}
+/* New session badges */
+.bap{background:var(--pud);color:var(--pu)}
+.bal{background:var(--bld);color:var(--bl)}
+.baf{background:var(--fld);color:var(--fl)}
+.bb{background:var(--gnd);color:var(--gn)}
+.bc{background:var(--amd);color:var(--am)}
+.bd{background:var(--cod);color:var(--co)}
 
 /* Day type selector */
 .dtype-row{display:flex;gap:5px;flex-wrap:wrap}
@@ -90,7 +99,7 @@ button{cursor:pointer}
 
 /* Inputs */
 .field{margin-bottom:12px}.field:last-child{margin-bottom:0}
-.lbl{font-size:11px;color:var(--tx3);margin-bottom:6px;display:block;letter-spacing:.03em;font-weight:500}
+.lbl{font-size:12px;color:var(--tx3);margin-bottom:6px;display:block;letter-spacing:.02em;font-weight:500}
 input[type=text],textarea{width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;-webkit-appearance:none;transition:border-color .15s}
 input:focus,textarea:focus{border-color:var(--am)}
 textarea{resize:none;min-height:60px;line-height:1.4}
@@ -111,11 +120,11 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .btn-skip{background:none;border:none;color:var(--tx3);font-size:12px;text-decoration:underline;padding:4px 0}
 
 /* Utility */
-.sm{font-size:13px}.xs{font-size:11px}.dim{color:var(--tx2)}.dimmer{color:var(--tx3)}
+.sm{font-size:13px}.xs{font-size:12px}.dim{color:var(--tx2)}.dimmer{color:var(--tx3)}
 .b6{font-weight:600}.b5{font-weight:500}.mono{font-family:'DM Mono',monospace}
 .mt1{margin-top:4px}.mt2{margin-top:8px}.mb1{margin-bottom:4px}
 .row{display:flex;align-items:center;gap:8px}.jcb{justify-content:space-between}
-.sec{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;padding:16px 18px 8px}
+.sec{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;padding:16px 18px 8px}
 .bpad{height:calc(var(--sb) + 24px)}
 
 /* Notice */
@@ -300,7 +309,9 @@ const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun
 const DSHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', per:'Personal Training' };
 const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
-const DTYPE_LOAD   = { perf:5, off:0, reh:3, per:2 }; // base load weight
+// Session display labels and badge classes
+const SESS_LABEL = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
+const SESS_BADGE = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
 
 let viewMonday     = getMondayOf(new Date());
 let weeks          = load('weeks') || {};      // weekKey → { ballet, plan, logs }
@@ -446,132 +457,198 @@ function setDint(i,v)  { getWeek(viewMonday).ballet[i].intensity=v; saveWeeks();
 function setDhours(i,v){ getWeek(viewMonday).ballet[i].hours=v; saveWeeks(); }
 
 // ═══════════════════════════════════════════════════════════
-// AUTO-ASSIGNMENT ENGINE
+// AUTO-ASSIGNMENT ENGINE v1.3
 // ═══════════════════════════════════════════════════════════
 function assignGymDays(ballet) {
-  // Returns { A: dayIndex|null, B: dayIndex|null, C: dayIndex|null, D: dayIndex|null, reasons: {A,B,C,D} }
-  const sessions = Object.keys(PROG.sessions); // ['A','B','C','D']
-  const rules = PROG.assignmentRules;
-
-  // Score each day for each session
-  // Lower score = better candidate
-  function dayLoad(d) {
-    const base = DTYPE_LOAD[d.type] || 0;
-    const intMod = d.type && d.type!=='off' ? (d.intensity-1)*0.5 : 0;
-    const hoursMod = parseFloat(d.hours)||0;
-    return base + intMod + hoursMod*0.3;
+  // ── Load computation ──────────────────────────────────────
+  // Separate upper and lower load scores per day
+  // Multiplicative: intensity × hours × type_coefficient
+  // Lower score = better gym candidate for that region
+  function computeLoad(d) {
+    const hrs = Math.max(parseFloat(d.hours)||0, 0.5);
+    const int = d.intensity || 3;
+    if (!d.type || d.type==='off') return { upper:0, lower:0 };
+    if (d.type==='perf') return { upper:99, lower:99 };
+    if (d.type==='reh') {
+      // Rehearsal: distributes load — upper moderate (partnering, port de bras), lower significant
+      return { upper: int * hrs * 0.4, lower: int * hrs * 0.5 };
+    }
+    if (d.type==='per') {
+      // Personal training: jump/technique = HIGH lower, low upper
+      return { upper: int * hrs * 0.2, lower: int * hrs * 0.8 };
+    }
+    return { upper:0, lower:0 };
   }
 
-  const loads = ballet.map(dayLoad);
-  const isPerf = ballet.map(d=>d.type==='perf');
+  const loads = ballet.map(computeLoad);
   const isOff  = ballet.map(d=>d.type==='off');
 
-  // Protect day before performance
+  // ── Protected days ─────────────────────────────────────────
+  // Performance day + day before: no gym
   const protectedDays = new Set();
-  if (rules.protectBeforePerformance) {
-    ballet.forEach((d,i)=>{ if(d.type==='perf'){ if(i>0) protectedDays.add(i-1); protectedDays.add(i); } });
+  ballet.forEach((d,i)=>{
+    if (d.type==='perf') { if(i>0) protectedDays.add(i-1); protectedDays.add(i); }
+  });
+
+  // ── Slot preference bonus ──────────────────────────────────
+  function slotBonus(i) {
+    let b = 0;
+    if (isOff[i]) b -= 2;                    // day off = great
+    if (i>0 && isOff[i-1]) b -= 1;           // day after off = good
+    return b;
   }
 
-  // Score function per session type
-  function scoreDay(sessionKey, dayIdx, alreadyAssigned) {
-    if (protectedDays.has(dayIdx)) return Infinity;
-    const d = ballet[dayIdx];
-    if (!d.type) return 999; // unset days are valid but not preferred
+  // Viability thresholds — above these the slot is rejected
+  const UPPER_MAX = 7;   // upper_load must be below this
+  const LOWER_MAX = 5;   // lower_load must be below this — stricter because ballet is lower-dominant
+  const OPTIONAL_MAX = 5; // total load for Day D slot
 
-    let score = loads[dayIdx];
+  // ── Find viable upper slots ────────────────────────────────
+  const upperSlots = [];
+  for (let i=0; i<7; i++) {
+    if (protectedDays.has(i)) continue;
+    if (loads[i].upper >= UPPER_MAX) continue;
+    upperSlots.push({ idx:i, score: loads[i].upper + slotBonus(i) });
+  }
+  upperSlots.sort((a,b)=>a.score-b.score);
 
-    // Prefer day off
-    if (isOff[dayIdx] && rules.preferDayOff) score -= 2;
+  // ── Decide: Push+Pull split or Full Body ───────────────────
+  // Split if: 2+ viable upper slots with ≥2 days between them
+  const assigned = {};
+  const reasons  = {};
 
-    // Prefer day after day off
-    if (dayIdx>0 && isOff[dayIdx-1] && rules.preferAfterDayOff) score -= 1;
-
-    // Plyo (C) avoid adjacent to full rehearsal
-    if (sessionKey==='C' && rules.plyoAvoidAdjacentFullRehearsal) {
-      const adjReh = (dayIdx>0 && ballet[dayIdx-1].type==='reh') || (dayIdx<6 && ballet[dayIdx+1].type==='reh');
-      if (adjReh) score += 3;
-    }
-
-    // Enforce min gaps from already assigned sessions
-    for (const [s, assignedIdx] of Object.entries(alreadyAssigned)) {
-      if (assignedIdx===null) continue;
-      const gap = Math.abs(dayIdx - assignedIdx);
-
-      // Same lower-body region gap (B and C both load lower)
-      const lowerSessions = ['B','C'];
-      if (lowerSessions.includes(sessionKey) && lowerSessions.includes(s)) {
-        if (gap < rules.minGapSameLower) return Infinity;
+  let splitMode = false, slot1 = null, slot2 = null;
+  if (upperSlots.length >= 2) {
+    outer: for (let i=0; i<upperSlots.length; i++) {
+      for (let j=i+1; j<upperSlots.length; j++) {
+        if (Math.abs(upperSlots[i].idx - upperSlots[j].idx) >= 2) {
+          slot1 = upperSlots[i]; slot2 = upperSlots[j];
+          splitMode = true; break outer;
+        }
       }
-      // No two sessions same day
-      if (gap < rules.minGapAnySession) return Infinity;
     }
-
-    return score;
   }
 
-  // Greedy assign mandatory sessions first (A, B, C), then optional (D)
-  const assigned = { A:null, B:null, C:null, D:null };
-  const reasons  = { A:'', B:'', C:'', D:'' };
-  const mandatory = sessions.filter(s=>!PROG.sessions[s].optional);
-  const optional  = sessions.filter(s=>PROG.sessions[s].optional);
-
-  for (const s of mandatory) {
-    let best = null, bestScore = Infinity;
-    for (let i=0; i<7; i++) {
-      const sc = scoreDay(s, i, assigned);
-      if (sc < bestScore) { bestScore=sc; best=i; }
-    }
-    assigned[s] = best;
-    reasons[s]  = buildReason(s, best, ballet, loads, protectedDays, assigned);
+  if (splitMode) {
+    const [early, late] = slot1.idx < slot2.idx ? [slot1, slot2] : [slot2, slot1];
+    assigned['AP'] = early.idx;
+    assigned['AL'] = late.idx;
+    assigned['AF'] = null;
+    reasons['AP'] = buildUpperReason('AP', early.idx, ballet, loads, true);
+    reasons['AL'] = buildUpperReason('AL', late.idx, ballet, loads, true);
+    reasons['AF'] = 'Split week — Push and Pull assigned separately.';
+  } else if (upperSlots.length === 1) {
+    assigned['AP'] = null; assigned['AL'] = null;
+    assigned['AF'] = upperSlots[0].idx;
+    reasons['AF'] = buildUpperReason('AF', upperSlots[0].idx, ballet, loads, false);
+    reasons['AP'] = 'Only one upper slot — Full Body used instead.';
+    reasons['AL'] = 'Only one upper slot — Full Body used instead.';
+  } else {
+    assigned['AP'] = null; assigned['AL'] = null; assigned['AF'] = null;
+    reasons['AP'] = 'No viable upper body slot this week.';
+    reasons['AL'] = 'No viable upper body slot this week.';
+    reasons['AF'] = 'No viable upper body slot this week.';
   }
 
-  for (const s of optional) {
-    let best = null, bestScore = 999;
-    for (let i=0; i<7; i++) {
-      const sc = scoreDay(s, i, assigned);
-      if (sc < bestScore) { bestScore=sc; best=i; }
-    }
-    // Only assign optional if a good slot exists
-    if (bestScore <= 4) {
-      assigned[s] = best;
-      reasons[s]  = buildReason(s, best, ballet, loads, protectedDays, assigned);
-    } else {
-      assigned[s] = null;
-      reasons[s]  = 'No suitable slot this week — Day D skipped.';
-    }
+  // ── Lower body sessions (B and C) ─────────────────────────
+  const usedDays = new Set(Object.values(assigned).filter(v=>v!==null));
+
+  function scoreLowerDay(i) {
+    if (protectedDays.has(i)) return Infinity;
+    if (usedDays.has(i)) return Infinity;
+    if (loads[i].lower >= LOWER_MAX) return Infinity;
+    return loads[i].lower + slotBonus(i);
+  }
+
+  // Day B — strength, first priority
+  let bestB=null, bestBScore=Infinity;
+  for (let i=0; i<7; i++) { const sc=scoreLowerDay(i); if(sc<bestBScore){bestBScore=sc;bestB=i;} }
+
+  if (bestB!==null && bestBScore<Infinity) {
+    assigned['B']=bestB; usedDays.add(bestB);
+    reasons['B']=buildLowerReason('B', bestB, ballet, loads);
+  } else {
+    assigned['B']=null;
+    reasons['B']='No viable lower body slot — Day B skipped. Ballet lower load is too high this week for safe additional loading.';
+  }
+
+  // Day C — plyo, needs ≥2 days from B, avoid adjacent full rehearsal
+  let bestC=null, bestCScore=Infinity;
+  for (let i=0; i<7; i++) {
+    let sc = scoreLowerDay(i);
+    if (sc===Infinity) continue;
+    if (assigned['B']!==null && Math.abs(i-assigned['B'])<2) continue;
+    // Penalise adjacent full rehearsal (CNS concern)
+    const adjReh=(i>0&&ballet[i-1].type==='reh')||(i<6&&ballet[i+1].type==='reh');
+    if (adjReh) sc+=3;
+    if (sc<bestCScore){bestCScore=sc;bestC=i;}
+  }
+
+  if (bestC!==null && bestCScore<Infinity) {
+    assigned['C']=bestC; usedDays.add(bestC);
+    reasons['C']=buildLowerReason('C', bestC, ballet, loads);
+  } else {
+    assigned['C']=null;
+    reasons['C']='No viable plyo slot — Day C skipped. Insufficient recovery gap from Day B, or ballet load too high.';
+  }
+
+  // Day D — optional, any remaining low-load day
+  let bestD=null, bestDScore=999;
+  for (let i=0; i<7; i++) {
+    if (usedDays.has(i)||protectedDays.has(i)) continue;
+    const total=loads[i].upper+loads[i].lower;
+    if (total>=OPTIONAL_MAX) continue;
+    const sc=total+slotBonus(i);
+    if(sc<bestDScore){bestDScore=sc;bestD=i;}
+  }
+  if (bestD!==null && bestDScore<999) {
+    assigned['D']=bestD;
+    reasons['D']=`${DAYS[bestD]} — available low-load slot. Optional hypertrophy.`;
+  } else {
+    assigned['D']=null;
+    reasons['D']='No clean optional slot — Day D skipped.';
   }
 
   return { assigned, reasons };
 }
 
-function buildReason(session, dayIdx, ballet, loads, protectedDays, allAssigned) {
-  if (dayIdx===null) return 'No suitable slot found.';
-  const d = ballet[dayIdx];
-  const dayName = DAYS[dayIdx];
-  const parts = [];
-
-  if (d.type==='off') parts.push(`${dayName} is a day off — lowest load`);
-  else if (loads[dayIdx] <= 2) parts.push(`${dayName} has light ballet load`);
-  else parts.push(`${dayName} has the best available load balance`);
-
-  if (session==='C') {
-    const adjReh = (dayIdx>0&&ballet[dayIdx-1].type==='reh')||(dayIdx<6&&ballet[dayIdx+1].type==='reh');
-    if (!adjReh) parts.push('not adjacent to full rehearsal — CNS demand managed');
+function buildUpperReason(session, dayIdx, ballet, loads, isSplit) {
+  if (dayIdx===null) return '';
+  const d=ballet[dayIdx]; const dayName=DAYS[dayIdx]; const parts=[];
+  if (d.type==='off') parts.push(`${dayName} is a day off — lowest upper body load`);
+  else if (loads[dayIdx].upper<=2) parts.push(`${dayName} has light upper body demand from ballet`);
+  else parts.push(`${dayName} has the best available upper body slot`);
+  if (isSplit) {
+    if (session==='AP') parts.push('Push assigned first — overhead priority early in week');
+    if (session==='AL') parts.push('Pull assigned second — 48h gap from Push maintained');
+  } else {
+    parts.push('only viable upper slot — Full Body compression used');
   }
-  if (session==='B'||session==='C') {
-    const other = session==='B'?'C':'B';
-    const otherIdx = allAssigned[other];
-    if (otherIdx!==null && otherIdx!==undefined) {
-      const gap = Math.abs(dayIdx-otherIdx);
-      parts.push(`${gap} days from Day ${other} — 48h lower body recovery respected`);
-    }
-  }
-
-  // Performance protection
-  const hasPerf = ballet.some(d=>d.type==='perf');
-  if (hasPerf && !protectedDays.has(dayIdx)) parts.push('clear of performance windows');
-
+  const modNote = getUpperModNote(loads[dayIdx].upper);
+  if (modNote) parts.push(modNote);
   return parts.join(' · ') + '.';
+}
+
+function buildLowerReason(session, dayIdx, ballet, loads) {
+  if (dayIdx===null) return '';
+  const d=ballet[dayIdx]; const dayName=DAYS[dayIdx]; const parts=[];
+  if (d.type==='off') parts.push(`${dayName} is a day off — lowest lower body load`);
+  else if (loads[dayIdx].lower<=2) parts.push(`${dayName} has light lower body demand`);
+  else parts.push(`${dayName} has the best available lower body slot`);
+  if (session==='C') parts.push('plyometrics — clear of adjacent full rehearsal days');
+  const modNote = getLowerModNote(loads[dayIdx].lower);
+  if (modNote) parts.push(modNote);
+  return parts.join(' · ') + '.';
+}
+
+function getUpperModNote(upperLoad) {
+  if (upperLoad>=5) return '⚠ Heavy day — gym after class, cap RPE at 7';
+  if (upperLoad>=3) return 'Moderate load — gym after class';
+  return '';
+}
+function getLowerModNote(lowerLoad) {
+  if (lowerLoad>=3.5) return '⚠ Moderate leg load — halve sets, keep RPE';
+  return '';
 }
 
 function generatePlan() {
