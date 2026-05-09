@@ -125,6 +125,21 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .mt1{margin-top:4px}.mt2{margin-top:8px}.mb1{margin-bottom:4px}
 .row{display:flex;align-items:center;gap:8px}.jcb{justify-content:space-between}
 .sec{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;padding:16px 18px 8px}
+/* ── Edit days mode ─────────────────────────────────── */
+.edit-mode-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--amd);border-bottom:1px solid var(--amm);margin-bottom:2px}
+.edit-mode-lbl{font-size:12px;font-weight:600;color:var(--am)}
+.btn-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600}
+.day-card.editable{cursor:pointer;border-color:var(--bd2)}
+.day-card.editable:active{background:var(--bg3)}
+.day-card.conflict{border-color:var(--rd) !important}
+.conflict-note{font-size:11px;color:var(--rd);padding:0 13px 9px;line-height:1.4}
+.session-menu{background:var(--bg3);border-radius:10px;margin:0 13px 10px;overflow:hidden;border:1px solid var(--bd2)}
+.session-opt{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.session-opt:last-child{border-bottom:none}
+.session-opt:active{background:var(--bg4)}
+.session-opt-lbl{display:flex;align-items:center;gap:10px}
+.session-tick{color:var(--gn);font-size:16px;font-weight:700;width:18px;text-align:center}
+.session-tick-empty{width:18px;display:inline-block}
 .bpad{height:calc(var(--sb) + 24px)}
 
 /* Notice */
@@ -321,6 +336,10 @@ let confirmDel     = null;
 // Log flow state
 let lf = null; // null = not in log flow
 
+// Edit days mode state
+let editDaysMode  = false;
+let editDayMenu   = null; // dayIndex currently showing session picker, or null
+
 // ═══════════════════════════════════════════════════════════
 // WEEK DATA HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -344,6 +363,7 @@ function defaultBallet() {
 // ═══════════════════════════════════════════════════════════
 function nav(name, el) {
   if (lf) { if (!confirm('Leave this session? Progress will be lost.')) return; lf=null; }
+  editDaysMode = false; editDayMenu = null;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('page-'+name).classList.add('on');
@@ -668,55 +688,164 @@ function generatePlan() {
 // ── Week view (plan generated) ─────────────────────────────
 function buildWeekView(wk, isCurrent) {
   const insight = buildProgressInsight();
+
+  // Detect duplicate session assignments (same sessionKey on multiple days)
+  const assignedArr = Object.entries(wk.plan.assigned).filter(([,idx])=>idx!==null);
+  const dayToSessions = {}; // dayIdx → [sessionKey, ...]
+  assignedArr.forEach(([sk,di])=>{
+    if (!dayToSessions[di]) dayToSessions[di]=[];
+    dayToSessions[di].push(sk);
+  });
+  const conflictDays = new Set(
+    Object.entries(dayToSessions).filter(([,arr])=>arr.length>1).map(([di])=>Number(di))
+  );
+
+  const editBar = editDaysMode ? `
+    <div class="edit-mode-bar">
+      <span class="edit-mode-lbl">✏️ Tap any day to reassign</span>
+      <button class="btn-done" onclick="exitEditDays()">Done</button>
+    </div>` : '';
+
   const dayCards = DAYS.map((day,i)=>{
     const ballet = wk.ballet[i];
-
-    // Find which session is assigned to this day
-    const sessionKey = Object.entries(wk.plan.assigned).find(([,idx])=>idx===i)?.[0] || null;
+    const sessionsOnDay = dayToSessions[i] || [];
+    const sessionKey = sessionsOnDay[0] || null;
     const log = sessionKey ? wk.logs[sessionKey] : null;
     const isDone = !!log;
+    const isConflict = conflictDays.has(i);
+
+    // Conflict note — list what's doubled
+    const conflictNote = isConflict && editDaysMode
+      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk=>SESS_LABEL[sk]||sk).join(' + ')} both assigned here</div>`
+      : isConflict
+      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk=>SESS_LABEL[sk]||sk).join(' + ')} — duplicate assignment</div>`
+      : '';
+
+    // Session menu (shown when this day is selected in edit mode)
+    const showMenu = editDaysMode && editDayMenu === i;
+    const menuHTML = showMenu ? buildSessionMenu(i, sessionKey) : '';
 
     let gymContent = '';
     if (sessionKey) {
       const sess = PROG.sessions[sessionKey];
-      const reason = wk.plan.reasons[sessionKey];
-      const modNote = getModNote(ballet);
+      const reason = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
+      const modNote = !editDaysMode ? getModNote(ballet) : null;
+
+      const clickAction = editDaysMode
+        ? `openEditDayMenu(${i})`
+        : isDone ? `toggleHistEntry('${sessionKey}')` : `openLog('${sessionKey}',${i})`;
 
       gymContent = `
-        <div class="day-card ${isDone?'':'tappable'}" onclick="${!isDone?`openLog('${sessionKey}',${i})`:'toggleHistEntry(\''+sessionKey+'\')'}">
+        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}" onclick="${clickAction}">
           <div class="day-card-hdr">
             <div>
-              <div class="row"><span class="badge b${sessionKey.toLowerCase()}">${SESS_LABEL[sessionKey]||sessionKey}</span><span class="sm b5" style="margin-left:4px">${sess.name}</span></div>
+              <div class="row">
+                <span class="badge b${sessionKey.toLowerCase()}">${SESS_LABEL[sessionKey]||sessionKey}</span>
+                <span class="sm b5" style="margin-left:4px">${sess.name}</span>
+              </div>
               <div class="day-meta">${day}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
             </div>
             <div class="day-status">
-              ${isDone?'<span class="done-pill">✓ Done</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'}
+              ${editDaysMode
+                ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
+                : isDone
+                  ? '<span class="done-pill">✓ Done</span>'
+                  : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'}
             </div>
           </div>
+          ${conflictNote}
           ${reason?`<div class="reason-text">🧠 ${reason}${modNote?'<br>'+modNote:''}</div>`:''}
-          ${isDone&&expandedHist===sessionKey?buildInlineLog(log,sessionKey):''}
-        </div>`;
+          ${!editDaysMode&&isDone&&expandedHist===sessionKey?buildInlineLog(log,sessionKey):''}
+        </div>
+        ${menuHTML}`;
     } else {
       const typeLabel = ballet.type ? DTYPE_LABELS[ballet.type] : '';
+      const clickAction = editDaysMode ? `openEditDayMenu(${i})` : '';
       gymContent = `
-        <div class="day-card">
+        <div class="day-card${editDaysMode?' editable':''}" ${editDaysMode?`onclick="${clickAction}"`:''}>
           <div class="day-card-hdr">
             <div>
               <div class="sm b5" style="color:var(--tx3)">${day}</div>
               <div class="day-meta">${typeLabel||'Not scheduled'}</div>
             </div>
-            <span class="rest-pill">${ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
+            <span class="rest-pill">${editDaysMode?'Tap to assign':ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
           </div>
-        </div>`;
+        </div>
+        ${menuHTML}`;
     }
     return gymContent;
   }).join('');
 
+  const actionRow = editDaysMode
+    ? '' // Done button is in the edit bar
+    : `<div style="padding:0 16px 8px;display:flex;gap:8px">
+        <button class="btn-g" style="flex:1;text-align:center" onclick="editPlan()">← Edit schedule</button>
+        <button class="btn-g" style="flex:1;text-align:center" onclick="enterEditDays()">✏️ Edit days</button>
+      </div>`;
+
   return `
-    ${insight}
+    ${editBar}
+    ${!editDaysMode?insight:''}
     <div class="week-grid">${dayCards}</div>
-    <div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="editPlan()">← Edit schedule</button></div>
+    ${actionRow}
     <div class="bpad"></div>`;
+}
+
+function buildSessionMenu(dayIdx, currentKey) {
+  const sessions = Object.entries(PROG.sessions);
+  const opts = sessions.map(([key, sess])=>{
+    const isCurrent = currentKey === key;
+    return `
+      <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
+        <div class="session-opt-lbl">
+          <span class="badge b${key.toLowerCase()}">${SESS_LABEL[key]||key}</span>
+          <span class="sm">${sess.name}</span>
+        </div>
+        ${isCurrent?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
+      </div>`;
+  }).join('');
+
+  const noGymActive = !currentKey;
+  const noGymOpt = `
+    <div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
+      <div class="session-opt-lbl">
+        <span class="badge bpre">—</span>
+        <span class="sm dim">No gym this day</span>
+      </div>
+      ${noGymActive?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
+    </div>`;
+
+  return `<div class="session-menu">${opts}${noGymOpt}</div>`;
+}
+
+function enterEditDays() {
+  editDaysMode = true;
+  editDayMenu  = null;
+  renderSchedule();
+}
+
+function exitEditDays() {
+  editDaysMode = false;
+  editDayMenu  = null;
+  saveWeeks();
+  renderSchedule();
+}
+
+function openEditDayMenu(dayIdx) {
+  editDayMenu = editDayMenu === dayIdx ? null : dayIdx;
+  renderSchedule();
+}
+
+function assignDaySession(dayIdx, sessionKey) {
+  const wk = getWeek(viewMonday);
+  // Remove this dayIdx from any existing assignment
+  Object.keys(wk.plan.assigned).forEach(sk=>{
+    if (wk.plan.assigned[sk] === dayIdx) wk.plan.assigned[sk] = null;
+  });
+  // Assign new session to this day (null = no gym)
+  if (sessionKey) wk.plan.assigned[sessionKey] = dayIdx;
+  editDayMenu = null; // close menu after selection
+  renderSchedule();   // show immediately — save happens on Done
 }
 
 function getModNote(ballet) {
@@ -780,6 +909,7 @@ function buildInlineLog(log, sessionKey) {
 // LOG FLOW
 // ═══════════════════════════════════════════════════════════
 function openLog(sessionKey, dayIdx) {
+  editDaysMode = false; editDayMenu = null;
   const wk = getWeek(viewMonday);
   const existingLog = wk.logs[sessionKey];
   lf = {
