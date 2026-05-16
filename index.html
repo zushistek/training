@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0d0d0c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>Training v1.3</title>
+<title>Training v1.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -32,19 +32,19 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 input,textarea,button,select{font-family:inherit}
 button{cursor:pointer}
 
-/* Layout */
+/* ── Layout ───────────────────────────────────────────── */
 #app{height:100dvh;display:flex;flex-direction:column}
 #hdr{background:var(--bg);border-bottom:1px solid var(--bd);padding:calc(var(--st) + 10px) 16px 0;flex-shrink:0}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:4px}
 .hdr-title{font-size:17px;font-weight:600;letter-spacing:-.3px}
 .hdr-ver{font-size:9px;color:var(--tx3);font-family:'DM Mono',monospace}
 .tabs{display:flex;margin:0 -16px}
-.tab{flex:1;padding:10px 0 9px;font-size:13px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s}
+.tab{flex:1;padding:10px 0 9px;font-size:12px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s}
 .tab.on{color:var(--am);border-bottom-color:var(--am)}
 #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{display:none}.page.on{display:block}
 
-/* Week nav */
+/* ── Week nav ─────────────────────────────────────────── */
 .week-nav{display:flex;align-items:center;padding:10px 16px;gap:6px;background:var(--bg2);border-bottom:1px solid var(--bd)}
 .wnav-btn{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:6px 10px;color:var(--tx2);font-size:16px;line-height:1;transition:all .15s;flex-shrink:0}
 .wnav-btn:active{opacity:.7}
@@ -52,12 +52,12 @@ button{cursor:pointer}
 .week-lbl{flex:1;text-align:center;font-size:13px;font-weight:500;color:var(--tx)}
 .week-tag{font-size:10px;color:var(--am);font-family:'DM Mono',monospace;display:block;text-align:center;margin-top:1px}
 
-/* Cards */
+/* ── Cards ────────────────────────────────────────────── */
 .card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;margin:0 16px 10px;overflow:hidden}
 .card-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
 .card-body{padding:14px}
 
-/* Badges */
+/* ── Badges ───────────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.05em;font-family:'DM Mono',monospace}
 .bap{background:var(--pud);color:var(--pu)}
 .bal{background:var(--bld);color:var(--bl)}
@@ -67,7 +67,7 @@ button{cursor:pointer}
 .bd{background:var(--cod);color:var(--co)}
 .bpre{background:var(--bg4);color:var(--tx2)}
 
-/* Day type selector */
+/* ── Day type selector ────────────────────────────────── */
 .dtype-row{display:flex;gap:5px;flex-wrap:wrap}
 .dtype-btn{padding:7px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s;flex:1;text-align:center;min-width:0}
 .dtype-btn.on-perf{background:#2a0d1e;color:#e060a0;border-color:#e060a0}
@@ -75,12 +75,12 @@ button{cursor:pointer}
 .dtype-btn.on-reh{background:var(--amd);color:var(--am);border-color:var(--am)}
 .dtype-btn.on-per{background:var(--pud);color:var(--pu);border-color:var(--pu)}
 
-/* Intensity */
+/* ── Intensity ────────────────────────────────────────── */
 .int-row{display:flex;gap:4px}
 .int-btn{flex:1;padding:8px 0;border-radius:7px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;font-family:'DM Mono',monospace;transition:all .15s}
 .int-btn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
 
-/* Week schedule grid */
+/* ── Week schedule grid ───────────────────────────────── */
 .week-grid{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
 .day-card{border-radius:11px;border:1px solid var(--bd);overflow:hidden;background:var(--bg2)}
 .day-card-hdr{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
@@ -92,19 +92,19 @@ button{cursor:pointer}
 .rest-pill{background:var(--bg4);color:var(--tx3);border-radius:20px;font-size:10px;padding:2px 8px}
 .reason-text{font-size:11px;color:var(--tx3);padding:0 13px 10px;line-height:1.4;border-top:1px solid var(--bd);margin-top:0;padding-top:8px}
 
-/* Inputs */
+/* ── Inputs ───────────────────────────────────────────── */
 .field{margin-bottom:12px}.field:last-child{margin-bottom:0}
 .lbl{font-size:12px;color:var(--tx3);margin-bottom:6px;display:block;letter-spacing:.02em;font-weight:500}
 input[type=text],textarea{width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;-webkit-appearance:none;transition:border-color .15s}
 input:focus,textarea:focus{border-color:var(--am)}
 textarea{resize:none;min-height:60px;line-height:1.4}
 
-/* Rating */
+/* ── Rating / quality buttons ─────────────────────────── */
 .rating{display:flex;gap:5px}
 .rbtn{flex:1;padding:10px 0;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;font-family:'DM Mono',monospace}
 .rbtn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
 
-/* Buttons */
+/* ── Buttons ──────────────────────────────────────────── */
 .btn-p{width:100%;background:var(--am);color:var(--bg);border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:600;letter-spacing:-.2px;transition:opacity .15s;margin:4px 0}
 .btn-p:active{opacity:.8}
 .btn-g{background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--tx2);font-weight:500;transition:all .15s}
@@ -114,16 +114,19 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .btn-back{background:none;border:none;color:var(--tx3);font-size:13px;padding:4px 0;display:flex;align-items:center;gap:4px}
 .btn-skip{background:none;border:none;color:var(--tx3);font-size:12px;text-decoration:underline;padding:4px 0}
 
-/* Utility */
+/* ── Utility ──────────────────────────────────────────── */
 .sm{font-size:13px}.xs{font-size:12px}.dim{color:var(--tx2)}.dimmer{color:var(--tx3)}
 .b6{font-weight:600}.b5{font-weight:500}.mono{font-family:'DM Mono',monospace}
 .mt1{margin-top:4px}.mt2{margin-top:8px}.mb1{margin-bottom:4px}
 .row{display:flex;align-items:center;gap:8px}.jcb{justify-content:space-between}
 .sec{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;padding:16px 18px 8px}
-/* ── Edit days mode ─────────────────────────────────── */
+
+/* ── Edit days mode ───────────────────────────────────── */
 .edit-mode-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--amd);border-bottom:1px solid var(--amm);margin-bottom:2px}
 .edit-mode-lbl{font-size:12px;font-weight:600;color:var(--am)}
+.edit-mode-actions{display:flex;gap:6px}
 .btn-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600}
+.btn-undo{background:var(--bg3);color:var(--tx2);border:1px solid var(--bd2);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:500}
 .day-card.editable{cursor:pointer;border-color:var(--bd2)}
 .day-card.editable:active{background:var(--bg3)}
 .day-card.conflict{border-color:var(--rd) !important}
@@ -137,7 +140,7 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .session-tick-empty{width:18px;display:inline-block}
 .bpad{height:calc(var(--sb) + 24px)}
 
-/* Notice */
+/* ── Notices ──────────────────────────────────────────── */
 .notice{margin:0 16px 10px;padding:11px 13px;background:var(--amd);border:1px solid var(--amm);border-radius:10px;font-size:12px;color:var(--am);line-height:1.5}
 .notice strong{font-weight:600;display:block;margin-bottom:2px}
 .ndim{margin:0 16px 10px;padding:11px 13px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;font-size:12px;color:var(--tx3);line-height:1.5}
@@ -145,7 +148,19 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .nred{margin:0 16px 10px;padding:11px 13px;background:var(--rdd);border:1px solid var(--rd);border-radius:10px;font-size:12px;color:var(--rd);line-height:1.5}
 .nred strong{font-weight:600;display:block;margin-bottom:2px}
 
-/* Tag chips */
+/* ── Week summary card ────────────────────────────────── */
+.week-sum-card{margin:8px 16px 4px;padding:12px 14px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px}
+.week-sum-title{font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;font-family:'DM Mono',monospace}
+.week-sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px}
+.week-sum-stat{text-align:center;padding:6px 4px;background:var(--bg3);border-radius:8px}
+.week-sum-val{font-size:18px;font-weight:600;font-family:'DM Mono',monospace;color:var(--tx);line-height:1}
+.week-sum-val.dim{color:var(--tx3)}
+.week-sum-lbl{font-size:9px;color:var(--tx3);margin-top:3px;letter-spacing:.03em}
+.week-sum-alert{padding:8px 10px;border-radius:7px;margin-top:6px;font-size:11px;line-height:1.4}
+.week-sum-alert.warn{background:var(--rdd);color:var(--rd);border:1px solid var(--rd)}
+.week-sum-alert.note{background:var(--amd);color:var(--am);border:1px solid var(--amm)}
+
+/* ── Tag chips ────────────────────────────────────────── */
 .tag-grp-lbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
 .tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .tag{padding:8px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:12px;font-weight:500;transition:all .15s}
@@ -153,19 +168,42 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .tag.cau{background:var(--cod);color:var(--co);border-color:var(--co)}
 .tag.wrn{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
 
-/* Mod preview */
+/* ── Mod preview ──────────────────────────────────────── */
 .mod-box{padding:12px 14px;background:var(--bg);border:1px solid var(--amm);border-radius:10px;margin-bottom:12px}
 .mod-title{font-size:10px;font-weight:600;color:var(--am);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
 .mod-line{font-size:12px;color:var(--tx2);margin-bottom:4px;line-height:1.4;padding-left:8px;border-left:2px solid var(--amm)}
 
-/* Exercise accordion */
+/* ── Exercise accordion ───────────────────────────────── */
 .ex-hdr{padding:13px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:border-color .15s}
 .ex-hdr.open{border-bottom-color:var(--bd)}
 .ex-body{padding:12px 14px;background:var(--bg)}
 .chev{width:16px;height:16px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
 .chev.open{transform:rotate(90deg)}
 
-/* Accuracy */
+/* ── Warm-up card ─────────────────────────────────────── */
+.warmup-card{border-color:var(--amm)}
+.warmup-item{padding:8px 0;border-bottom:1px solid var(--bd)}
+.warmup-item:last-child{border-bottom:none;padding-bottom:0}
+.warmup-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px}
+.warmup-pre{font-size:11px;color:var(--am);font-family:'DM Mono',monospace}
+.warmup-note{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.4}
+
+/* ── Sided section ────────────────────────────────────── */
+.sided-half{margin-bottom:8px}
+.sided-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-bottom:6px;display:inline-block}
+.sided-lbl.r{background:var(--amd);color:var(--am)}
+.sided-lbl.l{background:var(--bld);color:var(--bl)}
+.sided-sep{height:1px;background:var(--bd);margin:8px 0}
+
+/* ── Duration display ─────────────────────────────────── */
+.srpe-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.srpe-btn{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;min-width:120px;transition:border-color .15s}
+.srpe-btn:active{border-color:var(--am)}
+.srpe-val{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--tx)}
+.srpe-unit{font-size:11px;color:var(--tx3)}
+.srpe-note{font-size:11px;color:var(--tx3);flex:1}
+
+/* ── Accuracy ─────────────────────────────────────────── */
 .acc{margin:0 16px 10px;padding:14px;border-radius:12px;border:1px solid var(--bd)}
 .acc.good{background:var(--gnd);border-color:var(--gn)}
 .acc.warn{background:var(--cod);border-color:var(--co)}
@@ -175,15 +213,9 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .acc-detail{font-size:12px;color:var(--tx2);line-height:1.5}
 .acc-stat{font-size:11px;color:var(--tx3);margin-top:6px;font-family:'DM Mono',monospace}
 
-/* Insight strip */
-.insight{margin:0 16px 10px;padding:11px 13px;border-radius:10px;border-left:3px solid var(--am);background:var(--amd)}
-.insight.g{border-left-color:var(--gn);background:var(--gnd)}
-.ins-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--am);margin-bottom:3px}
-.insight.g .ins-t{color:var(--gn)}
-.ins-b{font-size:12px;color:var(--tx2);line-height:1.5}
-
-/* History */
-.hflt{display:flex;gap:6px;padding:10px 16px 4px}
+/* ── History ──────────────────────────────────────────── */
+.hflt-row{display:flex;align-items:center;gap:6px;padding:10px 16px 4px}
+.hflt{display:flex;gap:6px;flex:1}
 .flt{padding:6px 14px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s}
 .flt.on{background:var(--am);color:var(--bg);border-color:var(--am)}
 .hent{margin:0 16px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
@@ -196,18 +228,23 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .del-btn:active{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
 .del-conf{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
 
-/* Success */
-@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
-.success{text-align:center;padding:80px 24px;animation:pop .3s ease}
-.sico{width:64px;height:64px;background:#0f2d22;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+/* ── Injury log (Body tab) ────────────────────────────── */
+.inj-chips{display:flex;flex-wrap:wrap;gap:6px}
+.inj-chip{padding:7px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:12px;font-weight:500;transition:all .15s}
+.inj-chip.on{background:var(--cod);color:var(--co);border-color:var(--co)}
+.inj-status-pill{font-size:10px;padding:2px 7px;border-radius:10px;display:inline-block}
+.inj-status-active{background:var(--rdd);color:var(--rd)}
+.inj-status-monitoring{background:var(--amd);color:var(--am)}
+.inj-status-resolved{background:var(--gnd);color:var(--gn)}
 
-/* Empty */
+/* ── Empty & success ──────────────────────────────────── */
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
 .empty{text-align:center;padding:60px 24px}
 .emi{font-size:40px;margin-bottom:12px;opacity:.3}
 .emt{font-size:15px;font-weight:500;color:var(--tx2)}
 .ems{font-size:13px;color:var(--tx3);margin-top:4px}
 
-/* ── TOUCH PICKER ─────────────────────────────────── */
+/* ── TOUCH PICKER ─────────────────────────────────────── */
 .picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
 .picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px);user-select:none;-webkit-user-select:none}
 .picker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd)}
@@ -225,14 +262,14 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .picker-line{position:absolute;left:8%;right:8%;top:50%;transform:translateY(-50%);height:44px;border-top:1px solid var(--bd2);border-bottom:1px solid var(--bd2);pointer-events:none;z-index:3}
 .picker-col-lbl{text-align:center;font-size:10px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase;padding:4px 0 10px;font-family:'DM Mono',monospace}
 
-/* Value display button (replaces text input) */
+/* ── Value buttons ────────────────────────────────────── */
 .val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:11px 14px;transition:border-color .15s;cursor:pointer}
 .val-btn:active,.val-btn.active{border-color:var(--am)}
 .val-btn-num{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--tx)}
 .val-btn-unit{font-size:11px;color:var(--tx3)}
 .val-btn-empty{font-size:14px;color:var(--tx3)}
 
-/* Set row */
+/* ── Set row ──────────────────────────────────────────── */
 .set-row{display:flex;gap:5px;margin-bottom:8px;align-items:center}
 .set-n{width:22px;height:22px;background:var(--bg4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--tx3);font-family:'DM Mono',monospace;flex-shrink:0}
 .plyo-done{flex:1;padding:10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;transition:all .15s;text-align:center}
@@ -244,21 +281,23 @@ textarea{resize:none;min-height:60px;line-height:1.4}
   <div id="hdr">
     <div class="hdr-row">
       <span class="hdr-title">Training</span>
-      <span class="hdr-ver">v1.3</span>
+      <span class="hdr-ver">v1.5.0</span>
     </div>
     <div class="tabs">
       <button class="tab on" onclick="nav('schedule',this)">Schedule</button>
       <button class="tab"    onclick="nav('history',this)">History</button>
+      <button class="tab"    onclick="nav('body',this)">Body</button>
     </div>
   </div>
   <div id="content">
     <div id="page-schedule" class="page on"></div>
     <div id="page-history"  class="page"></div>
+    <div id="page-body"     class="page"></div>
   </div>
 </div>
 
-<!-- Picker overlay -->
-<div id="picker-overlay" class="picker-overlay" style="display:none">
+<!-- Picker overlay — onclick attaches pickerBgClick for backdrop dismiss -->
+<div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)">
   <div class="picker-sheet">
     <div class="picker-hdr">
       <span class="picker-label" id="picker-label">Select</span>
@@ -269,8 +308,12 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 </div>
 
 <script>
+'use strict';
 // ═══════════════════════════════════════════════════════════
-// PROGRAM (loaded from program.json, fallback inline)
+// PROGRAM — loaded from program.json via service-worker cache
+// No inline fallback: after first online load the SW caches
+// the file. If this fails the athlete is offline pre-first-load
+// and we show a clear message rather than silently load stale data.
 // ═══════════════════════════════════════════════════════════
 let PROG = null;
 
@@ -278,15 +321,22 @@ async function loadProgram() {
   try {
     const r = await fetch('program.json');
     if (r.ok) { PROG = await r.json(); return; }
-  } catch(e) {}
-  // Inline fallback — same structure as program.jso  PROG = {"meta":{"name":"Ballet Dancer In-Season Program","version":"1.3.1","athlete":"Professional male ballet dancer","phase":"In-season"},"sessions":{"AP":{"name":"Push \u2014 Partnering Strength","fullName":"Day Push \u2014 Overhead Strength & Shoulder Health","color":"#7c6fdf","colorDim":"#151338","optional":false,"upperBody":true,"exercises":[{"id":"ohp","name":"Overhead Barbell Press","type":"loaded","prescribed":"4 \u00d7 4\u20136","rpe":"7\u20138","sets":4,"regions":["upper_push"],"restNote":"3\u20135 min","note":"Primary partnering lift. Full lockout at top."},{"id":"dip","name":"Weighted Dips","type":"loaded","prescribed":"4 \u00d7 5\u20138","rpe":"7\u20138","sets":4,"regions":["upper_push"],"restNote":"3\u20134 min","note":"Triceps lockout transfers directly to holding overhead lifts."},{"id":"hkp","name":"Half-Kneeling Single-Arm DB Press","type":"loaded","prescribed":"3 \u00d7 8 each side","rpe":"6\u20137","sets":3,"regions":["upper_push"],"restNote":"90 sec","note":"Kneeling removes leg drive \u2014 pure shoulder stability."},{"id":"lat","name":"Lateral Raises (strict)","type":"loaded","prescribed":"3 \u00d7 12\u201315","rpe":"6","sets":3,"regions":["upper_push"],"restNote":"60 sec","note":"Slow lower. No swinging."},{"id":"sws","name":"Serratus Wall Slides","type":"bodyweight","prescribed":"2\u20133 \u00d7 10\u201312","rpe":"5\u20136","sets":2,"regions":["upper_push"],"restNote":"60 sec","note":"Scapular control. Slide arms up wall keeping contact."}]},"AL":{"name":"Pull \u2014 Lifting Mechanics","fullName":"Day Pull \u2014 Power, Back Strength & Grip","color":"#4a9fd4","colorDim":"#0a1e2e","optional":false,"upperBody":true,"exercises":[{"id":"hcl","name":"Hang Clean Pull","type":"loaded","prescribed":"3 \u00d7 3\u20134","rpe":"7\u20138","sets":3,"regions":["upper_pull"],"restNote":"3\u20134 min","note":"Explosive hip extension into shrug. No catch \u2014 stop at top of pull. Full intent every rep. Do first while CNS is freshest."},{"id":"wpu","name":"Weighted Pull-Ups","type":"loaded","prescribed":"4 \u00d7 4\u20136","rpe":"7\u20138","sets":4,"regions":["upper_pull"],"restNote":"3\u20135 min","note":"Dead hang to chin over bar. Full ROM every rep."},{"id":"scr","name":"Seated Cable Row (1-sec pause)","type":"loaded","prescribed":"3 \u00d7 8\u201310","rpe":"6\u20137","sets":3,"regions":["upper_pull"],"restNote":"90 sec","note":"1-sec hold at chest. Elbows drive back."},{"id":"fpu","name":"Face Pulls","type":"loaded","prescribed":"3 \u00d7 12\u201315","rpe":"6","sets":3,"regions":["upper_pull"],"restNote":"60 sec","note":"Rope at eye height. External rotate at end \u2014 hands finish by ears."},{"id":"fac","name":"Farmer's Carries","type":"carry","prescribed":"3 \u00d7 20\u201340s","rpe":"7","sets":3,"regions":["carry"],"restNote":"90 sec","note":"Tall posture, slight shoulder pack. Grip and trunk stability."}]},"AF":{"name":"Full Body \u2014 Upper","fullName":"Day Full Body \u2014 Compressed Upper (Constrained Week)","color":"#9b8fe8","colorDim":"#1a1835","optional":false,"upperBody":true,"exercises":[{"id":"ohp","name":"Overhead Barbell Press","type":"loaded","prescribed":"3 \u00d7 4\u20135","rpe":"7\u20138","sets":3,"regions":["upper_push"],"restNote":"3\u20134 min"},{"id":"wpu","name":"Weighted Pull-Ups","type":"loaded","prescribed":"3 \u00d7 4\u20135","rpe":"7\u20138","sets":3,"regions":["upper_pull"],"restNote":"3\u20134 min"},{"id":"dip","name":"Weighted Dips","type":"loaded","prescribed":"2 \u00d7 5\u20136","rpe":"7","sets":2,"regions":["upper_push"],"restNote":"3 min"},{"id":"hkp","name":"Half-Kneeling Single-Arm DB Press","type":"loaded","prescribed":"2 \u00d7 8 each side","rpe":"6","sets":2,"regions":["upper_push"],"restNote":"90 sec"},{"id":"scr","name":"Seated Cable Row (1-sec pause)","type":"loaded","prescribed":"2 \u00d7 8\u201310","rpe":"6","sets":2,"regions":["upper_pull"],"restNote":"90 sec"},{"id":"fpu","name":"Face Pulls","type":"loaded","prescribed":"2 \u00d7 12\u201315","rpe":"5\u20136","sets":2,"regions":["upper_pull"],"restNote":"60 sec"},{"id":"sws","name":"Serratus Wall Slides","type":"bodyweight","prescribed":"2 \u00d7 10\u201312","rpe":"5","sets":2,"regions":["upper_push"],"restNote":"60 sec"}]},"B":{"name":"Lower Body & Trunk","fullName":"Day B \u2014 Lower Body Strength, Turnout & Trunk","color":"#3aaa80","colorDim":"#091e16","optional":false,"upperBody":false,"exercises":[{"id":"rdl","name":"Romanian Deadlift","type":"loaded","prescribed":"3 \u00d7 5\u20136","rpe":"7","sets":3,"regions":["lower"],"restNote":"3\u20134 min","note":"Hip hinge \u2014 feel hamstring stretch at bottom. Stop when lower back rounds. Bar stays close to legs."},{"id":"nhc","name":"Nordic Hamstring Curl","type":"loaded","prescribed":"3 \u00d7 4\u20136","rpe":"6\u20137","sets":3,"regions":["lower"],"restNote":"3 min","note":"3-sec eccentric lower to floor. Partner holds ankles. #1 hamstring injury prevention exercise."},{"id":"bss","name":"Bulgarian Split Squat","type":"loaded","prescribed":"3 \u00d7 6\u20138 each side","rpe":"6\u20137","sets":3,"regions":["lower"],"restNote":"2\u20133 min","note":"Rear foot elevated on bench. Upright torso. Feel front glute loading."},{"id":"her","name":"Hip External Rotation (cable)","type":"loaded","prescribed":"3 \u00d7 12\u201315","rpe":"5\u20136","sets":3,"regions":["lower"],"restNote":"60\u201390 sec","note":"Seated or side-lying, cable at ankle. Rotate leg outward against resistance. Targets piriformis and short external rotators \u2014 turnout support."},{"id":"cop","name":"Copenhagen Plank","type":"timed","prescribed":"3 \u00d7 20\u201330s each side","rpe":"6","sets":3,"regions":["lower_core"],"restNote":"60 sec","note":"Top leg on bench, bottom leg lifted off floor. Adductor and groin protection."},{"id":"pal","name":"Pallof Press","type":"bodyweight","prescribed":"3 \u00d7 10\u201312 each side","rpe":"5\u20136","sets":3,"regions":["core"],"restNote":"60 sec","note":"Press straight out from chest \u2014 resist rotating toward cable."},{"id":"tib","name":"Tibialis Raises + Foot Intrinsics","type":"timed","prescribed":"2 \u00d7 3 min","rpe":"5","sets":2,"regions":["lower_acc"],"restNote":"60 sec","note":"Tibialis: heels on raised surface, raise toes rhythmically. Foot intrinsics: seated, short foot arch lifts, toe spreads. Achilles and plantar fascia protection."}]},"C":{"name":"Power & Plyometrics","fullName":"Day C \u2014 Reactive Strength & Ball\u00f3n","color":"#e8a020","colorDim":"#291e07","optional":false,"upperBody":false,"exercises":[{"id":"bxj","name":"Box Jumps (max height intent)","type":"plyo","prescribed":"4 \u00d7 3\u20134","rpe":"6\u20137","sets":4,"regions":["plyo"],"restNote":"2\u20133 min","note":"Always first \u2014 CNS freshest. Step down, never jump down. Full intent every rep."},{"id":"pog","name":"Pogos","type":"plyo","prescribed":"3 \u00d7 20\u201325","rpe":"5\u20136","sets":3,"regions":["plyo"],"restNote":"2 min","note":"Minimal ground contact time. Stiff ankle springs. Rhythm over height."},{"id":"brj","name":"Broad Jumps","type":"plyo","prescribed":"2 \u00d7 4","rpe":"6","sets":2,"regions":["plyo"],"restNote":"2 min","note":"Max horizontal distance. Stick the landing before next rep."},{"id":"scr","name":"Seated Cable Row (1-sec pause)","type":"loaded","prescribed":"2 \u00d7 8\u201310","rpe":"6","sets":2,"regions":["upper_pull"],"restNote":"90 sec","note":"Upper back maintenance. After plyo \u2014 fatigue is expected here."},{"id":"fpu","name":"Face Pulls","type":"loaded","prescribed":"2 \u00d7 12\u201315","rpe":"5\u20136","sets":2,"regions":["upper_pull"],"restNote":"60 sec"}]},"D":{"name":"Hypertrophy (Optional)","fullName":"Day D \u2014 Aesthetic Support & Balance","color":"#df6b4a","colorDim":"#281209","optional":true,"upperBody":false,"exercises":[{"id":"idb","name":"Incline DB Press","type":"loaded","prescribed":"3 \u00d7 8\u201310","rpe":"7","sets":3,"regions":["upper_push"],"restNote":"90 sec"},{"id":"chu","name":"Chin-Ups","type":"bodyweight","prescribed":"3 \u00d7 8\u201312","rpe":"6\u20137","sets":3,"regions":["upper_pull"],"restNote":"90 sec","note":"Supinated (underhand) grip. Full ROM \u2014 dead hang to chin over bar. Shifts emphasis to lower lat and biceps vs overhand pull-ups."},{"id":"clr","name":"Cable Lateral Raises","type":"loaded","prescribed":"3 \u00d7 12\u201315","rpe":"6\u20137","sets":3,"regions":["upper_push"],"restNote":"60 sec"},{"id":"rdf","name":"Rear Delt Fly","type":"loaded","prescribed":"3 \u00d7 12\u201315","rpe":"6\u20137","sets":3,"regions":["upper_pull"],"restNote":"60 sec"},{"id":"hcp","name":"Hammer Curls + Rope Pushdowns","type":"loaded","prescribed":"2\u20133 \u00d7 10\u201312","rpe":"6\u20137","sets":2,"regions":["upper_arm"],"restNote":"60 sec","note":"Superset: curls into pushdowns immediately. Rest after both."},{"id":"adm","name":"Adductor Machine","type":"loaded","prescribed":"2 \u00d7 12\u201315","rpe":"6","sets":2,"regions":["lower"],"restNote":"60 sec"}]}},"tags":{"poor_sleep":{"label":"Poor sleep","emoji":"\ud83d\ude34","group":"rec","affects":{"plyo":{"setReduction":1}},"note":"Reduce plyometric volume by 1 set. Strength work unchanged."},"high_fatigue":{"label":"High fatigue","emoji":"\ud83e\udeab","group":"rec","affects":{"ALL":{"setReduction":1}},"note":"Drop 1 set from each exercise. Keep prescribed RPE."},"low_energy":{"label":"Low energy","emoji":"\ud83d\udd0b","group":"rec","affects":{},"rpeCap":7,"note":"Cap all exercises at RPE 7. Volume unchanged."},"heavy_legs":{"label":"Heavy legs","emoji":"\ud83e\uddb5","group":"rec","affects":{"lower":{"setReduction":1},"plyo":{"setReduction":1},"lower_core":{"setReduction":1}},"note":"Reduce lower body & plyo by 1 set. Upper body unchanged."},"upper_soreness":{"label":"Upper body soreness","emoji":"\ud83d\udcaa","group":"rec","affects":{"upper_push":{"setReduction":1},"upper_pull":{"setReduction":1},"upper_arm":{"setReduction":1}},"note":"Reduce upper body by 1 set. Soreness is safe to train through."},"lower_soreness":{"label":"Lower body soreness","emoji":"\ud83e\uddb5","group":"rec","affects":{"lower":{"setReduction":1},"lower_core":{"setReduction":1}},"note":"Reduce lower body by 1 set."},"hip_knee":{"label":"Hip / knee tightness","emoji":"\u26a0\ufe0f","group":"cau","affects":{"lower":{"note":"Shorten ROM"},"plyo":{"setReduction":1,"note":"Focus on landing"}},"note":"Shorten ROM on lower body. Reduce plyo sets by 1."},"shoulder":{"label":"Shoulder tightness","emoji":"\u26a0\ufe0f","group":"cau","affects":{"upper_push":{"note":"Reduce load ~10\u201315%, avoid end-range"},"upper_pull":{"note":"Bodyweight only if weighted"}},"note":"Reduce pressing load 10\u201315%. Pull-ups bodyweight only."},"dull_ache":{"label":"Dull joint ache","emoji":"\ud83d\udd36","group":"cau","affects":{},"note":"Monitor during warm-up. Skip that movement if pain increases."},"sharp_pain":{"label":"Sharp / acute pain","emoji":"\ud83d\udea8","group":"warn","isWarning":true,"affects":{},"note":"Do not train through sharp pain. Requires physiotherapist assessment."}}};
+    throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    document.getElementById('page-schedule').innerHTML = `
+      <div class="empty">
+        <div class="emi">⚠️</div>
+        <div class="emt">Program unavailable</div>
+        <div class="ems">Open the app once while connected to the internet.<br>After that it works fully offline.</div>
+      </div>`;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
 // STORAGE
 // ═══════════════════════════════════════════════════════════
-const save = (k,v)=>{ try{localStorage.setItem('bt2_'+k,JSON.stringify(v))}catch(e){} };
-const load = k=>{ try{const v=localStorage.getItem('bt2_'+k);return v?JSON.parse(v):null}catch(e){return null} };
+const save = (k, v) => { try { localStorage.setItem('bt2_' + k, JSON.stringify(v)); } catch(e) {} };
+const load = k => { try { const v = localStorage.getItem('bt2_' + k); return v ? JSON.parse(v) : null; } catch(e) { return null; } };
 
 // ═══════════════════════════════════════════════════════════
 // DATE HELPERS
@@ -294,46 +344,52 @@ const load = k=>{ try{const v=localStorage.getItem('bt2_'+k);return v?JSON.parse
 function getMondayOf(date) {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = day===0?-6:1-day;
-  d.setDate(d.getDate()+diff);
-  d.setHours(0,0,0,0);
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
   return d;
 }
-function weekKey(monday) {
-  return monday.toISOString().split('T')[0];
-}
+function weekKey(monday) { return monday.toISOString().split('T')[0]; }
 function fmtWeekLabel(monday) {
-  const sun = new Date(monday); sun.setDate(sun.getDate()+6);
-  const opts = {day:'numeric',month:'short'};
-  const ms = monday.toLocaleDateString('en-GB',opts);
-  const ss = sun.toLocaleDateString('en-GB',opts);
-  return `${ms} – ${ss}`;
+  const sun = new Date(monday); sun.setDate(sun.getDate() + 6);
+  const opts = { day: 'numeric', month: 'short' };
+  return `${monday.toLocaleDateString('en-GB', opts)} – ${sun.toLocaleDateString('en-GB', opts)}`;
 }
-// weekKey and fmtWeekLabel defined above — isCurrentWeek/isNextWeek removed (unused)
+
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════
+const DAYS   = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', per:'Personal Training' };
+const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
+const SESS_LABEL   = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
+const SESS_BADGE   = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
+
+const INJURY_REGIONS = ['Ankle','Knee','Hip','Lower Back','Hamstring','Groin','Shoulder','Wrist','Foot','Achilles','Other'];
+const SEVERITY_LABELS = ['','Minor tightness','Mild pain','Moderate pain','Significant — limit training','Acute — see physio'];
+const SEVERITY_COLORS = ['','var(--gn)','var(--am)','var(--co)','var(--rd)','var(--rd)'];
 
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const DSHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', per:'Personal Training' };
-const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
-// Session display labels and badge classes
-const SESS_LABEL = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
-const SESS_BADGE = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
+let viewMonday    = getMondayOf(new Date());
+let weeks         = load('weeks') || {};
+let injuries      = load('injuries') || [];
+let histFilter    = 'all';
+let expandedHist  = null;
+let confirmDel    = null;
+let lf            = null;   // active log flow state, null when idle
 
-let viewMonday     = getMondayOf(new Date());
-let weeks          = load('weeks') || {};      // weekKey → { ballet, plan, logs }
-let histFilter     = 'all';
-let expandedHist   = null;
-let confirmDel     = null;
+// Edit days mode
+let editDaysMode     = false;
+let editDayMenu      = null;
+let editDaysSnapshot = null;  // single-level undo snapshot
 
-// Log flow state
-let lf = null; // null = not in log flow
-
-// Edit days mode state
-let editDaysMode  = false;
-let editDayMenu   = null; // dayIndex currently showing session picker, or null
+// Injury form state
+let injuryFormOpen = false;
+let injuryEditId   = null;
+let injuryFormData = { region: '', severity: 3, description: '', status: 'active' };
+let injuryExpandedId = null;
 
 // ═══════════════════════════════════════════════════════════
 // WEEK DATA HELPERS
@@ -341,30 +397,28 @@ let editDayMenu   = null; // dayIndex currently showing session picker, or null
 function getWeek(monday) {
   const k = weekKey(monday);
   if (!weeks[k]) weeks[k] = {
-    ballet: DAYS.map(d=>({ day:d, type:null, intensity:3, hours:'' })),
-    plan: null,
-    logs: {}
+    ballet: DAYS.map(d => ({ day: d, type: null, intensity: 3, hours: '' })),
+    plan:   null,
+    logs:   {}
   };
   return weeks[k];
 }
-function saveWeeks() { save('weeks', weeks); }
-
-function defaultBallet() {
-  return DAYS.map(d=>({ day:d, type:null, intensity:3, hours:'' }));
-}
+function saveWeeks()    { save('weeks', weeks); }
+function saveInjuries() { save('injuries', injuries); }
 
 // ═══════════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════
 function nav(name, el) {
-  if (lf) { if (!confirm('Leave this session? Progress will be lost.')) return; lf=null; }
+  if (lf) { if (!confirm('Leave this session? Progress will be lost.')) return; lf = null; }
   editDaysMode = false; editDayMenu = null;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.getElementById('page-'+name).classList.add('on');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('page-' + name).classList.add('on');
   el.classList.add('on');
-  if (name==='schedule') renderSchedule();
-  if (name==='history')  renderHistory();
+  if (name === 'schedule') renderSchedule();
+  if (name === 'history')  renderHistory();
+  if (name === 'body')     renderBody();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -372,68 +426,45 @@ function nav(name, el) {
 // ═══════════════════════════════════════════════════════════
 function renderSchedule() {
   if (lf) { renderLogFlow(); return; }
-  const el = document.getElementById('page-schedule');
+  const el  = document.getElementById('page-schedule');
   const wk  = getWeek(viewMonday);
-
-  // Reference points
   const currentMonday = getMondayOf(new Date());
-  const nextMonday    = new Date(currentMonday); nextMonday.setDate(nextMonday.getDate()+7);
-  const vk = weekKey(viewMonday);
-  const ck = weekKey(currentMonday);
-  const nk = weekKey(nextMonday);
+  const nextMonday    = new Date(currentMonday); nextMonday.setDate(nextMonday.getDate() + 7);
+  const isCurrent = weekKey(viewMonday) === weekKey(currentMonday);
+  const isNext    = weekKey(viewMonday) === weekKey(nextMonday);
 
-  const isCurrent = vk === ck;
-  const isNext    = vk === nk;
-  const label     = fmtWeekLabel(viewMonday);
-
-  const weekTag = isCurrent ? 'CURRENT WEEK' : 'NEXT WEEK';
-
-  // Current week: only right arrow (→ next week)
-  // Next week: only left arrow (← current week)
   const leftBtn  = isNext    ? `<button class="wnav-btn" onclick="changeWeek(-1)">‹</button>` : `<div style="width:37px"></div>`;
   const rightBtn = isCurrent ? `<button class="wnav-btn" onclick="changeWeek(1)">›</button>`  : `<div style="width:37px"></div>`;
-
-  const nav = `
+  const weekNav  = `
     <div class="week-nav">
       ${leftBtn}
       <div style="flex:1;text-align:center">
-        <div class="week-lbl">${label}</div>
-        <div class="week-tag">${weekTag}</div>
+        <div class="week-lbl">${fmtWeekLabel(viewMonday)}</div>
+        <div class="week-tag">${isCurrent ? 'CURRENT WEEK' : 'NEXT WEEK'}</div>
       </div>
       ${rightBtn}
     </div>`;
 
-  const hasPlan = !!wk.plan;
-
-  let body = '';
-  if (!hasPlan) {
-    body = buildBalletInput(wk);
-  } else {
-    body = buildWeekView(wk, isCurrent);
-  }
-
-  el.innerHTML = nav + body;
+  el.innerHTML = weekNav + (wk.plan ? buildWeekView(wk) : buildBalletInput(wk));
 }
 
 function changeWeek(dir) {
-  const currentMonday = getMondayOf(new Date());
-  const nextMonday = new Date(currentMonday); nextMonday.setDate(nextMonday.getDate()+7);
-  // Clamp: only current and next week are valid
-  if (dir > 0) viewMonday = nextMonday;
-  else          viewMonday = currentMonday;
+  const cm = getMondayOf(new Date());
+  const nm = new Date(cm); nm.setDate(nm.getDate() + 7);
+  viewMonday = dir > 0 ? nm : cm;
   renderSchedule();
 }
 
 // ── Ballet input form ──────────────────────────────────────
 function buildBalletInput(wk) {
-  const daycards = wk.ballet.map((d,i)=>{
-    const typebtns = Object.entries(DTYPE_LABELS).map(([k,lbl])=>`
-      <button class="dtype-btn${d.type===k?' '+DTYPE_CLASS[k]:''}" onclick="setDtype(${i},'${k}')">${lbl}</button>`
+  const daycards = wk.ballet.map((d, i) => {
+    const typebtns = Object.entries(DTYPE_LABELS).map(([k, lbl]) =>
+      `<button class="dtype-btn${d.type === k ? ' ' + DTYPE_CLASS[k] : ''}" onclick="setDtype(${i},'${k}')">${lbl}</button>`
     ).join('');
-    const intbtns = [1,2,3,4,5].map(v=>
-      `<button class="int-btn${d.intensity===v?' on':''}" onclick="setDint(${i},${v})">${v}</button>`
+    const intbtns = [1,2,3,4,5].map(v =>
+      `<button class="int-btn${d.intensity === v ? ' on' : ''}" onclick="setDint(${i},${v})">${v}</button>`
     ).join('');
-    const showExtra = d.type && d.type!=='off';
+    const showExtra = d.type && d.type !== 'off';
     return `
     <div class="card">
       <div class="card-hdr"><div class="sm b6">${d.day}</div></div>
@@ -442,7 +473,7 @@ function buildBalletInput(wk) {
           <label class="lbl">Day type</label>
           <div class="dtype-row">${typebtns}</div>
         </div>
-        ${showExtra?`
+        ${showExtra ? `
         <div class="field">
           <label class="lbl">Intensity — 1 light · 3 moderate · 5 maximum</label>
           <div class="int-row">${intbtns}</div>
@@ -450,8 +481,7 @@ function buildBalletInput(wk) {
         <div class="field">
           <label class="lbl">Duration (hours, optional)</label>
           <input type="text" inputmode="decimal" value="${d.hours}" placeholder="e.g. 2.5" oninput="setDhours(${i},this.value)">
-        </div>`:
-        d.type==='off'?'<div class="xs dimmer" style="margin-top:-4px">Rest day — prime gym candidate.</div>':''}
+        </div>` : d.type === 'off' ? '<div class="xs dimmer" style="margin-top:-4px">Rest day — prime gym candidate.</div>' : ''}
       </div>
     </div>`;
   }).join('');
@@ -466,77 +496,54 @@ function buildBalletInput(wk) {
     <div class="bpad"></div>`;
 }
 
-function setDtype(i,v) { getWeek(viewMonday).ballet[i].type=v; saveWeeks(); renderSchedule(); }
-function setDint(i,v)  { getWeek(viewMonday).ballet[i].intensity=v; saveWeeks(); renderSchedule(); }
-function setDhours(i,v){ getWeek(viewMonday).ballet[i].hours=v; saveWeeks(); }
+function setDtype(i, v)  { getWeek(viewMonday).ballet[i].type = v; saveWeeks(); renderSchedule(); }
+function setDint(i, v)   { getWeek(viewMonday).ballet[i].intensity = v; saveWeeks(); renderSchedule(); }
+function setDhours(i, v) { getWeek(viewMonday).ballet[i].hours = v; saveWeeks(); }
 
 // ═══════════════════════════════════════════════════════════
-// AUTO-ASSIGNMENT ENGINE v1.3
+// AUTO-ASSIGNMENT ENGINE
 // ═══════════════════════════════════════════════════════════
 function assignGymDays(ballet) {
-  // ── Load computation ──────────────────────────────────────
-  // Separate upper and lower load scores per day
-  // Multiplicative: intensity × hours × type_coefficient
-  // Lower score = better gym candidate for that region
   function computeLoad(d) {
-    const hrs = Math.max(parseFloat(d.hours)||0, 0.5);
+    const hrs = Math.max(parseFloat(d.hours) || 0, 0.5);
     const int = d.intensity || 3;
-    if (!d.type || d.type==='off') return { upper:0, lower:0 };
-    if (d.type==='perf') return { upper:99, lower:99 };
-    if (d.type==='reh') {
-      // Rehearsal: distributes load — upper moderate (partnering, port de bras), lower significant
-      return { upper: int * hrs * 0.4, lower: int * hrs * 0.5 };
-    }
-    if (d.type==='per') {
-      // Personal training: jump/technique = HIGH lower, low upper
-      return { upper: int * hrs * 0.2, lower: int * hrs * 0.8 };
-    }
-    return { upper:0, lower:0 };
+    if (!d.type || d.type === 'off')  return { upper: 0, lower: 0 };
+    if (d.type === 'perf')            return { upper: 99, lower: 99 };
+    if (d.type === 'reh')             return { upper: int * hrs * 0.4, lower: int * hrs * 0.5 };
+    if (d.type === 'per')             return { upper: int * hrs * 0.2, lower: int * hrs * 0.8 };
+    return { upper: 0, lower: 0 };
   }
 
-  const loads = ballet.map(computeLoad);
-  const isOff  = ballet.map(d=>d.type==='off');
-
-  // ── Protected days ─────────────────────────────────────────
-  // Performance day + day before: no gym
+  const loads   = ballet.map(computeLoad);
+  const isOff   = ballet.map(d => d.type === 'off');
   const protectedDays = new Set();
-  ballet.forEach((d,i)=>{
-    if (d.type==='perf') { if(i>0) protectedDays.add(i-1); protectedDays.add(i); }
+  ballet.forEach((d, i) => {
+    if (d.type === 'perf') { if (i > 0) protectedDays.add(i - 1); protectedDays.add(i); }
   });
 
-  // ── Slot preference bonus ──────────────────────────────────
   function slotBonus(i) {
     let b = 0;
-    if (isOff[i]) b -= 2;                    // day off = great
-    if (i>0 && isOff[i-1]) b -= 1;           // day after off = good
+    if (isOff[i]) b -= 2;
+    if (i > 0 && isOff[i - 1]) b -= 1;
     return b;
   }
 
-  // Viability thresholds — fully decoupled by region
-  // Upper sessions (AP, AL, AF) only check upper load — lower load is irrelevant
-  // Lower sessions (B, C) only check lower load — upper load is irrelevant
-  const UPPER_MAX    = 6.5; // upper_load ceiling for push/pull slots
-  const LOWER_MAX    = 5;   // lower_load ceiling for B/C slots
-  const OPTIONAL_MAX = 5;   // total load ceiling for Day D
+  const UPPER_MAX = 6.5, LOWER_MAX = 5, OPTIONAL_MAX = 5;
 
-  // ── Find viable upper slots (upper load only) ──────────────
   const upperSlots = [];
-  for (let i=0; i<7; i++) {
+  for (let i = 0; i < 7; i++) {
     if (protectedDays.has(i)) continue;
-    if (loads[i].upper >= UPPER_MAX) continue; // only upper load matters here
-    upperSlots.push({ idx:i, score: loads[i].upper + slotBonus(i) });
+    if (loads[i].upper >= UPPER_MAX) continue;
+    upperSlots.push({ idx: i, score: loads[i].upper + slotBonus(i) });
   }
-  upperSlots.sort((a,b)=>a.score-b.score);
+  upperSlots.sort((a, b) => a.score - b.score);
 
-  // ── Decide: Push+Pull split or Full Body ───────────────────
-  // Split if: 2+ viable upper slots with ≥2 days between them
-  const assigned = {};
-  const reasons  = {};
-
+  const assigned = {}, reasons = {};
   let splitMode = false, slot1 = null, slot2 = null;
+
   if (upperSlots.length >= 2) {
-    outer: for (let i=0; i<upperSlots.length; i++) {
-      for (let j=i+1; j<upperSlots.length; j++) {
+    outer: for (let i = 0; i < upperSlots.length; i++) {
+      for (let j = i + 1; j < upperSlots.length; j++) {
         if (Math.abs(upperSlots[i].idx - upperSlots[j].idx) >= 2) {
           slot1 = upperSlots[i]; slot2 = upperSlots[j];
           splitMode = true; break outer;
@@ -547,161 +554,141 @@ function assignGymDays(ballet) {
 
   if (splitMode) {
     const [early, late] = slot1.idx < slot2.idx ? [slot1, slot2] : [slot2, slot1];
-    assigned['AP'] = early.idx;
-    assigned['AL'] = late.idx;
-    assigned['AF'] = null;
-    reasons['AP'] = buildUpperReason('AP', early.idx, ballet, loads, true);
-    reasons['AL'] = buildUpperReason('AL', late.idx, ballet, loads, true);
-    reasons['AF'] = 'Split week — Push and Pull assigned separately.';
+    assigned.AP = early.idx; assigned.AL = late.idx; assigned.AF = null;
+    reasons.AP  = buildUpperReason('AP', early.idx, ballet, loads, true);
+    reasons.AL  = buildUpperReason('AL', late.idx, ballet, loads, true);
+    reasons.AF  = 'Split week — Push and Pull assigned separately.';
   } else if (upperSlots.length === 1) {
-    assigned['AP'] = null; assigned['AL'] = null;
-    assigned['AF'] = upperSlots[0].idx;
-    reasons['AF'] = buildUpperReason('AF', upperSlots[0].idx, ballet, loads, false);
-    reasons['AP'] = 'Only one upper slot — Full Body used instead.';
-    reasons['AL'] = 'Only one upper slot — Full Body used instead.';
+    assigned.AP = null; assigned.AL = null; assigned.AF = upperSlots[0].idx;
+    reasons.AF  = buildUpperReason('AF', upperSlots[0].idx, ballet, loads, false);
+    reasons.AP  = reasons.AL = 'Only one upper slot — Full Body used instead.';
   } else {
-    assigned['AP'] = null; assigned['AL'] = null; assigned['AF'] = null;
-    reasons['AP'] = 'No viable upper body slot this week.';
-    reasons['AL'] = 'No viable upper body slot this week.';
-    reasons['AF'] = 'No viable upper body slot this week.';
+    assigned.AP = assigned.AL = assigned.AF = null;
+    reasons.AP  = reasons.AL = reasons.AF = 'No viable upper body slot this week.';
   }
 
-  // ── Lower body sessions (B and C) ─────────────────────────
-  const usedDays = new Set(Object.values(assigned).filter(v=>v!==null));
+  const usedDays = new Set(Object.values(assigned).filter(v => v !== null));
 
   function scoreLowerDay(i) {
-    if (protectedDays.has(i)) return Infinity;
-    if (usedDays.has(i)) return Infinity;
+    if (protectedDays.has(i) || usedDays.has(i)) return Infinity;
     if (loads[i].lower >= LOWER_MAX) return Infinity;
     return loads[i].lower + slotBonus(i);
   }
 
-  // Day B — strength, first priority
-  let bestB=null, bestBScore=Infinity;
-  for (let i=0; i<7; i++) { const sc=scoreLowerDay(i); if(sc<bestBScore){bestBScore=sc;bestB=i;} }
-
-  if (bestB!==null && bestBScore<Infinity) {
-    assigned['B']=bestB; usedDays.add(bestB);
-    reasons['B']=buildLowerReason('B', bestB, ballet, loads);
+  let bestB = null, bestBScore = Infinity;
+  for (let i = 0; i < 7; i++) { const sc = scoreLowerDay(i); if (sc < bestBScore) { bestBScore = sc; bestB = i; } }
+  if (bestB !== null && bestBScore < Infinity) {
+    assigned.B = bestB; usedDays.add(bestB);
+    reasons.B  = buildLowerReason('B', bestB, ballet, loads);
   } else {
-    assigned['B']=null;
-    reasons['B']='No viable lower body slot — Day B skipped. Ballet lower load is too high this week for safe additional loading.';
+    assigned.B = null;
+    reasons.B  = 'No viable lower body slot — Day B skipped. Ballet lower load too high this week.';
   }
 
-  // Day C — plyo, needs ≥2 days from B, avoid adjacent full rehearsal
-  let bestC=null, bestCScore=Infinity;
-  for (let i=0; i<7; i++) {
+  let bestC = null, bestCScore = Infinity;
+  for (let i = 0; i < 7; i++) {
     let sc = scoreLowerDay(i);
-    if (sc===Infinity) continue;
-    if (assigned['B']!==null && Math.abs(i-assigned['B'])<2) continue;
-    // Penalise adjacent full rehearsal (CNS concern)
-    const adjReh=(i>0&&ballet[i-1].type==='reh')||(i<6&&ballet[i+1].type==='reh');
-    if (adjReh) sc+=3;
-    if (sc<bestCScore){bestCScore=sc;bestC=i;}
+    if (sc === Infinity) continue;
+    if (assigned.B !== null && Math.abs(i - assigned.B) < 2) continue;
+    const adjReh = (i > 0 && ballet[i-1].type === 'reh') || (i < 6 && ballet[i+1].type === 'reh');
+    if (adjReh) sc += 3;
+    if (sc < bestCScore) { bestCScore = sc; bestC = i; }
+  }
+  if (bestC !== null && bestCScore < Infinity) {
+    assigned.C = bestC; usedDays.add(bestC);
+    reasons.C  = buildLowerReason('C', bestC, ballet, loads);
+  } else {
+    assigned.C = null;
+    reasons.C  = 'No viable plyo slot — Day C skipped. Insufficient gap from Day B or ballet load too high.';
   }
 
-  if (bestC!==null && bestCScore<Infinity) {
-    assigned['C']=bestC; usedDays.add(bestC);
-    reasons['C']=buildLowerReason('C', bestC, ballet, loads);
-  } else {
-    assigned['C']=null;
-    reasons['C']='No viable plyo slot — Day C skipped. Insufficient recovery gap from Day B, or ballet load too high.';
+  let bestD = null, bestDScore = 999;
+  for (let i = 0; i < 7; i++) {
+    if (usedDays.has(i) || protectedDays.has(i)) continue;
+    const total = loads[i].upper + loads[i].lower;
+    if (total >= OPTIONAL_MAX) continue;
+    const sc = total + slotBonus(i);
+    if (sc < bestDScore) { bestDScore = sc; bestD = i; }
   }
-
-  // Day D — optional, any remaining low-load day
-  let bestD=null, bestDScore=999;
-  for (let i=0; i<7; i++) {
-    if (usedDays.has(i)||protectedDays.has(i)) continue;
-    const total=loads[i].upper+loads[i].lower;
-    if (total>=OPTIONAL_MAX) continue;
-    const sc=total+slotBonus(i);
-    if(sc<bestDScore){bestDScore=sc;bestD=i;}
-  }
-  if (bestD!==null && bestDScore<999) {
-    assigned['D']=bestD;
-    reasons['D']=`${DAYS[bestD]} — available low-load slot. Optional hypertrophy.`;
+  if (bestD !== null && bestDScore < 999) {
+    assigned.D = bestD;
+    reasons.D  = `${DAYS[bestD]} — available low-load slot. Optional hypertrophy.`;
   } else {
-    assigned['D']=null;
-    reasons['D']='No clean optional slot — Day D skipped.';
+    assigned.D = null;
+    reasons.D  = 'No clean optional slot — Day D skipped.';
   }
 
   return { assigned, reasons };
 }
 
 function buildUpperReason(session, dayIdx, ballet, loads, isSplit) {
-  if (dayIdx===null) return '';
-  const d=ballet[dayIdx]; const dayName=DAYS[dayIdx]; const parts=[];
-  if (d.type==='off') parts.push(`${dayName} is a day off — lowest upper body load`);
-  else if (loads[dayIdx].upper<=2) parts.push(`${dayName} has light upper body demand from ballet`);
+  if (dayIdx === null) return '';
+  const d = ballet[dayIdx], dayName = DAYS[dayIdx], parts = [];
+  if (d.type === 'off') parts.push(`${dayName} is a day off — lowest upper body load`);
+  else if (loads[dayIdx].upper <= 2) parts.push(`${dayName} has light upper body demand from ballet`);
   else parts.push(`${dayName} has the best available upper body slot`);
   if (isSplit) {
-    if (session==='AP') parts.push('Push assigned first — overhead priority early in week');
-    if (session==='AL') parts.push('Pull assigned second — 48h gap from Push maintained');
+    if (session === 'AP') parts.push('Push assigned first — overhead priority early in week');
+    if (session === 'AL') parts.push('Pull assigned second — 48h gap from Push maintained');
   } else {
     parts.push('only viable upper slot — Full Body compression used');
   }
-  const modNote = getUpperModNote(loads[dayIdx].upper);
-  if (modNote) parts.push(modNote);
+  const mn = getUpperModNote(loads[dayIdx].upper);
+  if (mn) parts.push(mn);
   return parts.join(' · ') + '.';
 }
 
 function buildLowerReason(session, dayIdx, ballet, loads) {
-  if (dayIdx===null) return '';
-  const d=ballet[dayIdx]; const dayName=DAYS[dayIdx]; const parts=[];
-  if (d.type==='off') parts.push(`${dayName} is a day off — lowest lower body load`);
-  else if (loads[dayIdx].lower<=2) parts.push(`${dayName} has light lower body demand`);
+  if (dayIdx === null) return '';
+  const d = ballet[dayIdx], dayName = DAYS[dayIdx], parts = [];
+  if (d.type === 'off') parts.push(`${dayName} is a day off — lowest lower body load`);
+  else if (loads[dayIdx].lower <= 2) parts.push(`${dayName} has light lower body demand`);
   else parts.push(`${dayName} has the best available lower body slot`);
-  if (session==='C') parts.push('plyometrics — clear of adjacent full rehearsal days');
-  const modNote = getLowerModNote(loads[dayIdx].lower);
-  if (modNote) parts.push(modNote);
+  if (session === 'C') parts.push('plyometrics — clear of adjacent full rehearsal days');
+  const mn = getLowerModNote(loads[dayIdx].lower);
+  if (mn) parts.push(mn);
   return parts.join(' · ') + '.';
 }
 
 function getUpperModNote(upperLoad) {
-  if (upperLoad>=5) return '⚠ Heavy day — gym after class, cap RPE at 7';
-  if (upperLoad>=3) return 'Moderate load — gym after class';
+  if (upperLoad >= 5) return '⚠ Heavy day — gym after class, cap RPE at 7';
+  if (upperLoad >= 3) return 'Moderate load — gym after class';
   return '';
 }
 function getLowerModNote(lowerLoad) {
-  if (lowerLoad>=3.5) return '⚠ Moderate leg load — halve sets, keep RPE';
+  if (lowerLoad >= 3.5) return '⚠ Moderate leg load — halve sets, keep RPE';
   return '';
 }
 
 function generatePlan() {
   const wk = getWeek(viewMonday);
   const { assigned, reasons } = assignGymDays(wk.ballet);
-
-  wk.plan = {
-    assigned,  // { A: dayIndex|null, ... }
-    reasons,
-    createdAt: new Date().toISOString()
-  };
+  wk.plan = { assigned, reasons, createdAt: new Date().toISOString() };
   saveWeeks();
   renderSchedule();
 }
 
 // ── Week view (plan generated) ─────────────────────────────
-function buildWeekView(wk, isCurrent) {
-  const insight = buildProgressInsight();
+function buildWeekView(wk) {
+  const summary = buildWeekSummary(wk);
 
-  // Detect duplicate session assignments (same sessionKey on multiple days)
-  const assignedArr = Object.entries(wk.plan.assigned).filter(([,idx])=>idx!==null);
-  const dayToSessions = {}; // dayIdx → [sessionKey, ...]
-  assignedArr.forEach(([sk,di])=>{
-    if (!dayToSessions[di]) dayToSessions[di]=[];
-    dayToSessions[di].push(sk);
-  });
+  const assignedArr = Object.entries(wk.plan.assigned).filter(([, idx]) => idx !== null);
+  const dayToSessions = {};
+  assignedArr.forEach(([sk, di]) => { if (!dayToSessions[di]) dayToSessions[di] = []; dayToSessions[di].push(sk); });
   const conflictDays = new Set(
-    Object.entries(dayToSessions).filter(([,arr])=>arr.length>1).map(([di])=>Number(di))
+    Object.entries(dayToSessions).filter(([, arr]) => arr.length > 1).map(([di]) => Number(di))
   );
 
   const editBar = editDaysMode ? `
     <div class="edit-mode-bar">
       <span class="edit-mode-lbl">✏️ Tap any day to reassign</span>
-      <button class="btn-done" onclick="exitEditDays()">Done</button>
+      <div class="edit-mode-actions">
+        <button class="btn-undo" onclick="undoEditDays()">Undo</button>
+        <button class="btn-done" onclick="exitEditDays()">Done</button>
+      </div>
     </div>` : '';
 
-  const dayCards = DAYS.map((day,i)=>{
+  const dayCards = DAYS.map((day, i) => {
     const ballet = wk.ballet[i];
     const sessionsOnDay = dayToSessions[i] || [];
     const sessionKey = sessionsOnDay[0] || null;
@@ -709,36 +696,29 @@ function buildWeekView(wk, isCurrent) {
     const isDone = !!log;
     const isConflict = conflictDays.has(i);
 
-    // Conflict note — list what's doubled
-    const conflictNote = isConflict && editDaysMode
-      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk=>SESS_LABEL[sk]||sk).join(' + ')} both assigned here</div>`
-      : isConflict
-      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk=>SESS_LABEL[sk]||sk).join(' + ')} — duplicate assignment</div>`
+    const conflictNote = isConflict
+      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk => SESS_LABEL[sk] || sk).join(' + ')} — duplicate assignment</div>`
       : '';
 
-    // Session menu (shown when this day is selected in edit mode)
-    const showMenu = editDaysMode && editDayMenu === i;
-    const menuHTML = showMenu ? buildSessionMenu(i, sessionsOnDay) : '';
+    const menuHTML = (editDaysMode && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay) : '';
 
-    let gymContent = '';
     if (sessionKey) {
       const sess = PROG.sessions[sessionKey];
-      const reason = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
+      const reason  = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
       const modNote = !editDaysMode ? getModNote(ballet) : null;
-
-      const clickAction = editDaysMode
+      const clickAct = editDaysMode
         ? `openEditDayMenu(${i})`
         : isDone ? `toggleHistEntry('${sessionKey}')` : `openLog('${sessionKey}',${i})`;
 
-      gymContent = `
-        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}" onclick="${clickAction}">
+      return `
+        <div class="day-card${editDaysMode ? ' editable' : ''}${isConflict ? ' conflict' : ''}" onclick="${clickAct}">
           <div class="day-card-hdr">
             <div>
               <div class="row">
-                <span class="badge b${sessionKey.toLowerCase()}">${SESS_LABEL[sessionKey]||sessionKey}</span>
+                <span class="badge ${SESS_BADGE[sessionKey] || 'bpre'}">${SESS_LABEL[sessionKey] || sessionKey}</span>
                 <span class="sm b5" style="margin-left:4px">${sess.name}</span>
               </div>
-              <div class="day-meta">${day}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
+              <div class="day-meta">${day}${ballet.type ? ' · ' + DTYPE_LABELS[ballet.type] : ''}${ballet.hours ? ' · ' + ballet.hours + 'h' : ''}</div>
             </div>
             <div class="day-status">
               ${editDaysMode
@@ -749,155 +729,194 @@ function buildWeekView(wk, isCurrent) {
             </div>
           </div>
           ${conflictNote}
-          ${reason?`<div class="reason-text">🧠 ${reason}${modNote?'<br>'+modNote:''}</div>`:''}
-          ${!editDaysMode&&isDone&&expandedHist===sessionKey?buildInlineLog(log,sessionKey):''}
+          ${reason ? `<div class="reason-text">🧠 ${reason}${modNote ? '<br>' + modNote : ''}</div>` : ''}
+          ${!editDaysMode && isDone && expandedHist === sessionKey ? buildInlineLog(log, sessionKey) : ''}
         </div>
         ${menuHTML}`;
     } else {
       const typeLabel = ballet.type ? DTYPE_LABELS[ballet.type] : '';
-      const clickAction = editDaysMode ? `openEditDayMenu(${i})` : '';
-      gymContent = `
-        <div class="day-card${editDaysMode?' editable':''}" ${editDaysMode?`onclick="${clickAction}"`:''}>
+      const clickAct  = editDaysMode ? `openEditDayMenu(${i})` : '';
+      return `
+        <div class="day-card${editDaysMode ? ' editable' : ''}"${editDaysMode ? ` onclick="${clickAct}"` : ''}>
           <div class="day-card-hdr">
             <div>
               <div class="sm b5" style="color:var(--tx3)">${day}</div>
-              <div class="day-meta">${typeLabel||'Not scheduled'}</div>
+              <div class="day-meta">${typeLabel || 'Not scheduled'}</div>
             </div>
-            <span class="rest-pill">${editDaysMode?'Tap to assign':ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
+            <span class="rest-pill">${editDaysMode ? 'Tap to assign' : ballet.type === 'perf' ? '🎭 Perf' : ballet.type === 'off' ? 'Rest' : 'No gym'}</span>
           </div>
         </div>
         ${menuHTML}`;
     }
-    return gymContent;
   }).join('');
 
-  const actionRow = editDaysMode
-    ? '' // Done button is in the edit bar
-    : `<div style="padding:0 16px 8px;display:flex;gap:8px">
-        <button class="btn-g" style="flex:1;text-align:center" onclick="editPlan()">← Edit schedule</button>
-        <button class="btn-g" style="flex:1;text-align:center" onclick="enterEditDays()">✏️ Edit days</button>
-      </div>`;
+  const actionRow = editDaysMode ? '' : `
+    <div style="padding:0 16px 8px;display:flex;gap:8px">
+      <button class="btn-g" style="flex:1;text-align:center" onclick="editPlan()">← Edit schedule</button>
+      <button class="btn-g" style="flex:1;text-align:center" onclick="enterEditDays()">✏️ Edit days</button>
+    </div>`;
 
   return `
     ${editBar}
-    ${!editDaysMode?insight:''}
+    ${!editDaysMode ? summary : ''}
     <div class="week-grid">${dayCards}</div>
     ${actionRow}
     <div class="bpad"></div>`;
 }
 
-function buildSessionMenu(dayIdx, sessionsOnDay) {
-  const sessions = Object.entries(PROG.sessions);
-  const opts = sessions.map(([key, sess])=>{
-    const isActive = sessionsOnDay.includes(key);
-    return `
-      <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
-        <div class="session-opt-lbl">
-          <span class="badge b${key.toLowerCase()}">${SESS_LABEL[key]||key}</span>
-          <span class="sm">${sess.name}</span>
-        </div>
-        ${isActive?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
-      </div>`;
-  }).join('');
+// ── Weekly summary card ────────────────────────────────────
+function buildWeekSummary(wk) {
+  const logs = Object.values(wk.logs || {});
+  const planned = Object.values(wk.plan?.assigned || {}).filter(v => v !== null).length;
+  const done    = logs.length;
+  if (done === 0 && planned === 0) return '';
 
-  const noGymActive = sessionsOnDay.length === 0;
+  const totalLoad = logs.reduce((s, l) => s + (l.sRPE || 0), 0);
+  const logsWithFeel = logs.filter(l => l.feel);
+  const avgFeel = logsWithFeel.length > 0
+    ? (logsWithFeel.reduce((s, l) => s + l.feel, 0) / logsWithFeel.length).toFixed(1) : null;
+  const logsWithAcc = logs.filter(l => l.accuracy?.rate !== undefined);
+  const avgAcc = logsWithAcc.length > 0
+    ? Math.round(logsWithAcc.reduce((s, l) => s + l.accuracy.rate, 0) / logsWithAcc.length) : null;
+
+  const statCell = (val, lbl) => `
+    <div class="week-sum-stat">
+      <div class="week-sum-val${val === '—' ? ' dim' : ''}">${val}</div>
+      <div class="week-sum-lbl">${lbl}</div>
+    </div>`;
+
+  const alert = totalLoad > 0 ? getLoadAlert(totalLoad) : null;
+  const alertHTML = alert ? `
+    <div class="week-sum-alert ${alert.level}">
+      <strong>${alert.level === 'warn' ? '⚠ Load spike' : '📈 Load rising'}</strong>
+      This week's load is ${Math.round((alert.ratio - 1) * 100)}% above the 4-week average. Monitor recovery closely.
+    </div>` : '';
+
+  return `
+    <div class="week-sum-card">
+      <div class="week-sum-title">Week at a glance</div>
+      <div class="week-sum-grid">
+        ${statCell(done + '/' + planned, 'sessions')}
+        ${statCell(totalLoad > 0 ? totalLoad.toLocaleString() : '—', 'load AU')}
+        ${statCell(avgFeel !== null ? avgFeel : '—', 'avg feel')}
+        ${statCell(avgAcc !== null ? avgAcc + '%' : '—', 'accuracy')}
+      </div>
+      ${alertHTML}
+    </div>`;
+}
+
+// ── ACWR load alert ────────────────────────────────────────
+function getLoadAlert(currentWeekLoad) {
+  const recentLoads = [];
+  for (let w = 1; w <= 4; w++) {
+    const m = new Date(viewMonday);
+    m.setDate(m.getDate() - w * 7);
+    const wk = weeks[weekKey(m)];
+    if (wk) {
+      const load = Object.values(wk.logs || {}).reduce((s, l) => s + (l.sRPE || 0), 0);
+      if (load > 0) recentLoads.push(load);
+    }
+  }
+  if (recentLoads.length < 2) return null;
+  const avg   = recentLoads.reduce((s, v) => s + v, 0) / recentLoads.length;
+  const ratio = currentWeekLoad / avg;
+  if (ratio > 1.25) return { level: 'warn', ratio, avg };
+  if (ratio > 1.15) return { level: 'note', ratio, avg };
+  return null;
+}
+
+// ── Session menu (edit days) ───────────────────────────────
+function buildSessionMenu(dayIdx, sessionsOnDay) {
+  const opts = Object.entries(PROG.sessions).map(([key, sess]) => `
+    <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
+      <div class="session-opt-lbl">
+        <span class="badge ${SESS_BADGE[key] || 'bpre'}">${SESS_LABEL[key] || key}</span>
+        <span class="sm">${sess.name}</span>
+      </div>
+      ${sessionsOnDay.includes(key) ? '<span class="session-tick">✓</span>' : '<span class="session-tick-empty"></span>'}
+    </div>`).join('');
   const noGymOpt = `
     <div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
       <div class="session-opt-lbl">
         <span class="badge bpre">—</span>
         <span class="sm dim">No gym this day</span>
       </div>
-      ${noGymActive?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
+      ${sessionsOnDay.length === 0 ? '<span class="session-tick">✓</span>' : '<span class="session-tick-empty"></span>'}
     </div>`;
-
   return `<div class="session-menu">${opts}${noGymOpt}</div>`;
 }
 
+// ── Edit days mode controls ────────────────────────────────
 function enterEditDays() {
-  editDaysMode = true;
-  editDayMenu  = null;
+  editDaysMode     = true;
+  editDayMenu      = null;
+  editDaysSnapshot = JSON.parse(JSON.stringify(getWeek(viewMonday).plan.assigned));
   renderSchedule();
 }
-
 function exitEditDays() {
-  editDaysMode = false;
-  editDayMenu  = null;
-  saveWeeks();
-  renderSchedule();
+  editDaysMode = false; editDayMenu = null; editDaysSnapshot = null;
+  saveWeeks(); renderSchedule();
 }
-
+function undoEditDays() {
+  const wk = getWeek(viewMonday);
+  wk.plan.assigned = JSON.parse(JSON.stringify(editDaysSnapshot));
+  editDaysMode = false; editDayMenu = null; editDaysSnapshot = null;
+  saveWeeks(); renderSchedule();
+}
 function openEditDayMenu(dayIdx) {
   editDayMenu = editDayMenu === dayIdx ? null : dayIdx;
   renderSchedule();
 }
-
 function assignDaySession(dayIdx, sessionKey) {
   const wk = getWeek(viewMonday);
   if (sessionKey) {
-    // Move the selected session to this day.
-    // Do NOT clear what's already on this day — that's how conflicts are created deliberately.
-    // The session itself can only be on one day, so update its day index directly.
     wk.plan.assigned[sessionKey] = dayIdx;
   } else {
-    // "No gym" — remove ALL sessions currently assigned to this day
-    Object.keys(wk.plan.assigned).forEach(sk=>{
-      if (wk.plan.assigned[sk] === dayIdx) wk.plan.assigned[sk] = null;
-    });
+    Object.keys(wk.plan.assigned).forEach(sk => { if (wk.plan.assigned[sk] === dayIdx) wk.plan.assigned[sk] = null; });
   }
   editDayMenu = null;
-  renderSchedule(); // save happens on Done
+  renderSchedule();
 }
-
 function getModNote(ballet) {
   if (!ballet.type) return '';
-  if (ballet.type==='perf') return '⚠️ Performance day — gym not recommended.';
-  if (ballet.type==='off') return '';
-  const hrs = Math.max(parseFloat(ballet.hours)||0, 0.5);
-  const int = ballet.intensity || 3;
-  // Use same coefficients as the engine's computeLoad
-  const lowerLoad = ballet.type==='per' ? int * hrs * 0.8 : int * hrs * 0.5;
-  const upperLoad = ballet.type==='per' ? int * hrs * 0.2 : int * hrs * 0.4;
-  const dominant = Math.max(lowerLoad, upperLoad);
-  if (dominant >= 6) return '⚠️ Heavy ballet load — halve sets, keep RPE. Gym after class minimum 4h.';
-  if (dominant >= 3) return 'Moderate load — monitor RPE. Gym after class.';
+  if (ballet.type === 'perf') return '⚠️ Performance day — gym not recommended.';
+  if (ballet.type === 'off')  return '';
+  const hrs  = Math.max(parseFloat(ballet.hours) || 0, 0.5);
+  const int  = ballet.intensity || 3;
+  const lowerLoad = ballet.type === 'per' ? int * hrs * 0.8 : int * hrs * 0.5;
+  const upperLoad = ballet.type === 'per' ? int * hrs * 0.2 : int * hrs * 0.4;
+  const dom = Math.max(lowerLoad, upperLoad);
+  if (dom >= 6) return '⚠️ Heavy ballet load — halve sets, keep RPE. Gym minimum 4h after class.';
+  if (dom >= 3) return 'Moderate load — monitor RPE. Gym after class.';
   return '';
 }
+function editPlan() { const wk = getWeek(viewMonday); wk.plan = null; saveWeeks(); renderSchedule(); }
+function toggleHistEntry(key) { expandedHist = expandedHist === key ? null : key; renderSchedule(); }
 
-function editPlan() {
-  const wk = getWeek(viewMonday);
-  wk.plan = null;
-  saveWeeks();
-  renderSchedule();
-}
-
-function toggleHistEntry(key) {
-  expandedHist = expandedHist===key ? null : key;
-  renderSchedule();
-}
-
+// ── Inline log summary (in week view) ─────────────────────
 function buildInlineLog(log, sessionKey) {
   if (!log) return '';
-  const prog = PROG.sessions[sessionKey];
-  const exLines = (log.exLogs||[]).map((el,i)=>{
-    const ex = prog.exercises[i];
-    if (!ex) return '';
-    const sStr = el.sets.map(s=>{
-      if (ex.type==='plyo') return s.done?'✓':'—';
-      if (ex.type==='timed'||ex.type==='carry') return s.dur?`${s.dur}s`:null;
-      if (ex.type==='bodyweight') return s.reps?`${s.reps}r @${s.rpe||'?'}`:null;
-      return s.reps?`${s.reps}r · ${s.weight||'?'}kg @${s.rpe||'?'}`:null;
-    }).filter(Boolean).join('  ');
-    return `<div class="hex">${ex.name}: <span>${el.sets.length} sets${sStr?' — '+sStr:''}</span></div>`;
+  const sess = PROG.sessions[sessionKey];
+  const exLines = (log.exLogs || []).map((el, i) => {
+    const ex = sess?.exercises?.[i];
+    const name = ex?.name || `Exercise ${i+1}`;
+    const cnt  = ex?.sides
+      ? (el.setsR?.length || 0) + (el.setsL?.length || 0)
+      : (el.sets?.length || 0);
+    const fmt  = countAndFmt(el, ex);
+    return `<div class="hex">${name}: <span>${cnt} sets${fmt !== '—' ? ' — ' + fmt : ''}</span></div>`;
   }).join('');
   const acc = log.accuracy;
-  const accColor = acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
+  const ac  = acc ? (acc.level === 'good' ? 'var(--gn)' : acc.level === 'warn' ? 'var(--co)' : 'var(--am)') : 'var(--tx3)';
+  const sRPENote = log.sRPE ? `<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min</div>` : '';
   return `
     <div style="padding:0 14px 12px;border-top:1px solid var(--bd)">
       ${exLines}
-      ${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${accColor}">
-        <div class="xs b6" style="color:${accColor}">${acc.verdict}</div>
+      ${sRPENote}
+      ${acc ? `<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}">
+        <div class="xs b6" style="color:${ac}">${acc.verdict}</div>
         <div class="xs dimmer mt1">${acc.detail}</div>
-      </div>`:''}
+      </div>` : ''}
       <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn-g" style="flex:1;text-align:center;font-size:12px" onclick="openEditLog('${sessionKey}',event)">Edit log</button>
         <button class="del-btn" onclick="promptDel('${sessionKey}',event)">Delete</button>
@@ -910,76 +929,76 @@ function buildInlineLog(log, sessionKey) {
 // ═══════════════════════════════════════════════════════════
 function openLog(sessionKey, dayIdx) {
   editDaysMode = false; editDayMenu = null;
-  const wk = getWeek(viewMonday);
-  const existingLog = wk.logs[sessionKey];
+  const wk  = getWeek(viewMonday);
+  const existing = wk.logs[sessionKey];
   lf = {
-    sessionKey,
-    dayIdx,
-    step: 'presession',
-    tags: [],
-    mods: null,
-    modsAccepted: false,
-    exLogs: PROG.sessions[sessionKey].exercises.map(()=>({ sets:[] })),
-    openEx: null,
-    feel: 3,
-    notes: '',
-    accuracy: null,
-    isEdit: false,
+    sessionKey, dayIdx,
+    step:            'presession',
+    tags:            [],
+    mods:            null,
+    modsAccepted:    false,
+    exLogs:          PROG.sessions[sessionKey].exercises.map(ex =>
+                       ex.sides ? { setsR: [], setsL: [] } : { sets: [] }),
+    openEx:          null,
+    warmupOpen:      false,
+    feel:            3,
+    duration:        0,
+    notes:           '',
+    accuracy:        null,
+    isEdit:          false,
     presessionSaved: false
   };
-  if (existingLog) {
-    // Edit mode
-    lf.isEdit = true;
-    lf.step = 'logging';
-    lf.exLogs = JSON.parse(JSON.stringify(existingLog.exLogs));
-    lf.feel = existingLog.feel;
-    lf.notes = existingLog.notes;
-    lf.mods = existingLog.mods||null;
-    lf.tags = existingLog.tags||[];
+  if (existing) {
+    lf.isEdit    = true;
+    lf.step      = 'logging';
+    lf.exLogs    = JSON.parse(JSON.stringify(existing.exLogs));
+    lf.feel      = existing.feel;
+    lf.duration  = existing.duration || 0;
+    lf.notes     = existing.notes;
+    lf.mods      = existing.mods || null;
+    lf.tags      = existing.tags || [];
   }
   renderSchedule();
 }
-
 function openEditLog(sessionKey, e) {
   e.stopPropagation();
-  const wk = getWeek(viewMonday);
-  const dayIdx = wk.plan.assigned[sessionKey];
-  openLog(sessionKey, dayIdx);
+  openLog(sessionKey, getWeek(viewMonday).plan.assigned[sessionKey]);
 }
-
 function renderLogFlow() {
   const el = document.getElementById('page-schedule');
-  const steps = {
-    presession: buildPreSession,
-    logging:    buildLogSession,
-    accuracy:   buildAccuracyScreen
-  };
-  el.innerHTML = (steps[lf.step]||buildPreSession)();
+  const steps = { presession: buildPreSession, logging: buildLogSession, accuracy: buildAccuracyScreen };
+  el.innerHTML = (steps[lf.step] || buildPreSession)();
 }
+function backToSchedule() { lf = null; expandedHist = null; renderSchedule(); }
 
-// Back button — always returns to schedule safely
-function backToSchedule() {
-  lf = null;
-  expandedHist = null;
-  renderSchedule();
-}
-
-// ── Pre-session ────────────────────────────────────────────
+// ── Pre-session check-in ───────────────────────────────────
 function buildPreSession() {
-  const sess = PROG.sessions[lf.sessionKey];
-  const tags = PROG.tags;
-  const recTags  = Object.entries(tags).filter(([,t])=>t.group==='rec');
-  const cauTags  = Object.entries(tags).filter(([,t])=>t.group==='cau'||t.group==='warn');
-  const count    = lf.tags.length;
-  const modPrev  = count>0 ? buildModPreview() : '';
-  const hasWarn  = lf.tags.includes('sharp_pain');
+  const sess   = PROG.sessions[lf.sessionKey];
+  const tags   = PROG.tags;
+  const recTags = Object.entries(tags).filter(([, t]) => t.group === 'rec');
+  const cauTags = Object.entries(tags).filter(([, t]) => t.group === 'cau' || t.group === 'warn');
+  const count  = lf.tags.length;
+  const hasWarn = lf.tags.includes('sharp_pain');
 
+  // Tag limit raised to 3
   const tagBtn = (key, tag) => {
     const isOn = lf.tags.includes(key);
-    const cls  = isOn ? (tag.group==='rec'?'rec':tag.group==='warn'?'wrn':'cau') : '';
-    const dis  = !isOn && count>=2;
-    return `<button class="tag${cls?' '+cls:''}" onclick="toggleTag('${key}')" ${dis?'style="opacity:.35;pointer-events:none"':''}>${tag.emoji} ${tag.label}</button>`;
+    const cls  = isOn ? (tag.group === 'rec' ? 'rec' : tag.group === 'warn' ? 'wrn' : 'cau') : '';
+    const dis  = !isOn && count >= 3;
+    return `<button class="tag${cls ? ' ' + cls : ''}" onclick="toggleTag('${key}')"${dis ? ' style="opacity:.35;pointer-events:none"' : ''}>${tag.emoji} ${tag.label}</button>`;
   };
+
+  // Passive injury notice — informational only, never blocks
+  const activeInj = injuries.filter(inj => inj.status !== 'resolved');
+  const injNotice = activeInj.length > 0 ? `
+    <div class="ndim"><strong>Active injury flags</strong>
+      ${activeInj.map(inj =>
+        `<div class="xs mt1" style="color:${SEVERITY_COLORS[inj.severity]||'var(--co)'}">● ${inj.region} — ${SEVERITY_LABELS[inj.severity]}</div>`
+      ).join('')}
+      <div class="xs dimmer mt1">For context only — update status in the Body tab.</div>
+    </div>` : '';
+
+  const modPrev = count > 0 ? buildModPreview() : '';
 
   return `
     <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
@@ -990,23 +1009,24 @@ function buildPreSession() {
       <button class="btn-skip" onclick="skipPresession()">Skip check-in →</button>
     </div>
     <div style="padding:0 16px 4px" class="row">
-      <span class="badge b${lf.sessionKey.toLowerCase()}" style="display:inline-flex">${SESS_LABEL[lf.sessionKey]||lf.sessionKey}</span>
+      <span class="badge ${SESS_BADGE[lf.sessionKey] || 'bpre'}" style="display:inline-flex">${SESS_LABEL[lf.sessionKey] || lf.sessionKey}</span>
       <span class="sm b5">${sess.name}</span>
     </div>
     <div class="sec" style="padding-top:12px">Pre-session check-in</div>
+    ${injNotice}
     <div class="card"><div class="card-body">
       <div class="tag-grp-lbl">Recovery</div>
-      <div class="tags-wrap">${recTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
+      <div class="tags-wrap">${recTags.map(([k, t]) => tagBtn(k, t)).join('')}</div>
       <div class="tag-grp-lbl">Caution</div>
-      <div class="tags-wrap">${cauTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
-      <div class="xs dimmer">${count>0?count+'/2 selected — tap to deselect':'Select up to 2 · or skip'}</div>
+      <div class="tags-wrap">${cauTags.map(([k, t]) => tagBtn(k, t)).join('')}</div>
+      <div class="xs dimmer">${count > 0 ? count + '/3 selected — tap to deselect' : 'Select up to 3 · or skip'}</div>
     </div></div>
-    ${hasWarn?`<div class="nred"><strong>🚨 Sharp / acute pain flagged</strong>Do not train through sharp pain. Requires physiotherapist assessment before loading this pattern again.</div>`:''}
+    ${hasWarn ? `<div class="nred"><strong>🚨 Sharp / acute pain flagged</strong>Do not train through sharp pain. Requires physiotherapist assessment before loading this pattern again.</div>` : ''}
     ${modPrev}
-    ${count>0&&!hasWarn?`<div style="padding:0 16px 8px;display:flex;flex-direction:column;gap:8px">
+    ${count > 0 && !hasWarn ? `<div style="padding:0 16px 8px;display:flex;flex-direction:column;gap:8px">
       <button class="btn-p" onclick="acceptMods()">Accept modifications & begin →</button>
       <button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Train as prescribed</button>
-    </div>`:hasWarn?`<div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Proceed anyway (not recommended)</button></div>`:''}
+    </div>` : hasWarn ? `<div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Proceed anyway (not recommended)</button></div>` : ''}
     <div class="bpad"></div>`;
 }
 
@@ -1014,11 +1034,11 @@ function buildModPreview() {
   const mods = computeMods(lf.tags, lf.sessionKey);
   const sess = PROG.sessions[lf.sessionKey];
   const lines = [];
-  sess.exercises.forEach((ex,i)=>{
-    const m = mods.exMods[i]; const parts=[];
-    if (m.setReduction>0) parts.push(`→ ${m.adjSets} sets (was ${ex.sets})`);
+  sess.exercises.forEach((ex, i) => {
+    const m = mods.exMods[i]; const parts = [];
+    if (m.setReduction > 0) parts.push(`→ ${m.adjSets} sets (was ${ex.sets})`);
     if (m.notes.length) parts.push(...m.notes);
-    if (mods.globalRPECap&&(ex.type==='loaded'||ex.type==='bodyweight')) parts.push(`cap RPE ${mods.globalRPECap}`);
+    if (mods.globalRPECap && (ex.type === 'loaded' || ex.type === 'bodyweight')) parts.push(`cap RPE ${mods.globalRPECap}`);
     if (parts.length) lines.push(`<div class="mod-line"><strong>${ex.name}</strong> — ${parts.join(' · ')}</div>`);
   });
   if (!lines.length) return '';
@@ -1027,28 +1047,30 @@ function buildModPreview() {
 
 function toggleTag(key) {
   const idx = lf.tags.indexOf(key);
-  if (idx>-1) lf.tags.splice(idx,1);
-  else if (lf.tags.length<2) lf.tags.push(key);
+  if (idx > -1) lf.tags.splice(idx, 1);
+  else if (lf.tags.length < 3) lf.tags.push(key);  // limit raised to 3
   renderSchedule();
 }
 function acceptMods() {
   lf.mods = computeMods(lf.tags, lf.sessionKey);
   lf.modsAccepted = true;
   savePresession();
-  lf.step='logging';
+  lf.step = 'logging';
   renderSchedule();
 }
 function skipPresession() {
-  lf.mods = null;
-  lf.modsAccepted = false;
+  lf.mods = null; lf.modsAccepted = false;
   savePresession();
-  lf.step='logging';
+  lf.step = 'logging';
   renderSchedule();
 }
 function savePresession() {
-  if (lf.presessionSaved||lf.isEdit) return;
-  if (lf.tags.length===0) return;
-  const entry = { id:Date.now().toString(), type:'presession', date:new Date().toISOString(), sessionKey:lf.sessionKey, tags:[...lf.tags], modsAccepted:lf.modsAccepted, sessionNotes:lf.tags.map(t=>PROG.tags[t]?.note).filter(Boolean) };
+  if (lf.presessionSaved || lf.isEdit || lf.tags.length === 0) return;
+  const entry = {
+    id: Date.now().toString(), type: 'presession', date: new Date().toISOString(),
+    sessionKey: lf.sessionKey, tags: [...lf.tags], modsAccepted: lf.modsAccepted,
+    sessionNotes: lf.tags.map(t => PROG.tags[t]?.note).filter(Boolean)
+  };
   const wk = getWeek(viewMonday);
   if (!wk.presessionLogs) wk.presessionLogs = [];
   wk.presessionLogs.push(entry);
@@ -1059,56 +1081,90 @@ function savePresession() {
 // ── Log session ────────────────────────────────────────────
 function buildLogSession() {
   const sess = PROG.sessions[lf.sessionKey];
-  const prevWkMonday = new Date(viewMonday); prevWkMonday.setDate(prevWkMonday.getDate()-7);
-  const prevWk = weeks[weekKey(prevWkMonday)];
-  const prevLog = prevWk?.logs?.[lf.sessionKey];
 
-  const exCards = sess.exercises.map((ex,i)=>{
-    const exLog   = lf.exLogs[i];
-    const isOpen  = lf.openEx===i;
-    const mod     = lf.mods?.exMods?.[i];
-    const adjSets = mod?.adjSets ?? ex.sets;
-    const prevEx  = prevLog?.exLogs?.[i];
-    const prevRef = prevEx?.sets?.length>0 ? prevEx.sets.filter(s=>s.reps||s.weight||s.dur||s.done).map(s=>
-      ex.type==='plyo'?(s.done?'✓':'—'):ex.type==='timed'||ex.type==='carry'?`${s.dur||'?'}s`:ex.type==='bodyweight'?`${s.reps||'?'}r @${s.rpe||'?'}`:`${s.reps||'?'}r · ${s.weight||'?'}kg @${s.rpe||'?'}`
-    ).join('  ') : '';
-    const modNote = mod&&mod.setReduction>0?`<div class="xs" style="color:var(--am);margin-top:2px">↓ ${adjSets} sets today</div>`:'';
+  // Previous week reference
+  const prevMon = new Date(viewMonday); prevMon.setDate(prevMon.getDate() - 7);
+  const prevLog = weeks[weekKey(prevMon)]?.logs?.[lf.sessionKey];
+
+  const warmupCard = buildWarmupCard(sess);
+
+  const exCards = sess.exercises.map((ex, i) => {
+    const exLog    = lf.exLogs[i];
+    const isOpen   = lf.openEx === i;
+    const mod      = lf.mods?.exMods?.[i];
+    const adjSets  = mod?.adjSets ?? ex.sets;
+    const prevEx   = prevLog?.exLogs?.[i];
+
+    // Previous reference — handles sided and all types
+    let prevRef = '';
+    if (prevEx) {
+      if (ex.sides) {
+        const rParts = (prevEx.setsR || []).map(s => fmtSet(s, ex)).filter(v => v !== '—');
+        const lParts = (prevEx.setsL || []).map(s => fmtSet(s, ex)).filter(v => v !== '—');
+        if (rParts.length || lParts.length) prevRef = `R: ${rParts.join(' ') || '—'} / L: ${lParts.join(' ') || '—'}`;
+      } else {
+        const parts = (prevEx.sets || []).map(s => fmtSet(s, ex)).filter(v => v !== '—');
+        prevRef = parts.join('  ');
+      }
+    }
+
+    const loggedCount = ex.sides
+      ? (exLog.setsR?.length || 0) + (exLog.setsL?.length || 0)
+      : (exLog.sets?.length || 0);
+    const modNote = mod && mod.setReduction > 0
+      ? `<div class="xs" style="color:var(--am);margin-top:2px">↓ ${adjSets} sets today</div>` : '';
+
     return `
     <div class="card">
-      <div class="ex-hdr${isOpen?' open':''}" onclick="toggleEx(${i})">
+      <div class="ex-hdr${isOpen ? ' open' : ''}" onclick="toggleEx(${i})">
         <div style="flex:1;min-width:0">
           <div class="sm b5">${ex.name}</div>
-          <div class="xs dimmer mt1">${ex.prescribed} · RPE ${ex.rpe}${exLog.sets.length?' · '+exLog.sets.length+' logged':''}</div>
+          <div class="xs dimmer mt1">${ex.prescribed} · RPE ${ex.rpe}${loggedCount ? ' · ' + loggedCount + ' logged' : ''}</div>
           ${modNote}
-          ${prevRef&&!isOpen?`<div class="xs mt1 mono" style="color:var(--tx3);font-size:10px">↩ ${prevRef}</div>`:''}
+          ${prevRef && !isOpen ? `<div class="xs mt1 mono" style="color:var(--tx3);font-size:10px">↩ ${prevRef}</div>` : ''}
         </div>
-        <svg class="chev${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+        <svg class="chev${isOpen ? ' open' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
-      ${isOpen?`<div class="ex-body">
-        ${prevRef?`<div class="xs mono mb1" style="color:var(--tx3);padding:5px 8px;background:var(--bg2);border-radius:6px;font-size:10px">↩ Last: ${prevRef}</div>`:''}
+      ${isOpen ? `<div class="ex-body">
+        ${prevRef ? `<div class="xs mono mb1" style="color:var(--tx3);padding:5px 8px;background:var(--bg2);border-radius:6px;font-size:10px">↩ Last: ${prevRef}</div>` : ''}
+        ${ex.note ? `<div class="xs dimmer mb1" style="line-height:1.4;font-size:11px;padding:4px 0">${ex.note}</div>` : ''}
         ${buildSetRowsNew(ex, exLog, i, adjSets)}
-      </div>`:''}
+      </div>` : ''}
     </div>`;
   }).join('');
 
-  const feelBtns = [1,2,3,4,5].map(v=>
-    `<button class="rbtn${lf.feel===v?' on':''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`
+  const feelBtns = [1,2,3,4,5].map(v =>
+    `<button class="rbtn${lf.feel === v ? ' on' : ''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`
   ).join('');
+
+  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
+  const durationBtn = `
+    <div class="srpe-row">
+      <button class="srpe-btn" onclick="openDurationPicker()">
+        ${lf.duration > 0
+          ? `<span class="srpe-val">${lf.duration}</span><span class="srpe-unit">min</span>`
+          : '<span class="val-btn-empty">Set duration</span>'}
+      </button>
+      <span class="srpe-note">${sRPE !== null ? `sRPE: <strong style="color:var(--tx)">${sRPE}</strong> AU` : 'Session RPE × duration = training load'}</span>
+    </div>`;
 
   return `
     <div style="padding:12px 16px 8px;display:flex;align-items:center;gap:10px">
-      <button class="btn-back" onclick="${lf.isEdit?'backToSchedule()':'lf.step=\'presession\';renderSchedule()'}">
+      <button class="btn-back" onclick="${lf.isEdit ? 'backToSchedule()' : 'lf.step=\'presession\';renderSchedule()'}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-        ${lf.isEdit?'Cancel':'Back'}
+        ${lf.isEdit ? 'Cancel' : 'Back'}
       </button>
-      <span class="badge b${lf.sessionKey.toLowerCase()}">${SESS_LABEL[lf.sessionKey]||lf.sessionKey}</span>
+      <span class="badge ${SESS_BADGE[lf.sessionKey] || 'bpre'}">${SESS_LABEL[lf.sessionKey] || lf.sessionKey}</span>
       <span class="sm b5">${sess.name}</span>
     </div>
+    ${warmupCard}
     ${exCards}
     <div class="card"><div class="card-body">
       <div class="lbl">Overall session feel</div>
       <div class="rating">${feelBtns}</div>
       <div class="xs dimmer mt1" style="text-align:center">1 = Struggled · 3 = Expected · 5 = Strong</div>
+      <div class="lbl" style="margin-top:12px">Session duration (for training load)</div>
+      ${durationBtn}
     </div></div>
     <div class="card"><div class="card-body">
       <div class="lbl">Notes (optional)</div>
@@ -1120,86 +1176,188 @@ function buildLogSession() {
     <div class="bpad"></div>`;
 }
 
-// ── Set rows with picker ───────────────────────────────────
+// ── Warm-up card ───────────────────────────────────────────
+function buildWarmupCard(sess) {
+  if (!sess.warmup?.length) return '';
+  const isOpen = lf.warmupOpen;
+  const items  = sess.warmup.map(w => `
+    <div class="warmup-item">
+      <div class="warmup-name">${w.name}</div>
+      <div class="warmup-pre">${w.prescription}</div>
+      ${w.note ? `<div class="warmup-note">${w.note}</div>` : ''}
+    </div>`).join('');
+  return `
+    <div class="card warmup-card">
+      <div class="ex-hdr${isOpen ? ' open' : ''}" onclick="lf.warmupOpen=!lf.warmupOpen;renderSchedule()">
+        <div style="flex:1">
+          <div class="sm b5" style="color:var(--am)">▷ Warm-Up Sequence</div>
+          <div class="xs dimmer mt1">${sess.warmup.length} movements · ${isOpen ? 'tap to collapse' : 'tap to expand'}</div>
+        </div>
+        <svg class="chev${isOpen ? ' open' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
+      ${isOpen ? `<div class="ex-body">${items}</div>` : ''}
+    </div>`;
+}
+
+// ── Set rows ───────────────────────────────────────────────
 function buildSetRowsNew(ex, exLog, exIdx, adjSets) {
-  const colLbls = ex.type==='loaded'?['REPS','KG','RPE']:
-    ex.type==='bodyweight'?['REPS','RPE']:
-    ex.type==='timed'||ex.type==='carry'?['SEC','RPE']:null;
+  // Sided exercises render two independent R / L sub-sections
+  if (ex.sides) return buildSidedRows(ex, exLog, exIdx, adjSets);
 
-  const head = colLbls?`<div class="xs dimmer mono mb1" style="display:flex;gap:5px;padding-left:27px">
-    ${colLbls.map(l=>`<div style="flex:1;text-align:center">${l}</div>`).join('')}
-  </div>`:`<div class="xs dimmer mt1 mb1" style="padding-left:4px">Prescribed: ${ex.prescribed}</div>`;
+  // Column header for non-sided exercises
+  const colLbls = ex.type === 'loaded'
+    ? ['REPS','KG','RPE']
+    : ex.type === 'bodyweight' ? ['REPS','RPE']
+    : ex.type === 'timed' || ex.type === 'carry' ? ['SEC','RPE']
+    : ex.type === 'jump' ? (ex.measureLabel === 'cm' ? ['CM','QUAL','RPE'] : ['QUAL','RPE'])
+    : null;
 
-  const rows = exLog.sets.map((set,si)=>{
-    if (ex.type==='plyo') return `
-      <div class="set-row">
-        <div class="set-n">${si+1}</div>
-        <button class="plyo-done${set.done?' done':''}" onclick="updSet(${exIdx},${si},'done',${!set.done});renderSchedule()">${set.done?'✓ Done':'Tap to mark done'}</button>
+  const head = colLbls
+    ? `<div class="xs dimmer mono mb1" style="display:flex;gap:5px;padding-left:27px">${colLbls.map(l => `<div style="flex:1;text-align:center">${l}</div>`).join('')}</div>`
+    : `<div class="xs dimmer mt1 mb1" style="padding-left:4px">Prescribed: ${ex.prescribed}</div>`;
+
+  const sets  = exLog.sets || [];
+  const rows  = sets.map((set, si) => buildSetRow(ex, set, exIdx, si, null)).join('');
+  const canAdd = sets.length < adjSets + 2;
+
+  return head + rows + (canAdd ? `<button class="btn-d" onclick="addSet(${exIdx},null)">+ Add Set</button>` : '');
+}
+
+function buildSidedRows(ex, exLog, exIdx, adjSets) {
+  const halves = [
+    { key: 'setsR', label: 'R', cls: 'r', color: 'var(--am)' },
+    { key: 'setsL', label: 'L', cls: 'l', color: 'var(--bl)' }
+  ];
+  return halves.map(({ key, label, cls, color }) => {
+    const sets   = exLog[key] || [];
+    const rows   = sets.map((set, si) => buildSetRow(ex, set, exIdx, si, label)).join('');
+    const canAdd = sets.length < adjSets + 2;
+    return `
+      <div class="sided-half">
+        <span class="sided-lbl ${cls}">${label}</span>
+        ${rows}
+        ${canAdd ? `<button class="btn-d" onclick="addSet(${exIdx},'${label}')">+ Add ${label}</button>` : ''}
       </div>`;
-    if (ex.type==='loaded') return `
-      <div class="set-row">
-        <div class="set-n">${si+1}</div>
-        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='reps'?' active':''}" onclick="openPicker('reps',${exIdx},${si})" style="flex:1">
-          ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
-        </button>
-        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='weight'?' active':''}" onclick="openPicker('weight',${exIdx},${si})" style="flex:1">
-          ${set.weight!==undefined&&set.weight!==''?`<span class="val-btn-num">${set.weight}</span><span class="val-btn-unit">kg</span>`:'<span class="val-btn-empty">kg</span>'}
-        </button>
-        <button class="val-btn${pickerCtx?.exIdx===exIdx&&pickerCtx?.si===si&&pickerCtx?.field==='rpe'?' active':''}" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
-          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-        </button>
-      </div>`;
-    if (ex.type==='bodyweight') return `
-      <div class="set-row">
-        <div class="set-n">${si+1}</div>
-        <button class="val-btn" onclick="openPicker('reps',${exIdx},${si})" style="flex:1">
-          ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
-        </button>
-        <button class="val-btn" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
-          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-        </button>
-      </div>`;
-    // timed / carry
+  }).join('<div class="sided-sep"></div>');
+}
+
+function buildSetRow(ex, set, exIdx, si, side) {
+  const sideArg = side ? `,'${side}'` : ',null';
+  const oi = `openPicker`;
+
+  if (ex.type === 'plyo') {
+    // plyo is never sided — no sideArg needed
     return `
       <div class="set-row">
         <div class="set-n">${si+1}</div>
-        <button class="val-btn" onclick="openPicker('sec',${exIdx},${si})" style="flex:1">
-          ${set.dur?`<span class="val-btn-num">${set.dur}</span><span class="val-btn-unit">sec</span>`:'<span class="val-btn-empty">Sec</span>'}
+        <button class="plyo-done${set.done ? ' done' : ''}" onclick="updSet(${exIdx},${si},'done',${!set.done});renderSchedule()">${set.done ? '✓ Done' : 'Tap to mark done'}</button>
+      </div>`;
+  }
+  if (ex.type === 'jump') {
+    const usesCm = ex.measureLabel === 'cm';
+    return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        ${usesCm ? `
+          <button class="val-btn" onclick="${oi}('cm',${exIdx},${si}${sideArg})" style="flex:1">
+            ${set.height !== undefined && set.height !== ''
+              ? `<span class="val-btn-num">${set.height}</span><span class="val-btn-unit">cm</span>`
+              : '<span class="val-btn-empty">Height</span>'}
+          </button>` : ''}
+        <button class="val-btn" onclick="${oi}('quality',${exIdx},${si}${sideArg})" style="flex:${usesCm ? '0 0 78px' : '1'}">
+          ${set.quality ? `<span class="val-btn-num">${set.quality}</span><span class="val-btn-unit">Q</span>` : '<span class="val-btn-empty">Quality</span>'}
         </button>
-        <button class="val-btn" onclick="openPicker('rpe',${exIdx},${si})" style="flex:0 0 62px">
-          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
+        <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sideArg})" style="flex:0 0 62px">
+          ${set.rpe ? `<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>` : '<span class="val-btn-empty">RPE</span>'}
         </button>
       </div>`;
-  }).join('');
-
-  const canAdd = exLog.sets.length < adjSets + 2;
-  return head + rows + (canAdd?`<button class="btn-d" onclick="addSet(${exIdx})">+ Add Set</button>`:'');
+  }
+  if (ex.type === 'loaded') {
+    return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sideArg})" style="flex:1">
+          ${set.reps ? `<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>` : '<span class="val-btn-empty">Reps</span>'}
+        </button>
+        <button class="val-btn" onclick="${oi}('weight',${exIdx},${si}${sideArg})" style="flex:1">
+          ${set.weight !== undefined && set.weight !== '' ? `<span class="val-btn-num">${set.weight}</span><span class="val-btn-unit">kg</span>` : '<span class="val-btn-empty">kg</span>'}
+        </button>
+        <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sideArg})" style="flex:0 0 62px">
+          ${set.rpe ? `<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>` : '<span class="val-btn-empty">RPE</span>'}
+        </button>
+      </div>`;
+  }
+  if (ex.type === 'bodyweight') {
+    return `
+      <div class="set-row">
+        <div class="set-n">${si+1}</div>
+        <button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sideArg})" style="flex:1">
+          ${set.reps ? `<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>` : '<span class="val-btn-empty">Reps</span>'}
+        </button>
+        <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sideArg})" style="flex:0 0 62px">
+          ${set.rpe ? `<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>` : '<span class="val-btn-empty">RPE</span>'}
+        </button>
+      </div>`;
+  }
+  // timed / carry
+  return `
+    <div class="set-row">
+      <div class="set-n">${si+1}</div>
+      <button class="val-btn" onclick="${oi}('sec',${exIdx},${si}${sideArg})" style="flex:1">
+        ${set.dur ? `<span class="val-btn-num">${set.dur}</span><span class="val-btn-unit">sec</span>` : '<span class="val-btn-empty">Sec</span>'}
+      </button>
+      <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sideArg})" style="flex:0 0 62px">
+        ${set.rpe ? `<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>` : '<span class="val-btn-empty">RPE</span>'}
+      </button>
+    </div>`;
 }
 
-function toggleEx(i) { lf.openEx = lf.openEx===i?null:i; renderSchedule(); }
-function addSet(exIdx) {
+function toggleEx(i)  { lf.openEx = lf.openEx === i ? null : i; renderSchedule(); }
+
+function addSet(exIdx, side) {
   const ex = PROG.sessions[lf.sessionKey].exercises[exIdx];
-  const empty = ex.type==='plyo'?{done:false}:ex.type==='timed'||ex.type==='carry'?{dur:'',rpe:''}:ex.type==='bodyweight'?{reps:'',rpe:''}:{reps:'',weight:'',rpe:''};
-  lf.exLogs[exIdx].sets.push(empty);
+  const empty = ex.type === 'jump'    ? { height: '', quality: '', rpe: '' }
+    : ex.type === 'plyo'              ? { done: false }
+    : ex.type === 'timed' || ex.type === 'carry' ? { dur: '', rpe: '' }
+    : ex.type === 'bodyweight'        ? { reps: '', rpe: '' }
+    : { reps: '', weight: '', rpe: '' };
+
+  if (side) {
+    const key = side === 'R' ? 'setsR' : 'setsL';
+    if (!lf.exLogs[exIdx][key]) lf.exLogs[exIdx][key] = [];
+    lf.exLogs[exIdx][key].push({ ...empty });
+  } else {
+    if (!lf.exLogs[exIdx].sets) lf.exLogs[exIdx].sets = [];
+    lf.exLogs[exIdx].sets.push({ ...empty });
+  }
   renderSchedule();
 }
-function updSet(ei,si,field,val) { lf.exLogs[ei].sets[si][field]=val; }
+
+// plyo toggle (always flat sets, never sided)
+function updSet(ei, si, field, val) { lf.exLogs[ei].sets[si][field] = val; }
 
 // ── Complete log ───────────────────────────────────────────
 function completeLog() {
-  const acc = computeAccuracy(lf.exLogs, lf.sessionKey, lf.mods);
-  const entry = { id: Date.now().toString(), type:'training', date: new Date().toISOString(), sessionKey: lf.sessionKey, exLogs: lf.exLogs, feel: lf.feel, notes: lf.notes, accuracy: acc, tags: [...lf.tags], mods: lf.mods };
+  const acc  = computeAccuracy(lf.exLogs, lf.sessionKey, lf.mods);
+  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
+  const entry = {
+    id: Date.now().toString(), type: 'training',
+    date: new Date().toISOString(), sessionKey: lf.sessionKey,
+    exLogs: lf.exLogs, feel: lf.feel, duration: lf.duration || null,
+    sRPE, notes: lf.notes, accuracy: acc, tags: [...lf.tags], mods: lf.mods
+  };
   const wk = getWeek(viewMonday);
   wk.logs[lf.sessionKey] = entry;
   lf.accuracy = acc;
   saveWeeks();
-  lf.step='accuracy';
+  lf.step = 'accuracy';
   renderSchedule();
 }
 
 function buildAccuracyScreen() {
   const acc = lf.accuracy;
-  const cls = acc.level==='good'?'good':acc.level==='warn'?'warn':'note';
+  const cls = acc.level === 'good' ? 'good' : acc.level === 'warn' ? 'warn' : 'note';
+  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
   return `
     <div style="padding:12px 16px 8px"><button class="btn-back" onclick="backToSchedule()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back to schedule</button>
@@ -1209,70 +1367,46 @@ function buildAccuracyScreen() {
       <div class="acc-title">${acc.verdict}</div>
       <div class="acc-detail">${acc.detail}</div>
       <div class="acc-stat">${acc.totalDone}/${acc.totalPrescribed} sets · ${acc.rate}% volume · Feel ${lf.feel}/5</div>
+      ${sRPE ? `<div class="acc-stat" style="margin-top:3px">Training load: ${sRPE} AU (${lf.feel * 2} RPE × ${lf.duration} min)</div>` : ''}
     </div>
-    ${lf.tags.length?`<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t=>PROG.tags[t]?.label||t).join(' · ')}</div>`:''}
+    ${lf.tags.length ? `<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t => PROG.tags[t]?.label || t).join(' · ')}</div>` : ''}
     <div style="padding:0 16px 8px"><button class="btn-p" onclick="backToSchedule()">Back to schedule ✓</button></div>
     <div class="bpad"></div>`;
 }
 
-// ── Delete log from week view ──────────────────────────────
-function promptDel(sessionKey, e) {
-  e.stopPropagation();
-  confirmDel = sessionKey;
-  renderSchedule();
-}
+function promptDel(sessionKey, e) { e.stopPropagation(); confirmDel = sessionKey; renderSchedule(); }
 
 // ═══════════════════════════════════════════════════════════
-// TOUCH PICKER — JS-driven, works in iOS fixed overlays
+// TOUCH PICKER — JS-driven, reliable in iOS fixed overlays
 // ═══════════════════════════════════════════════════════════
 const ITEM_H   = 44;
 const VIEW_H   = 264;
-const CENTER_Y = Math.floor((VIEW_H - ITEM_H) / 2); // 110 — offset for idx=0
+const CENTER_Y = Math.floor((VIEW_H - ITEM_H) / 2);
 
 let pickerCtx = null;
 const PICKER_RANGES = {
-  reps:   { items: Array.from({length:30}, (_,i)=>i+1),      label:'Reps' },
-  weight: { items: Array.from({length:201},(_,i)=>i),         label:'kg' },
-  rpe:    { items: Array.from({length:10}, (_,i)=>i+1),      label:'RPE' },
-  sec:    { items: Array.from({length:120},(_,i)=>(i+1)*5),  label:'Seconds' }
+  reps:    { items: Array.from({length:30},  (_, i) => i + 1),       label: 'Reps' },
+  weight:  { items: Array.from({length:201}, (_, i) => i),            label: 'kg' },
+  rpe:     { items: Array.from({length:10},  (_, i) => i + 1),       label: 'RPE' },
+  sec:     { items: Array.from({length:120}, (_, i) => (i + 1) * 5), label: 'Seconds' },
+  cm:      { items: Array.from({length:31},  (_, i) => i * 5),       label: 'cm' },
+  quality: { items: [1, 2, 3, 4, 5],                                  label: 'Quality' },
+  min:     { items: Array.from({length:34},  (_, i) => (i + 3) * 5), label: 'min' }
 };
 
-let pt = {             // picker touch state
-  startY:0, startOff:0, offset:0, idx:0,
-  items:[], dragging:false, vel:0, lastY:0, lastT:0
-};
+let pt = { startY:0, startOff:0, offset:0, idx:0, items:[], dragging:false, vel:0, lastY:0, lastT:0 };
 
 function idxToOffset(idx) { return CENTER_Y - idx * ITEM_H; }
-function offsetToIdx(offset, len) {
-  return Math.max(0, Math.min(Math.round((CENTER_Y - offset) / ITEM_H), len-1));
-}
+function offsetToIdx(offset, len) { return Math.max(0, Math.min(Math.round((CENTER_Y - offset) / ITEM_H), len - 1)); }
 
-function openPicker(field, exIdx, si) {
-  pickerCtx = { field, exIdx, si };
-  const range  = PICKER_RANGES[field];
-  const curSet = lf.exLogs[exIdx].sets[si];
-  const storeKey = field==='sec' ? 'dur' : field;
-
-  // Smart start: use previous set's value → current set → midpoint
-  let startVal = null;
-  if (curSet[storeKey] !== undefined && curSet[storeKey] !== '') {
-    startVal = Number(curSet[storeKey]);
-  } else if (si > 0) {
-    const prev = lf.exLogs[exIdx].sets[si-1][storeKey];
-    if (prev !== undefined && prev !== '') startVal = Number(prev);
-  }
-  const startIdx = startVal !== null
-    ? Math.max(0, range.items.indexOf(startVal))
-    : (field==='rpe' ? 6 : field==='reps' ? 4 : field==='weight' ? 19 : 5);
-
-  document.getElementById('picker-label').textContent = range.label;
+function _showPicker(range, startIdx) {
   document.getElementById('picker-cols').innerHTML = `
     <div style="flex:1">
       <div class="picker-col-lbl">${range.label}</div>
       <div class="picker-col" id="pc-main">
         <div class="picker-viewport">
           <div class="picker-list" id="picker-list">
-            ${range.items.map(v=>`<div class="picker-item">${v}</div>`).join('')}
+            ${range.items.map(v => `<div class="picker-item">${v}</div>`).join('')}
           </div>
         </div>
         <div class="picker-mask-t"></div>
@@ -1281,49 +1415,76 @@ function openPicker(field, exIdx, si) {
       </div>
     </div>`;
 
-  pt.items   = range.items;
-  pt.idx     = startIdx;
-  pt.offset  = idxToOffset(startIdx);
-  pt.dragging= false;
-  pt.vel     = 0;
+  pt.items = range.items; pt.idx = startIdx;
+  pt.offset = idxToOffset(startIdx); pt.dragging = false; pt.vel = 0;
 
   const list = document.getElementById('picker-list');
   list.style.transform = `translateY(${pt.offset}px)`;
   _pickerHighlight();
 
-  // Attach touch handlers to viewport (not overlay)
   const vp = document.querySelector('#pc-main .picker-viewport');
-  vp.addEventListener('touchstart',  _ptStart, { passive:false });
-  vp.addEventListener('touchmove',   _ptMove,  { passive:false });
-  vp.addEventListener('touchend',    _ptEnd,   { passive:false });
-  vp.addEventListener('touchcancel', _ptEnd,   { passive:false });
+  vp.addEventListener('touchstart',  _ptStart, { passive: false });
+  vp.addEventListener('touchmove',   _ptMove,  { passive: false });
+  vp.addEventListener('touchend',    _ptEnd,   { passive: false });
+  vp.addEventListener('touchcancel', _ptEnd,   { passive: false });
 
   document.getElementById('picker-overlay').style.display = 'flex';
 }
 
-function _ptStart(e) {
-  e.preventDefault();
-  pt.dragging = true;
-  pt.startY   = e.touches[0].clientY;
-  pt.startOff = pt.offset;
-  pt.vel      = 0;
-  pt.lastY    = pt.startY;
-  pt.lastT    = Date.now();
+function openPicker(field, exIdx, si, side) {
+  pickerCtx = { field, exIdx, si, side: side || null };
+  const range  = PICKER_RANGES[field];
+  const storeKey = field === 'sec' ? 'dur' : field === 'cm' ? 'height' : field;
+
+  // Smart start: current value → previous set value → sensible default
+  let startVal = null;
+  if (exIdx >= 0) {
+    const exLog = lf.exLogs[exIdx];
+    const setsArr = side
+      ? (side === 'R' ? exLog.setsR : exLog.setsL)
+      : exLog.sets;
+    const curSet = setsArr?.[si];
+    if (curSet && curSet[storeKey] !== undefined && curSet[storeKey] !== '') {
+      startVal = Number(curSet[storeKey]);
+    } else if (si > 0) {
+      const prev = setsArr?.[si - 1];
+      if (prev && prev[storeKey] !== undefined && prev[storeKey] !== '') startVal = Number(prev[storeKey]);
+    }
+  }
+  const defaults = { rpe: 6, reps: 4, weight: 19, quality: 3, cm: 10, sec: 5, min: 8 };
+  const startIdx = startVal !== null
+    ? Math.max(0, range.items.indexOf(startVal))
+    : (defaults[field] !== undefined ? defaults[field] : 0);
+
+  document.getElementById('picker-label').textContent = range.label;
+  _showPicker(range, startIdx);
 }
 
+function openDurationPicker() {
+  pickerCtx = { field: 'min', exIdx: -1, si: -1, side: null };
+  const range     = PICKER_RANGES.min;
+  const startVal  = lf.duration || 45;
+  let startIdx    = range.items.indexOf(startVal);
+  if (startIdx < 0) startIdx = range.items.indexOf(45);
+  if (startIdx < 0) startIdx = 8;
+  document.getElementById('picker-label').textContent = 'Duration';
+  _showPicker(range, startIdx);
+}
+
+function _ptStart(e) {
+  e.preventDefault();
+  pt.dragging = true; pt.startY = e.touches[0].clientY;
+  pt.startOff = pt.offset; pt.vel = 0;
+  pt.lastY = pt.startY; pt.lastT = Date.now();
+}
 function _ptMove(e) {
   e.preventDefault();
   if (!pt.dragging) return;
-  const y   = e.touches[0].clientY;
-  const dy  = y - pt.startY;
-  const now = Date.now();
-  pt.vel  = (y - pt.lastY) / Math.max(1, now - pt.lastT);
+  const y = e.touches[0].clientY, now = Date.now();
+  pt.vel = (y - pt.lastY) / Math.max(1, now - pt.lastT);
   pt.lastY = y; pt.lastT = now;
-
-  let off = pt.startOff + dy;
-  // Rubber band at ends
-  const maxOff = idxToOffset(0);
-  const minOff = idxToOffset(pt.items.length - 1);
+  let off = pt.startOff + (y - pt.startY);
+  const maxOff = idxToOffset(0), minOff = idxToOffset(pt.items.length - 1);
   if (off > maxOff) off = maxOff + (off - maxOff) * 0.25;
   if (off < minOff) off = minOff + (off - minOff) * 0.25;
   pt.offset = off;
@@ -1332,47 +1493,50 @@ function _ptMove(e) {
   pt.idx = offsetToIdx(off, pt.items.length);
   _pickerHighlight();
 }
-
 function _ptEnd(e) {
   e.preventDefault();
   if (!pt.dragging) return;
   pt.dragging = false;
-  // Apply momentum — flick gesture
-  const momentum = pt.vel * 80;
-  let targetOff  = pt.offset + momentum;
-  // Snap to nearest item
-  let snapIdx = offsetToIdx(targetOff, pt.items.length);
+  let snapIdx = offsetToIdx(pt.offset + pt.vel * 80, pt.items.length);
   snapIdx = Math.max(0, Math.min(snapIdx, pt.items.length - 1));
-  pt.idx    = snapIdx;
-  pt.offset = idxToOffset(snapIdx);
+  pt.idx = snapIdx; pt.offset = idxToOffset(snapIdx);
   const list = document.getElementById('picker-list');
   if (list) {
     list.style.transition = 'transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94)';
     list.style.transform  = `translateY(${pt.offset}px)`;
-    setTimeout(()=>{ if(list) list.style.transition=''; }, 250);
+    setTimeout(() => { if (list) list.style.transition = ''; }, 250);
   }
   _pickerHighlight();
 }
-
 function _pickerHighlight() {
-  document.querySelectorAll('.picker-item').forEach((el,i)=>{
-    el.classList.toggle('sel', i === pt.idx);
-  });
+  document.querySelectorAll('.picker-item').forEach((el, i) => el.classList.toggle('sel', i === pt.idx));
 }
 
 function pickerDone() {
   if (!pickerCtx) { closePicker(); return; }
-  const val      = pt.items[pt.idx];
-  const storeKey = pickerCtx.field==='sec' ? 'dur' : pickerCtx.field;
-  lf.exLogs[pickerCtx.exIdx].sets[pickerCtx.si][storeKey] = val;
-  closePicker();
-  renderSchedule();
+  const val = pt.items[pt.idx];
+  const { field, exIdx, si, side } = pickerCtx;
+
+  if (exIdx === -1) {
+    // Duration picker
+    lf.duration = val;
+    closePicker(); renderSchedule(); return;
+  }
+
+  const storeKey = field === 'sec' ? 'dur' : field === 'cm' ? 'height' : field;
+  const exLog    = lf.exLogs[exIdx];
+
+  if (side) {
+    const setsArr = side === 'R' ? exLog.setsR : exLog.setsL;
+    if (setsArr?.[si] !== undefined) setsArr[si][storeKey] = val;
+  } else {
+    if (exLog.sets?.[si] !== undefined) exLog.sets[si][storeKey] = val;
+  }
+  closePicker(); renderSchedule();
 }
 
 function closePicker() {
-  const overlay = document.getElementById('picker-overlay');
-  overlay.style.display = 'none';
-  // Remove touch handlers
+  document.getElementById('picker-overlay').style.display = 'none';
   const vp = document.querySelector('#pc-main .picker-viewport');
   if (vp) {
     vp.removeEventListener('touchstart',  _ptStart);
@@ -1383,8 +1547,9 @@ function closePicker() {
   pickerCtx = null;
 }
 
+// Backdrop tap closes picker — onclick="pickerBgClick(event)" on the overlay div
 function pickerBgClick(e) {
-  if (e.target===document.getElementById('picker-overlay')) closePicker();
+  if (e.target === document.getElementById('picker-overlay')) closePicker();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1394,68 +1559,114 @@ function computeMods(tags, sessionKey) {
   const sess = PROG.sessions[sessionKey];
   const progTags = PROG.tags;
   let globalRPECap = null;
-  const sessionNotes = tags.map(t=>progTags[t]?.note).filter(Boolean);
+  const sessionNotes = tags.map(t => progTags[t]?.note).filter(Boolean);
 
-  const exMods = sess.exercises.map(ex=>{
-    let setReduction=0; const notes=[];
-    tags.forEach(tagKey=>{
+  const exMods = sess.exercises.map(ex => {
+    let setReduction = 0; const notes = [];
+    tags.forEach(tagKey => {
       const tag = progTags[tagKey];
-      if (!tag||tag.isWarning) return;
-      if (tag.rpeCap) globalRPECap = globalRPECap?Math.min(globalRPECap,tag.rpeCap):tag.rpeCap;
-      const aff = tag.affects||{};
-      if (aff.ALL) setReduction=Math.max(setReduction,aff.ALL.setReduction||0);
-      ex.regions.forEach(r=>{
-        if (aff[r]) { setReduction=Math.max(setReduction,aff[r].setReduction||0); if(aff[r].note) notes.push(aff[r].note); }
+      if (!tag || tag.isWarning) return;
+      if (tag.rpeCap) globalRPECap = globalRPECap ? Math.min(globalRPECap, tag.rpeCap) : tag.rpeCap;
+      const aff = tag.affects || {};
+      if (aff.ALL) setReduction = Math.max(setReduction, aff.ALL.setReduction || 0);
+      ex.regions.forEach(r => {
+        if (aff[r]) {
+          setReduction = Math.max(setReduction, aff[r].setReduction || 0);
+          if (aff[r].note) notes.push(aff[r].note);
+        }
       });
     });
-    return { setReduction, adjSets:Math.max(1,ex.sets-setReduction), notes, rpeCap:globalRPECap };
+    return { setReduction, adjSets: Math.max(1, ex.sets - setReduction), notes, rpeCap: globalRPECap };
   });
   return { exMods, globalRPECap, sessionNotes };
 }
 
 function parseRPE(rpeStr) {
-  const p = String(rpeStr).replace('–','-').split('-').map(s=>parseFloat(s.trim()));
-  return p.length===1?{min:p[0],max:p[0]}:{min:p[0],max:p[1]};
+  const p = String(rpeStr).replace('–', '-').split('-').map(s => parseFloat(s.trim()));
+  return p.length === 1 ? { min: p[0], max: p[0] } : { min: p[0], max: p[1] };
 }
 
 function computeAccuracy(exLogs, sessionKey, mods) {
   const sess = PROG.sessions[sessionKey];
-  let totalP=0,totalD=0,rpeHigh=0,rpeLow=0;
-  exLogs.forEach((el,i)=>{
-    const ex=sess.exercises[i];
-    const adj=mods?.exMods?.[i]?.adjSets??ex.sets;
-    totalP+=adj; totalD+=el.sets.length;
-    if (ex.type==='loaded'||ex.type==='bodyweight') {
-      const {min,max}=parseRPE(ex.rpe);
-      el.sets.forEach(s=>{ const r=parseFloat(s.rpe); if(!isNaN(r)){if(r>max+0.5)rpeHigh++;if(r<min-1)rpeLow++;} });
+  let totalP = 0, totalD = 0, rpeHigh = 0, rpeLow = 0;
+
+  exLogs.forEach((el, i) => {
+    const ex  = sess.exercises[i];
+    if (!ex) return;
+    const adj = mods?.exMods?.[i]?.adjSets ?? ex.sets;
+
+    if (ex.sides) {
+      totalP += adj * 2;
+      totalD += (el.setsR?.length || 0) + (el.setsL?.length || 0);
+    } else {
+      totalP += adj;
+      totalD += el.sets?.length || 0;
+    }
+
+    // RPE check: loaded, bodyweight, jump
+    if (ex.type === 'loaded' || ex.type === 'bodyweight' || ex.type === 'jump') {
+      const { min, max } = parseRPE(ex.rpe);
+      const allSets = ex.sides
+        ? [...(el.setsR || []), ...(el.setsL || [])]
+        : (el.sets || []);
+      allSets.forEach(s => {
+        const r = parseFloat(s.rpe);
+        if (!isNaN(r)) { if (r > max + 0.5) rpeHigh++; if (r < min - 1) rpeLow++; }
+      });
     }
   });
-  const rate=totalP>0?totalD/totalP:1;
-  let verdict,detail,level;
-  if (rate>=0.9&&rpeHigh===0&&rpeLow===0){verdict='Session on target';level='good';detail='Volume and intensity matched the prescription.';}
-  else if (rpeHigh>=2){verdict='Intensity exceeded prescription';level='warn';detail=`${rpeHigh} set${rpeHigh>1?'s':''} above prescribed RPE. Monitor recovery.`;}
-  else if (rate<0.75){verdict='Volume incomplete';level='note';detail=`${totalD}/${totalP} sets completed. If fatigue-driven, note in next week's plan.`;}
-  else if (rpeLow>=3){verdict='Session felt easy';level='note';detail='RPE consistently below target. Consider a small load increase.';}
-  else{verdict='Session solid';level='good';detail='Minor deviations within acceptable range.';}
-  return {verdict,detail,level,rate:Math.round(rate*100),totalDone:totalD,totalPrescribed:totalP};
+
+  const rate = totalP > 0 ? totalD / totalP : 1;
+  let verdict, detail, level;
+  if (rate >= 0.9 && rpeHigh === 0 && rpeLow === 0) {
+    verdict = 'Session on target'; level = 'good';
+    detail  = 'Volume and intensity matched the prescription.';
+  } else if (rpeHigh >= 2) {
+    verdict = 'Intensity exceeded prescription'; level = 'warn';
+    detail  = `${rpeHigh} set${rpeHigh > 1 ? 's' : ''} above prescribed RPE. Monitor recovery.`;
+  } else if (rate < 0.75) {
+    verdict = 'Volume incomplete'; level = 'note';
+    detail  = `${totalD}/${totalP} sets completed. If fatigue-driven, note in next week's plan.`;
+  } else if (rpeLow >= 3) {
+    verdict = 'Session felt easy'; level = 'note';
+    detail  = 'RPE consistently below target. Consider a small load increase.';
+  } else {
+    verdict = 'Session solid'; level = 'good';
+    detail  = 'Minor deviations within acceptable range.';
+  }
+  return { verdict, detail, level, rate: Math.round(rate * 100), totalDone: totalD, totalPrescribed: totalP };
 }
 
 // ═══════════════════════════════════════════════════════════
-// PROGRESS INSIGHT
+// FORMAT HELPERS — used in inline logs, history, and summaries
 // ═══════════════════════════════════════════════════════════
-function buildProgressInsight() {
-  // Collect recent training logs across all weeks
-  const allLogs = [];
-  Object.values(weeks).forEach(wk=>{ Object.values(wk.logs||{}).forEach(l=>allLogs.push(l)); });
-  allLogs.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const recent = allLogs.slice(0,3);
-  if (recent.length<2) return '';
-  const avg = recent.reduce((s,l)=>s+l.feel,0)/recent.length;
-  let highRPE=0;
-  recent.forEach(log=>log.exLogs.forEach(ex=>ex.sets.forEach(s=>{ if(parseFloat(s.rpe)>=9)highRPE++; })));
-  if (avg<=2.5||highRPE>=3) return `<div class="insight"><div class="ins-t">⚠ Fatigue signal</div><div class="ins-b">Last ${recent.length} sessions averaged ${avg.toFixed(1)}/5 feel. Consider reducing volume this week.</div></div>`;
-  if (avg>=4.2) return `<div class="insight g"><div class="ins-t">↑ Recovery solid</div><div class="ins-b">Averaging ${avg.toFixed(1)}/5 across recent sessions. Good week to push the RPE ceiling.</div></div>`;
-  return '';
+function fmtSet(s, ex) {
+  if (!s || !ex) return '—';
+  if (ex.type === 'plyo')    return s.done ? '✓' : '—';
+  if (ex.type === 'jump') {
+    const parts = [];
+    if (s.height !== undefined && s.height !== '') parts.push(`${s.height}cm`);
+    if (s.quality) parts.push(`Q${s.quality}`);
+    if (s.rpe)     parts.push(`@${s.rpe}`);
+    return parts.length ? parts.join(' ') : '—';
+  }
+  if (ex.type === 'timed' || ex.type === 'carry') return s.dur ? `${s.dur}s` : '—';
+  if (ex.type === 'bodyweight') return s.reps ? `${s.reps}r @${s.rpe || '?'}` : '—';
+  // loaded
+  return s.reps
+    ? `${s.reps}r · ${(s.weight !== undefined && s.weight !== '') ? s.weight : '?'}kg @${s.rpe || '?'}`
+    : '—';
+}
+
+function countAndFmt(exLog, ex) {
+  if (!exLog) return '—';
+  if (ex?.sides) {
+    const rStr = (exLog.setsR || []).map(s => fmtSet(s, ex)).join('  ');
+    const lStr = (exLog.setsL || []).map(s => fmtSet(s, ex)).join('  ');
+    return `R: ${rStr || '—'} / L: ${lStr || '—'}`;
+  }
+  const sets = exLog.sets || [];
+  return sets.length ? sets.map(s => fmtSet(s, ex)).join('  ') : '—';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1463,75 +1674,100 @@ function buildProgressInsight() {
 // ═══════════════════════════════════════════════════════════
 function renderHistory() {
   const el = document.getElementById('page-history');
-  // Collect all logs from all weeks
   const allLogs = [];
-  Object.entries(weeks).forEach(([wk, data])=>{
-    Object.values(data.logs||{}).forEach(l=>allLogs.push({...l, weekKey:wk}));
-    (data.presessionLogs||[]).forEach(l=>allLogs.push({...l, weekKey:wk}));
+  Object.entries(weeks).forEach(([wk, data]) => {
+    Object.values(data.logs || {}).forEach(l  => allLogs.push({ ...l,  weekKey: wk }));
+    (data.presessionLogs || []).forEach(l      => allLogs.push({ ...l,  weekKey: wk }));
   });
-  allLogs.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const filtered = histFilter==='all'?allLogs:allLogs.filter(l=>l.type===histFilter);
+  allLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const filtered = histFilter === 'all' ? allLogs : allLogs.filter(l => l.type === histFilter);
+
+  const filterRow = `
+    <div class="hflt-row">
+      <div class="hflt">
+        ${[{k:'all',l:'All'},{k:'training',l:'Training'},{k:'presession',l:'Pre-Session'}].map(({k,l}) =>
+          `<button class="flt${histFilter === k ? ' on' : ''}" onclick="setHFilter('${k}')">${l}</button>`
+        ).join('')}
+      </div>
+      ${allLogs.some(l => l.type === 'training')
+        ? `<button class="btn-g" style="font-size:11px;padding:6px 10px" onclick="exportCSV()">Export CSV</button>`
+        : ''}
+    </div>`;
 
   if (!filtered.length) {
-    el.innerHTML=`<div class="hflt">${fltBtns()}</div><div class="empty"><div class="emi">📊</div><div class="emt">No logs yet</div><div class="ems">Complete a session to see history</div></div>`;
+    el.innerHTML = filterRow + `<div class="empty"><div class="emi">📊</div><div class="emt">No logs yet</div><div class="ems">Complete a session to see history</div></div>`;
     return;
   }
-  el.innerHTML=`<div class="hflt">${fltBtns()}</div><div class="sec">${filtered.length} log${filtered.length!==1?'s':''}</div>${filtered.map(l=>buildHistEntry(l)).join('')}<div class="bpad"></div>`;
+  el.innerHTML = filterRow + `<div class="sec">${filtered.length} log${filtered.length !== 1 ? 's' : ''}</div>${filtered.map(l => buildHistEntry(l)).join('')}<div class="bpad"></div>`;
 }
 
-function fltBtns() {
-  return [{k:'all',l:'All'},{k:'training',l:'Training'},{k:'presession',l:'Pre-Session'}].map(({k,l})=>
-    `<button class="flt${histFilter===k?' on':''}" onclick="setHFilter('${k}')">${l}</button>`
-  ).join('');
-}
-function setHFilter(f) { histFilter=f; expandedHist=null; confirmDel=null; renderHistory(); }
+function setHFilter(f) { histFilter = f; expandedHist = null; confirmDel = null; renderHistory(); }
 
 function buildHistEntry(log) {
-  const isExp   = expandedHist===log.id;
-  const isTrain = log.type==='training';
-  const ds = new Date(log.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-  const ts = new Date(log.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const isExp   = expandedHist === log.id;
+  const isTrain = log.type === 'training';
+  const ds = new Date(log.date).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
+  const ts = new Date(log.date).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 
-  const typeLabel = isTrain?'TRAINING LOG':'PRE-SESSION';
-  // Graceful fallback for old session keys (A, B, C, D from previous versions)
   const sessLabel = SESS_LABEL[log.sessionKey] || log.sessionKey || '?';
   const sessBadge = SESS_BADGE[log.sessionKey] || 'bpre';
-  const dayBadge  = log.sessionKey
-    ? `<span class="badge ${sessBadge}">${sessLabel}</span>` : '';
+  const dayBadge  = log.sessionKey ? `<span class="badge ${sessBadge}">${sessLabel}</span>` : '';
+  const typeLabel = isTrain ? 'TRAINING LOG' : 'PRE-SESSION';
 
   const right = isTrain
-    ?`<div style="text-align:right"><div class="xs dimmer mb1">Feel</div><div class="mono b6" style="font-size:20px;color:${log.feel>=4?'var(--gn)':log.feel<=2?'var(--co)':'var(--tx2)'}">${log.feel}<span style="font-size:11px;color:var(--tx3)">/5</span></div></div>`
-    :`<div class="xs dimmer">${log.tags?.length||0} tag${log.tags?.length!==1?'s':''}</div>`;
+    ? `<div style="text-align:right">
+        <div class="xs dimmer mb1">Feel</div>
+        <div class="mono b6" style="font-size:20px;color:${log.feel >= 4 ? 'var(--gn)' : log.feel <= 2 ? 'var(--co)' : 'var(--tx2)'}">${log.feel}<span style="font-size:11px;color:var(--tx3)">/5</span></div>
+        ${log.sRPE ? `<div class="xs dimmer" style="margin-top:2px">${log.sRPE} AU</div>` : ''}
+      </div>`
+    : `<div class="xs dimmer">${log.tags?.length || 0} tag${log.tags?.length !== 1 ? 's' : ''}</div>`;
 
-  let body='';
+  let body = '';
   if (isExp) {
     if (isTrain) {
-      // Graceful session lookup — old logs may have session keys not in current PROG
       const sess = PROG.sessions[log.sessionKey];
-      const exLines = (log.exLogs||[]).map((el,i)=>{
-        const ex = sess?.exercises?.[i];
-        const exName = ex?.name || `Exercise ${i+1}`;
-        const sStr = el.sets.map(s=>
-          !ex||ex.type==='plyo'?(s.done?'✓':'—'):
-          ex.type==='timed'||ex.type==='carry'?`${s.dur||'?'}s`:
-          ex.type==='bodyweight'?`${s.reps||'?'}r @${s.rpe||'?'}`:
-          `${s.reps||'?'}r·${s.weight||'?'}kg @${s.rpe||'?'}`
-        ).filter(Boolean).join('  ');
-        return `<div class="hex">${exName}: <span>${el.sets.length} sets${sStr?' — '+sStr:''}</span></div>`;
+      const exLines = (log.exLogs || []).map((el, i) => {
+        const ex   = sess?.exercises?.[i];
+        const name = ex?.name || `Exercise ${i+1}`;
+        const cnt  = ex?.sides
+          ? (el.setsR?.length || 0) + (el.setsL?.length || 0)
+          : (el.sets?.length || 0);
+        const fmt  = countAndFmt(el, ex);
+        return `<div class="hex">${name}: <span>${cnt} sets${fmt !== '—' ? ' — ' + fmt : ''}</span></div>`;
       }).join('');
-      const acc=log.accuracy;
-      const ac=acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
-      body=`<div class="hent-body">${exLines}${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}"><div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>`:''}
-        ${confirmDel===log.id
-          ?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`
-          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
+      const acc = log.accuracy;
+      const ac  = acc ? (acc.level === 'good' ? 'var(--gn)' : acc.level === 'warn' ? 'var(--co)' : 'var(--am)') : 'var(--tx3)';
+      const sRPELine = log.sRPE
+        ? `<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min · Feel ${log.feel}/5</div>` : '';
+      body = `<div class="hent-body">
+        ${exLines}
+        ${sRPELine}
+        ${acc ? `<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}">
+          <div class="xs b6" style="color:${ac}">${acc.verdict}</div>
+          <div class="xs dimmer mt1">${acc.detail}</div>
+        </div>` : ''}
+        ${log.notes ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>` : ''}
+        ${confirmDel === log.id
+          ? `<div class="del-conf">
+              <button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button>
+              <button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button>
+            </div>`
+          : `<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
       </div>`;
     } else {
-      const tList=(log.tags||[]).map(t=>`<span class="tag ${PROG.tags[t]?.group==='warn'?'wrn':'rec'}" style="margin:2px">${PROG.tags[t]?.emoji||''} ${PROG.tags[t]?.label||t}</span>`).join('');
-      body=`<div class="hent-body">${tList||'<div class="xs dimmer">No tags — check-in skipped.</div>'}${(log.sessionNotes||[]).map(n=>`<div class="xs dimmer mt1">· ${n}</div>`).join('')}<div class="xs dimmer mt2">Mods ${log.modsAccepted?'accepted':'not applied'}</div>
-        ${confirmDel===log.id
-          ?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`
-          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
+      const tList = (log.tags || []).map(t =>
+        `<span class="tag ${PROG.tags[t]?.group === 'warn' ? 'wrn' : 'rec'}" style="margin:2px">${PROG.tags[t]?.emoji || ''} ${PROG.tags[t]?.label || t}</span>`
+      ).join('');
+      body = `<div class="hent-body">
+        ${tList || '<div class="xs dimmer">No tags — check-in skipped.</div>'}
+        ${(log.sessionNotes || []).map(n => `<div class="xs dimmer mt1">· ${n}</div>`).join('')}
+        <div class="xs dimmer mt2">Mods ${log.modsAccepted ? 'accepted' : 'not applied'}</div>
+        ${confirmDel === log.id
+          ? `<div class="del-conf">
+              <button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button>
+              <button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button>
+            </div>`
+          : `<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
       </div>`;
     }
   }
@@ -1552,23 +1788,188 @@ function buildHistEntry(log) {
 function doDelete(logId, wkKey) {
   const wk = weeks[wkKey];
   if (!wk) return;
-  // Remove from training logs
-  Object.keys(wk.logs||{}).forEach(k=>{ if(wk.logs[k].id===logId) delete wk.logs[k]; });
-  // Remove from presession logs
-  if (wk.presessionLogs) wk.presessionLogs = wk.presessionLogs.filter(l=>l.id!==logId);
+  Object.keys(wk.logs || {}).forEach(k => { if (wk.logs[k].id === logId) delete wk.logs[k]; });
+  if (wk.presessionLogs) wk.presessionLogs = wk.presessionLogs.filter(l => l.id !== logId);
   saveWeeks();
-  confirmDel=null; expandedHist=null;
+  confirmDel = null; expandedHist = null;
   renderHistory();
+}
+
+// ── CSV Export ─────────────────────────────────────────────
+function exportCSV() {
+  const rows = [
+    ['Date','Week','Session','Type','Feel','Duration(min)','sRPE(AU)','Volume%','Verdict','Tags','Notes']
+  ];
+  Object.entries(weeks).forEach(([wk, data]) => {
+    Object.values(data.logs || {}).forEach(log => {
+      rows.push([
+        new Date(log.date).toLocaleDateString('en-GB'),
+        wk, log.sessionKey, log.type,
+        log.feel ?? '',
+        log.duration ?? '',
+        log.sRPE ?? '',
+        log.accuracy?.rate ?? '',
+        (log.accuracy?.verdict || '').replace(/,/g, ';'),
+        (log.tags || []).join(' | '),
+        (log.notes || '').replace(/,/g, ';').replace(/\n/g, ' ')
+      ]);
+    });
+  });
+  const csv  = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `training-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BODY TAB — INJURY LOG
+// ═══════════════════════════════════════════════════════════
+function renderBody() {
+  const el      = document.getElementById('page-body');
+  const active  = injuries.filter(inj => inj.status !== 'resolved');
+  const resolved = injuries.filter(inj => inj.status === 'resolved');
+
+  const headerRow = `
+    <div style="padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+      <span class="sm b6">Injury Log</span>
+      ${!injuryFormOpen ? `<button class="btn-g" onclick="openInjuryForm()">+ Log injury</button>` : ''}
+    </div>`;
+
+  const formHTML = injuryFormOpen ? buildInjuryForm() : '';
+
+  const activeSection = active.length > 0
+    ? `<div class="sec">Active (${active.length})</div>${active.map(inj => buildInjuryEntry(inj)).join('')}`
+    : !injuryFormOpen
+      ? `<div class="ndim"><strong>No active injuries</strong>Log any pain, tightness, or concern here. Entries appear in the pre-session screen as passive reminders.</div>`
+      : '';
+
+  const resolvedSection = resolved.length > 0
+    ? `<div class="sec">Resolved (${resolved.length})</div>${resolved.map(inj => buildInjuryEntry(inj)).join('')}`
+    : '';
+
+  el.innerHTML = headerRow + formHTML + activeSection + resolvedSection + '<div class="bpad"></div>';
+}
+
+function buildInjuryForm() {
+  const d = injuryFormData;
+  const regionChips = INJURY_REGIONS.map(r =>
+    `<button class="inj-chip${d.region === r ? ' on' : ''}" onclick="injuryFormData.region='${r}';renderBody()">${r}</button>`
+  ).join('');
+  const sevBtns = [1,2,3,4,5].map(v =>
+    `<button class="rbtn${d.severity === v ? ' on' : ''}" onclick="injuryFormData.severity=${v};renderBody()">${v}</button>`
+  ).join('');
+  const statusOpts = [
+    { k:'active', l:'Active' }, { k:'monitoring', l:'Monitoring' }, { k:'resolved', l:'Resolved' }
+  ].map(({ k, l }) =>
+    `<button class="dtype-btn${d.status === k ? ' on-reh' : ''}" onclick="injuryFormData.status='${k}';renderBody()">${l}</button>`
+  ).join('');
+
+  return `
+    <div class="card"><div class="card-body">
+      <div class="field">
+        <label class="lbl">Body region</label>
+        <div class="inj-chips">${regionChips}</div>
+      </div>
+      <div class="field">
+        <label class="lbl">Severity — 1 minor tightness · 5 acute, see physio</label>
+        <div class="rating">${sevBtns}</div>
+        <div class="xs dimmer mt1" style="text-align:center">${SEVERITY_LABELS[d.severity]}</div>
+      </div>
+      <div class="field">
+        <label class="lbl">Status</label>
+        <div class="dtype-row">${statusOpts}</div>
+      </div>
+      <div class="field">
+        <label class="lbl">Description (location, onset, trigger)</label>
+        <textarea placeholder="e.g. Left Achilles — tightness during relevés, started Tuesday after long rehearsal" oninput="injuryFormData.description=this.value">${d.description || ''}</textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-p" style="flex:1;margin:0" onclick="saveInjury()">Save</button>
+        <button class="btn-g" style="flex:0 0 80px" onclick="closeInjuryForm()">Cancel</button>
+      </div>
+    </div></div>`;
+}
+
+function buildInjuryEntry(inj) {
+  const isExp = injuryExpandedId === inj.id;
+  const ds    = new Date(inj.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  const col   = SEVERITY_COLORS[inj.severity] || 'var(--tx3)';
+  const sPill = inj.status === 'resolved'
+    ? `<span class="inj-status-pill inj-status-resolved">resolved</span>`
+    : inj.status === 'monitoring'
+      ? `<span class="inj-status-pill inj-status-monitoring">monitoring</span>`
+      : `<span class="inj-status-pill inj-status-active">active</span>`;
+
+  return `
+    <div class="hent">
+      <div class="hent-hdr" onclick="injuryExpandedId=injuryExpandedId==='${inj.id}'?null:'${inj.id}';renderBody()">
+        <div>
+          <div class="sm b5" style="margin-bottom:3px">
+            ${inj.region}
+            <span style="font-size:11px;color:${col}">● ${SEVERITY_LABELS[inj.severity]}</span>
+          </div>
+          <div class="xs dimmer">${ds} · ${sPill}</div>
+        </div>
+        <svg class="chev${isExp ? ' open' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
+      ${isExp ? `<div class="hent-body">
+        ${inj.description ? `<div class="xs" style="color:var(--tx2);margin-bottom:10px;line-height:1.5">${inj.description}</div>` : ''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${inj.status !== 'resolved'
+            ? `<button class="btn-g" style="font-size:12px" onclick="resolveInjury('${inj.id}')">✓ Mark resolved</button>` : ''}
+          <button class="btn-g" style="font-size:12px" onclick="editInjury('${inj.id}')">Edit</button>
+          <button class="del-btn" onclick="deleteInjury('${inj.id}')">Delete</button>
+        </div>
+      </div>` : ''}
+    </div>`;
+}
+
+function openInjuryForm() {
+  injuryFormOpen = true; injuryEditId = null;
+  injuryFormData = { region: '', severity: 3, description: '', status: 'active' };
+  renderBody();
+}
+function editInjury(id) {
+  const inj = injuries.find(i => i.id === id);
+  if (!inj) return;
+  injuryFormOpen = true; injuryEditId = id;
+  injuryFormData = { region: inj.region, severity: inj.severity, description: inj.description, status: inj.status };
+  renderBody();
+}
+function closeInjuryForm() {
+  injuryFormOpen = false; injuryEditId = null; renderBody();
+}
+function saveInjury() {
+  if (!injuryFormData.region) { alert('Please select a body region.'); return; }
+  if (injuryEditId) {
+    const idx = injuries.findIndex(i => i.id === injuryEditId);
+    if (idx > -1) injuries[idx] = { ...injuries[idx], ...injuryFormData };
+  } else {
+    injuries.unshift({ id: Date.now().toString(), date: new Date().toISOString(), ...injuryFormData });
+  }
+  saveInjuries();
+  injuryFormOpen = false; injuryEditId = null; renderBody();
+}
+function resolveInjury(id) {
+  const inj = injuries.find(i => i.id === id);
+  if (inj) { inj.status = 'resolved'; inj.resolvedDate = new Date().toISOString(); }
+  saveInjuries(); renderBody();
+}
+function deleteInjury(id) {
+  injuries = injuries.filter(i => i.id !== id);
+  injuryExpandedId = null; saveInjuries(); renderBody();
 }
 
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 
-loadProgram().then(()=>{
-  renderSchedule();
-});
+loadProgram().then(() => { if (PROG) renderSchedule(); });
 </script>
 </body>
 </html>
