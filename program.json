@@ -1,7 +1,7 @@
 {
   "meta": {
     "name": "Ballet Dancer In-Season Program",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "athlete": "Professional male ballet dancer",
     "phase": "In-season"
   },
@@ -11,6 +11,7 @@
       "fullName": "Day Push — Overhead Strength & Shoulder Health",
       "color": "#7c6fdf", "colorDim": "#151338",
       "optional": false, "upperBody": true,
+      "liteSetReduction": 1,
       "warmup": [
         { "name": "Thoracic Extension — Table Slides", "prescription": "2 × 8 reps", "note": "Kneel at bench, arms on surface, sit back driving chest toward floor. Targets t-spine mobility needed for safe overhead press." },
         { "name": "Shoulder CARs", "prescription": "2 × 5 each side", "note": "Full circumduction in the shoulder joint — largest pain-free circle possible. Slow and controlled throughout." },
@@ -19,11 +20,11 @@
         { "name": "Wall Slide Activation", "prescription": "2 × 10", "note": "Forearms against wall, slide upward maintaining contact. Same scapular path as overhead press lockout." }
       ],
       "exercises": [
-        { "id": "ohp", "name": "Overhead Barbell Press",            "type": "loaded",     "prescribed": "4 × 4–6",          "rpe": "7–8", "sets": 4, "regions": ["upper_push"], "restNote": "3–5 min", "note": "Primary partnering lift. Full lockout at top." },
-        { "id": "dip", "name": "Weighted Dips",                     "type": "loaded",     "prescribed": "4 × 5–8",          "rpe": "7–8", "sets": 4, "regions": ["upper_push"], "restNote": "3–4 min", "note": "Triceps lockout transfers directly to holding overhead lifts." },
-        { "id": "hkp", "name": "Half-Kneeling Single-Arm DB Press", "type": "loaded",     "prescribed": "3 × 8 each side",  "rpe": "6–7", "sets": 3, "regions": ["upper_push"], "sides": true, "restNote": "90 sec", "note": "Kneeling removes leg drive — pure shoulder stability. Log right and left separately." },
-        { "id": "lat", "name": "Lateral Raises (strict)",           "type": "loaded",     "prescribed": "3 × 12–15",        "rpe": "6",   "sets": 3, "regions": ["upper_push"], "restNote": "60 sec",  "note": "Slow lower. No swinging." },
-        { "id": "sws", "name": "Serratus Wall Slides",              "type": "bodyweight", "prescribed": "2–3 × 10–12",      "rpe": "5–6", "sets": 2, "regions": ["scapular"],   "restNote": "60 sec",  "note": "Scapular control. Slide arms up wall keeping contact. Never skip — shoulder injury prevention." }
+        { "id": "ohp", "name": "Overhead Barbell Press",            "type": "loaded",     "prescribed": "4 × 4–6",         "rpe": "7–8", "sets": 4, "regions": ["upper_push"], "restNote": "3–5 min", "lite": true,  "minDose": true,  "note": "Primary partnering lift. Full lockout at top." },
+        { "id": "dip", "name": "Weighted Dips",                     "type": "loaded",     "prescribed": "4 × 5–8",         "rpe": "7–8", "sets": 4, "regions": ["upper_push"], "restNote": "3–4 min", "lite": true,  "minDose": false, "note": "Triceps lockout transfers directly to holding overhead lifts." },
+        { "id": "hkp", "name": "Half-Kneeling Single-Arm DB Press", "type": "loaded",     "prescribed": "3 × 8 each side", "rpe": "6–7", "sets": 3, "regions": ["upper_push"], "restNote": "90 sec",  "lite": true,  "minDose": false, "sides": true, "note": "Kneeling removes leg drive — pure shoulder stability. Log right and left separately." },
+        { "id": "lat", "name": "Lateral Raises (strict)",           "type": "loaded",     "prescribed": "3 × 12–15",       "rpe": "6",   "sets": 3, "regions": ["upper_push"], "restNote": "60 sec",  "lite": false, "minDose": false, "note": "Slow lower. No swinging." },
+        { "id": "sws", "name": "Serratus Wall Slides",              "type": "bodyweight", "prescribed": "2–3 × 10–12",     "rpe": "5–6", "sets": 2, "regions": ["scapular"],   "restNote": "60 sec",  "lite": true,  "minDose": true,  "note": "Scapular control. Never skip — direct shoulder injury prevention regardless of weekly load." }
       ]
     },
     "AL": {
@@ -31,19 +32,20 @@
       "fullName": "Day Pull — Power, Back Strength & Grip",
       "color": "#4a9fd4", "colorDim": "#0a1e2e",
       "optional": false, "upperBody": true,
+      "liteSetReduction": 1,
       "warmup": [
         { "name": "Dead Hang", "prescription": "2 × 20–30 sec", "note": "Full shoulder decompression. Lat and shoulder capsule stretch before loading. Release grip slowly." },
         { "name": "Band Pull-Apart", "prescription": "2 × 15", "note": "Targets the same posterior chain used in hang clean pull and face pulls." },
         { "name": "Hip Hinge Activation — Empty Bar", "prescription": "2 × 8 reps", "note": "RDL pattern with empty bar. Grooves the hip hinge before loading the hang clean pull." },
         { "name": "Wrist / Grip CARs", "prescription": "1 × 8 each direction", "note": "Wrist circles, flexion/extension, radial/ulnar deviation. Prepares grip for farmer's carries and pull-ups." },
-        { "name": "Scapular Depression Drill", "prescription": "2 × 10 reps", "note": "Hanging from bar, depress scapulae (pull shoulders from ears) without bending elbows. Prepares lat activation for pull-ups." }
+        { "name": "Scapular Depression Drill", "prescription": "2 × 10 reps", "note": "Hanging from bar, depress scapulae without bending elbows. Prepares lat activation for pull-ups." }
       ],
       "exercises": [
-        { "id": "hcl", "name": "Hang Clean Pull",                "type": "loaded", "prescribed": "3 × 3–4",    "rpe": "7–8", "sets": 3, "regions": ["upper_pull"], "restNote": "3–4 min", "note": "Explosive hip extension into shrug. No catch — stop at top of pull. Full intent every rep. ALWAYS first while CNS is freshest." },
-        { "id": "wpu", "name": "Weighted Pull-Ups",              "type": "loaded", "prescribed": "4 × 4–6",    "rpe": "7–8", "sets": 4, "regions": ["upper_pull"], "restNote": "3–5 min", "note": "Dead hang to chin over bar. Full ROM every rep." },
-        { "id": "scr", "name": "Seated Cable Row (1-sec pause)", "type": "loaded", "prescribed": "3 × 8–10",   "rpe": "6–7", "sets": 3, "regions": ["upper_pull"], "restNote": "90 sec",  "note": "1-sec hold at chest. Elbows drive back." },
-        { "id": "fpu", "name": "Face Pulls",                     "type": "loaded", "prescribed": "3 × 12–15",  "rpe": "6",   "sets": 3, "regions": ["upper_pull"], "restNote": "60 sec",  "note": "Rope at eye height. External rotate at end — hands finish by ears." },
-        { "id": "fac", "name": "Farmer's Carries",               "type": "carry",  "prescribed": "3 × 20–40s", "rpe": "7",   "sets": 3, "regions": ["carry", "upper_pull"], "restNote": "90 sec", "note": "Tall posture, slight shoulder pack. Grip and trunk stability." }
+        { "id": "hcl", "name": "Hang Clean Pull",                "type": "loaded", "prescribed": "3 × 3–4",    "rpe": "7–8", "sets": 3, "regions": ["upper_pull"],          "restNote": "3–4 min", "lite": true,  "minDose": true,  "note": "Explosive hip extension into shrug. No catch — stop at top of pull. Full intent every rep. ALWAYS first while CNS is freshest." },
+        { "id": "wpu", "name": "Weighted Pull-Ups",              "type": "loaded", "prescribed": "4 × 4–6",    "rpe": "7–8", "sets": 4, "regions": ["upper_pull"],          "restNote": "3–5 min", "lite": true,  "minDose": true,  "note": "Dead hang to chin over bar. Full ROM every rep." },
+        { "id": "scr", "name": "Seated Cable Row (1-sec pause)", "type": "loaded", "prescribed": "3 × 8–10",   "rpe": "6–7", "sets": 3, "regions": ["upper_pull"],          "restNote": "90 sec",  "lite": true,  "minDose": false, "note": "1-sec hold at chest. Elbows drive back." },
+        { "id": "fpu", "name": "Face Pulls",                     "type": "loaded", "prescribed": "3 × 12–15",  "rpe": "6",   "sets": 3, "regions": ["upper_pull"],          "restNote": "60 sec",  "lite": true,  "minDose": false, "note": "Rope at eye height. External rotate at end — hands finish by ears." },
+        { "id": "fac", "name": "Farmer's Carries",               "type": "carry",  "prescribed": "3 × 20–40s", "rpe": "7",   "sets": 3, "regions": ["carry","upper_pull"],  "restNote": "90 sec",  "lite": false, "minDose": false, "note": "Tall posture, slight shoulder pack. Grip and trunk stability." }
       ]
     },
     "AF": {
@@ -51,6 +53,7 @@
       "fullName": "Day Full Body — Compressed Upper (Constrained Week)",
       "color": "#9b8fe8", "colorDim": "#1a1835",
       "optional": false, "upperBody": true,
+      "liteSetReduction": 0,
       "warmup": [
         { "name": "Thoracic Extension — Table Slides", "prescription": "2 × 8 reps", "note": "Compresses both push and pull warm-up needs into one movement." },
         { "name": "Shoulder CARs", "prescription": "1 × 5 each side" },
@@ -59,13 +62,13 @@
         { "name": "Dead Hang", "prescription": "1 × 20 sec", "note": "Lat decompression before pull-ups." }
       ],
       "exercises": [
-        { "id": "ohp", "name": "Overhead Barbell Press",            "type": "loaded",     "prescribed": "3 × 4–5",         "rpe": "7–8", "sets": 3, "regions": ["upper_push"], "restNote": "3–4 min" },
-        { "id": "wpu", "name": "Weighted Pull-Ups",                 "type": "loaded",     "prescribed": "3 × 4–5",         "rpe": "7–8", "sets": 3, "regions": ["upper_pull"], "restNote": "3–4 min" },
-        { "id": "dip", "name": "Weighted Dips",                     "type": "loaded",     "prescribed": "2 × 5–6",         "rpe": "7",   "sets": 2, "regions": ["upper_push"], "restNote": "3 min" },
-        { "id": "hkp", "name": "Half-Kneeling Single-Arm DB Press", "type": "loaded",     "prescribed": "2 × 8 each side", "rpe": "6",   "sets": 2, "regions": ["upper_push"], "sides": true, "restNote": "90 sec" },
-        { "id": "scr", "name": "Seated Cable Row (1-sec pause)",    "type": "loaded",     "prescribed": "2 × 8–10",        "rpe": "6",   "sets": 2, "regions": ["upper_pull"], "restNote": "90 sec" },
-        { "id": "fpu", "name": "Face Pulls",                        "type": "loaded",     "prescribed": "2 × 12–15",       "rpe": "5–6", "sets": 2, "regions": ["upper_pull"], "restNote": "60 sec" },
-        { "id": "sws", "name": "Serratus Wall Slides",              "type": "bodyweight", "prescribed": "2 × 10–12",       "rpe": "5",   "sets": 2, "regions": ["scapular"],   "restNote": "60 sec" }
+        { "id": "ohp", "name": "Overhead Barbell Press",            "type": "loaded",     "prescribed": "3 × 4–5",         "rpe": "7–8", "sets": 3, "regions": ["upper_push"], "restNote": "3–4 min", "lite": true,  "minDose": true  },
+        { "id": "wpu", "name": "Weighted Pull-Ups",                 "type": "loaded",     "prescribed": "3 × 4–5",         "rpe": "7–8", "sets": 3, "regions": ["upper_pull"], "restNote": "3–4 min", "lite": true,  "minDose": true  },
+        { "id": "dip", "name": "Weighted Dips",                     "type": "loaded",     "prescribed": "2 × 5–6",         "rpe": "7",   "sets": 2, "regions": ["upper_push"], "restNote": "3 min",   "lite": false, "minDose": false },
+        { "id": "hkp", "name": "Half-Kneeling Single-Arm DB Press", "type": "loaded",     "prescribed": "2 × 8 each side", "rpe": "6",   "sets": 2, "regions": ["upper_push"], "restNote": "90 sec",  "lite": false, "minDose": false, "sides": true },
+        { "id": "scr", "name": "Seated Cable Row (1-sec pause)",    "type": "loaded",     "prescribed": "2 × 8–10",        "rpe": "6",   "sets": 2, "regions": ["upper_pull"], "restNote": "90 sec",  "lite": false, "minDose": false },
+        { "id": "fpu", "name": "Face Pulls",                        "type": "loaded",     "prescribed": "2 × 12–15",       "rpe": "5–6", "sets": 2, "regions": ["upper_pull"], "restNote": "60 sec",  "lite": true,  "minDose": false },
+        { "id": "sws", "name": "Serratus Wall Slides",              "type": "bodyweight", "prescribed": "2 × 10–12",       "rpe": "5",   "sets": 2, "regions": ["scapular"],   "restNote": "60 sec",  "lite": true,  "minDose": true  }
       ]
     },
     "B": {
@@ -73,6 +76,7 @@
       "fullName": "Day B — Lower Body Strength, Turnout & Trunk",
       "color": "#3aaa80", "colorDim": "#091e16",
       "optional": false, "upperBody": false,
+      "liteSetReduction": 1,
       "warmup": [
         { "name": "Hip 90/90 Mobility", "prescription": "90 sec each side", "note": "Seated on floor, both knees at 90°. Rotate torso toward front shin, hold end range. Directly prepares hip external rotators for cable HER." },
         { "name": "Deep Hip External Rotation Stretch", "prescription": "90 sec each side", "note": "Figure-4 or pigeon position. Targets piriformis and short rotators — the same muscles trained with cable HER." },
@@ -81,13 +85,13 @@
         { "name": "Slow Calf Raises", "prescription": "2 × 12 (3-sec lower)", "note": "Eccentric emphasis. Achilles and plantar fascia preparation before tibialis finisher." }
       ],
       "exercises": [
-        { "id": "rdl", "name": "Romanian Deadlift",               "type": "loaded",     "prescribed": "3 × 5–6",             "rpe": "7",   "sets": 3, "regions": ["lower"],      "restNote": "3–4 min",   "note": "Hip hinge — feel hamstring stretch at bottom. Stop when lower back rounds. Bar stays close to legs." },
-        { "id": "nhc", "name": "Nordic Hamstring Curl",           "type": "loaded",     "prescribed": "3 × 4–6",             "rpe": "6–7", "sets": 3, "regions": ["lower"],      "restNote": "3 min",     "note": "3-sec eccentric lower to floor. Partner holds ankles. Gold standard hamstring injury prevention." },
-        { "id": "bss", "name": "Bulgarian Split Squat",           "type": "loaded",     "prescribed": "3 × 6–8 each side",   "rpe": "6–7", "sets": 3, "regions": ["lower"],      "sides": true, "restNote": "2–3 min",   "note": "Rear foot elevated on bench. Upright torso. Feel front glute loading. Log right and left separately." },
-        { "id": "her", "name": "Hip External Rotation (cable)",  "type": "loaded",     "prescribed": "3 × 12–15 each side",  "rpe": "5–6", "sets": 3, "regions": ["lower"],      "sides": true, "restNote": "60–90 sec", "note": "Seated or side-lying, cable at ankle. Rotate leg outward against resistance. Targets piriformis and short external rotators — direct turnout support." },
-        { "id": "cop", "name": "Copenhagen Plank",                "type": "timed",      "prescribed": "3 × 20–30s each side", "rpe": "6",   "sets": 3, "regions": ["lower_core"], "sides": true, "restNote": "60 sec",    "note": "Top leg on bench, bottom leg lifted. Adductor and groin protection." },
-        { "id": "pal", "name": "Pallof Press",                    "type": "bodyweight", "prescribed": "3 × 10–12 each side",  "rpe": "5–6", "sets": 3, "regions": ["core"],       "sides": true, "restNote": "60 sec",    "note": "Press straight out from chest — resist rotating toward cable." },
-        { "id": "tib", "name": "Tibialis Raises + Foot Intrinsics","type": "timed",    "prescribed": "2 × 3 min",            "rpe": "5",   "sets": 2, "regions": ["lower_acc"],  "restNote": "60 sec",    "note": "Tibialis: heels on raised surface, raise toes rhythmically. Foot intrinsics: short foot arch lifts, toe spreads. Achilles and plantar fascia protection." }
+        { "id": "rdl", "name": "Romanian Deadlift",                "type": "loaded",     "prescribed": "3 × 5–6",             "rpe": "7",   "sets": 3, "regions": ["lower"],      "restNote": "3–4 min",   "lite": true,  "minDose": true,  "note": "Hip hinge — feel hamstring stretch at bottom. Stop when lower back rounds. Bar stays close to legs." },
+        { "id": "nhc", "name": "Nordic Hamstring Curl",            "type": "loaded",     "prescribed": "3 × 4–6",             "rpe": "6–7", "sets": 3, "regions": ["lower"],      "restNote": "3 min",     "lite": true,  "minDose": true,  "note": "3-sec eccentric lower to floor. Partner holds ankles. Gold standard hamstring injury prevention. Never dropped regardless of load." },
+        { "id": "bss", "name": "Bulgarian Split Squat",            "type": "loaded",     "prescribed": "3 × 6–8 each side",   "rpe": "6–7", "sets": 3, "regions": ["lower"],      "restNote": "2–3 min",   "lite": true,  "minDose": false, "sides": true, "note": "Rear foot elevated on bench. Upright torso. Feel front glute loading. Log right and left separately." },
+        { "id": "her", "name": "Hip External Rotation (cable)",   "type": "loaded",     "prescribed": "3 × 12–15 each side",  "rpe": "5–6", "sets": 3, "regions": ["lower"],      "restNote": "60–90 sec", "lite": false, "minDose": false, "sides": true, "note": "Seated or side-lying, cable at ankle. Rotate leg outward against resistance. Targets piriformis and short external rotators — direct turnout support." },
+        { "id": "cop", "name": "Copenhagen Plank",                 "type": "timed",      "prescribed": "3 × 20–30s each side", "rpe": "6",   "sets": 3, "regions": ["lower_core"], "restNote": "60 sec",    "lite": true,  "minDose": false, "sides": true, "note": "Top leg on bench, bottom leg lifted. Adductor and groin protection." },
+        { "id": "pal", "name": "Pallof Press",                     "type": "bodyweight", "prescribed": "3 × 10–12 each side",  "rpe": "5–6", "sets": 3, "regions": ["core"],       "restNote": "60 sec",    "lite": true,  "minDose": false, "sides": true, "note": "Press straight out from chest — resist rotating toward cable." },
+        { "id": "tib", "name": "Tibialis Raises + Foot Intrinsics","type": "timed",      "prescribed": "2 × 3 min",            "rpe": "5",   "sets": 2, "regions": ["lower_acc"],  "restNote": "60 sec",    "lite": false, "minDose": false, "note": "Tibialis: heels on raised surface, raise toes rhythmically. Foot intrinsics: short foot arch lifts, toe spreads. Achilles and plantar fascia protection." }
       ]
     },
     "C": {
@@ -95,6 +99,7 @@
       "fullName": "Day C — Reactive Strength & Ballón",
       "color": "#e8a020", "colorDim": "#291e07",
       "optional": false, "upperBody": false,
+      "liteSetReduction": 0,
       "warmup": [
         { "name": "Ankle Circles + Mobilisation", "prescription": "1 × 10 each direction, each ankle", "note": "Full circumduction. Cold ankles are the primary injury site in plyometric sessions. Never skip." },
         { "name": "Calf Raises — Double then Single-Leg", "prescription": "2 × 15 double, 2 × 8 single-leg", "note": "Progressive achilles loading. Transition to single-leg mirrors takeoff mechanics." },
@@ -103,17 +108,23 @@
         { "name": "Approach Run-Up Strides", "prescription": "4 × full approach, no jump", "note": "Run the full 3–5 step approach at 80% speed — stop at takeoff point. Grooves the pattern before maximum vertical effort." }
       ],
       "exercises": [
-        { "id": "avj",  "name": "Approach Vertical Jump",        "type": "jump",  "measureLabel": "cm",      "measureMax": 150, "prescribed": "4 × 2",          "rpe": "9–9.5",  "sets": 4, "regions": ["plyo"], "restNote": "3–4 min",
+        { "id": "avj",  "name": "Approach Vertical Jump",         "type": "jump", "measureLabel": "cm",      "measureMax": 150, "prescribed": "4 × 2",          "rpe": "9–9.5", "sets": 4, "regions": ["plyo"], "restNote": "3–4 min",
+          "lite": true, "minDose": true,
           "note": "3–5 step approach, maximum intent every rep. Closest gym analogue to grand jeté and tour en l'air takeoff. ALWAYS first — highest CNS demand in this program. Measure peak height, track over time. Step down between reps, never drop." },
-        { "id": "ddr",  "name": "Depth Drop → Reactive Vertical","type": "jump",  "measureLabel": "quality",               "prescribed": "3 × 3",           "rpe": "8.5",    "sets": 3, "regions": ["plyo"], "restNote": "3 min",
+        { "id": "ddr",  "name": "Depth Drop → Reactive Vertical", "type": "jump", "measureLabel": "quality",                   "prescribed": "3 × 3",           "rpe": "8.5",   "sets": 3, "regions": ["plyo"], "restNote": "3 min",
+          "lite": true, "minDose": false,
           "note": "Step off box (40–60cm), land and immediately jump maximum vertical. Trains the stretch-shortening cycle at near-maximum intensity. Ground contact minimal — land-and-explode, not absorb-then-jump." },
-        { "id": "slbj", "name": "Single-Leg Box Jump",           "type": "jump",  "measureLabel": "quality",               "prescribed": "3 × 4 each leg",  "rpe": "8",      "sets": 3, "regions": ["plyo"], "sides": true, "restNote": "2–3 min",
+        { "id": "slbj", "name": "Single-Leg Box Jump",            "type": "jump", "measureLabel": "quality",                   "prescribed": "3 × 4 each leg",  "rpe": "8",     "sets": 3, "regions": ["plyo"], "restNote": "2–3 min", "sides": true,
+          "lite": true, "minDose": false,
           "note": "Most ballet-specific exercise in the program. Mirrors the asymmetric single-leg takeoff of assemblé, sissone, and grand allegro. Log right and left separately — asymmetries are clinically relevant." },
-        { "id": "lbs",  "name": "Lateral Bound → Stick",         "type": "jump",  "measureLabel": "quality",               "prescribed": "3 × 4 each side", "rpe": "7.5–8",  "sets": 3, "regions": ["plyo"], "sides": true, "restNote": "2 min",
+        { "id": "lbs",  "name": "Lateral Bound → Stick",          "type": "jump", "measureLabel": "quality",                   "prescribed": "3 × 4 each side", "rpe": "7.5–8", "sets": 3, "regions": ["plyo"], "restNote": "2 min",   "sides": true,
+          "lite": false, "minDose": false,
           "note": "Maximum lateral distance, stick landing for 2 seconds. Trains lateral acceleration found in manège and grand allegro. Develops hip abductor power supporting turnout under load." },
-        { "id": "rbj",  "name": "Repeated Broad Jump Series",    "type": "jump",  "measureLabel": "cm",      "measureMax": 300, "prescribed": "3 × 4",          "rpe": "8",      "sets": 3, "regions": ["plyo"], "restNote": "2 min",
+        { "id": "rbj",  "name": "Repeated Broad Jump Series",     "type": "jump", "measureLabel": "cm",      "measureMax": 300, "prescribed": "3 × 4",           "rpe": "8",     "sets": 3, "regions": ["plyo"], "restNote": "2 min",
+          "lite": false, "minDose": false,
           "note": "Continuous horizontal projection — land and immediately jump forward. Record total series distance. Trains posterior chain drive relevant to ballon in allegro sequences." },
-        { "id": "pog",  "name": "Pogos",                          "type": "plyo",                                           "prescribed": "2 × 20",          "rpe": "5–6",    "sets": 2, "regions": ["plyo"], "restNote": "90 sec",
+        { "id": "pog",  "name": "Pogos",                           "type": "plyo",                                              "prescribed": "2 × 20",          "rpe": "5–6",   "sets": 2, "regions": ["plyo"], "restNote": "90 sec",
+          "lite": true, "minDose": true,
           "note": "Tendon conditioning finisher only. Stiff ankle spring, minimal knee bend, fast rhythm. Low RPE by design — if effort feels above 6, reduce reps. Achilles and plantar fascia protection." }
       ]
     },
@@ -122,6 +133,7 @@
       "fullName": "Day D — Aesthetic Support & Balance",
       "color": "#df6b4a", "colorDim": "#281209",
       "optional": true, "upperBody": false,
+      "liteSetReduction": 1,
       "warmup": [
         { "name": "Arm Circles", "prescription": "2 × 10 each direction", "note": "Forward and backward. Shoulder joint circulation before pressing." },
         { "name": "Band Pull-Apart", "prescription": "2 × 12 reps" },
@@ -129,25 +141,25 @@
         { "name": "Chin-Up Negative", "prescription": "3 reps — 5-sec lower", "note": "Jump to top position, lower slowly. Activates biceps and lower lat before chin-up sets." }
       ],
       "exercises": [
-        { "id": "idb", "name": "Incline DB Press",              "type": "loaded",     "prescribed": "3 × 8–10",    "rpe": "7",   "sets": 3, "regions": ["upper_push"], "restNote": "90 sec" },
-        { "id": "chu", "name": "Chin-Ups",                      "type": "bodyweight", "prescribed": "3 × 8–12",    "rpe": "6–7", "sets": 3, "regions": ["upper_pull"], "restNote": "90 sec", "note": "Supinated (underhand) grip. Full ROM — dead hang to chin over bar. Shifts emphasis to lower lat and biceps vs overhand pull-ups." },
-        { "id": "clr", "name": "Cable Lateral Raises",          "type": "loaded",     "prescribed": "3 × 12–15",   "rpe": "6–7", "sets": 3, "regions": ["upper_push"], "restNote": "60 sec" },
-        { "id": "rdf", "name": "Rear Delt Fly",                 "type": "loaded",     "prescribed": "3 × 12–15",   "rpe": "6–7", "sets": 3, "regions": ["upper_pull"], "restNote": "60 sec" },
-        { "id": "hcp", "name": "Hammer Curls + Rope Pushdowns", "type": "loaded",     "prescribed": "2–3 × 10–12", "rpe": "6–7", "sets": 2, "regions": ["upper_arm"],  "restNote": "60 sec", "note": "Superset: curls into pushdowns immediately. Rest after both." },
-        { "id": "adm", "name": "Adductor Machine",              "type": "loaded",     "prescribed": "2 × 12–15",   "rpe": "6",   "sets": 2, "regions": ["lower"],      "restNote": "60 sec" }
+        { "id": "idb", "name": "Incline DB Press",              "type": "loaded",     "prescribed": "3 × 8–10",    "rpe": "7",   "sets": 3, "regions": ["upper_push"], "restNote": "90 sec", "lite": true,  "minDose": false },
+        { "id": "chu", "name": "Chin-Ups",                      "type": "bodyweight", "prescribed": "3 × 8–12",    "rpe": "6–7", "sets": 3, "regions": ["upper_pull"], "restNote": "90 sec", "lite": true,  "minDose": false, "note": "Supinated (underhand) grip. Full ROM — dead hang to chin over bar. Shifts emphasis to lower lat and biceps." },
+        { "id": "clr", "name": "Cable Lateral Raises",          "type": "loaded",     "prescribed": "3 × 12–15",   "rpe": "6–7", "sets": 3, "regions": ["upper_push"], "restNote": "60 sec", "lite": false, "minDose": false },
+        { "id": "rdf", "name": "Rear Delt Fly",                 "type": "loaded",     "prescribed": "3 × 12–15",   "rpe": "6–7", "sets": 3, "regions": ["upper_pull"], "restNote": "60 sec", "lite": false, "minDose": false },
+        { "id": "hcp", "name": "Hammer Curls + Rope Pushdowns", "type": "loaded",     "prescribed": "2–3 × 10–12", "rpe": "6–7", "sets": 2, "regions": ["upper_arm"],  "restNote": "60 sec", "lite": false, "minDose": false, "note": "Superset: curls into pushdowns immediately. Rest after both." },
+        { "id": "adm", "name": "Adductor Machine",              "type": "loaded",     "prescribed": "2 × 12–15",   "rpe": "6",   "sets": 2, "regions": ["lower"],      "restNote": "60 sec", "lite": true,  "minDose": false }
       ]
     }
   },
   "tags": {
-    "poor_sleep":     { "label": "Poor sleep",           "emoji": "😴", "group": "rec",  "affects": { "plyo": { "setReduction": 1 } },                                                                                                            "note": "Reduce plyometric volume by 1 set. Strength work unchanged — sleep debt impairs reactive power more than strength." },
-    "high_fatigue":   { "label": "High fatigue",         "emoji": "🪫", "group": "rec",  "affects": { "ALL":  { "setReduction": 1 } },                                                                                                            "note": "Drop 1 set from each exercise. Keep prescribed RPE — the load is appropriate, the volume is reduced." },
-    "low_energy":     { "label": "Low energy",           "emoji": "🔋", "group": "rec",  "affects": {},                                     "rpeCap": 7,                                                                                          "note": "Cap all exercises at RPE 7. Volume unchanged — energy will build through the session." },
-    "heavy_legs":     { "label": "Heavy legs",           "emoji": "🦵", "group": "rec",  "affects": { "lower": { "setReduction": 1 }, "plyo": { "setReduction": 1 }, "lower_core": { "setReduction": 1 } },                                     "note": "Reduce lower body and plyo by 1 set. Upper body unchanged." },
-    "upper_soreness": { "label": "Upper body soreness",  "emoji": "💪", "group": "rec",  "affects": { "upper_push": { "setReduction": 1 }, "upper_pull": { "setReduction": 1 }, "upper_arm": { "setReduction": 1 }, "carry": { "setReduction": 1 } }, "note": "Reduce upper body and carries by 1 set. Soreness is safe to train through — scapular work is maintained." },
-    "lower_soreness": { "label": "Lower body soreness",  "emoji": "🦵", "group": "rec",  "affects": { "lower": { "setReduction": 1 }, "lower_core": { "setReduction": 1 } },                                                                    "note": "Reduce lower body by 1 set." },
-    "hip_knee":       { "label": "Hip / knee tightness", "emoji": "⚠️", "group": "cau",  "affects": { "lower": { "note": "Shorten ROM" }, "plyo": { "setReduction": 1, "note": "Focus on landing quality" } },                                  "note": "Shorten ROM on lower body exercises. Reduce plyo by 1 set — prioritise landing over height." },
-    "shoulder":       { "label": "Shoulder tightness",   "emoji": "⚠️", "group": "cau",  "affects": { "upper_push": { "note": "Reduce load ~10–15%, avoid end-range" }, "upper_pull": { "note": "Bodyweight only if weighted" } },               "note": "Reduce pressing load 10–15%. Pull-ups bodyweight only. Serratus and scapular work maintained." },
-    "dull_ache":      { "label": "Dull joint ache",      "emoji": "🔶", "group": "cau",  "affects": {},                                                                                                                                            "note": "Monitor during warm-up. Skip that movement if ache increases. Log location in injury log." },
-    "sharp_pain":     { "label": "Sharp / acute pain",   "emoji": "🚨", "group": "warn", "isWarning": true, "affects": {},                                                                                                                        "note": "Do not train through sharp pain. Requires physiotherapist assessment before next session." }
+    "poor_sleep":     { "label": "Poor sleep",           "emoji": "😴", "group": "rec",  "affects": { "plyo": { "setReduction": 1 } },                                                                                                                    "note": "Reduce plyometric volume by 1 set. Strength work unchanged — sleep debt impairs reactive power more than strength." },
+    "high_fatigue":   { "label": "High fatigue",         "emoji": "🪫", "group": "rec",  "affects": { "ALL":  { "setReduction": 1 } },                                                                                                                    "note": "Drop 1 set from each exercise. Keep prescribed RPE — the load is appropriate, the volume is reduced." },
+    "low_energy":     { "label": "Low energy",           "emoji": "🔋", "group": "rec",  "affects": {},                                         "rpeCap": 7,                                                                                              "note": "Cap all exercises at RPE 7. Volume unchanged — energy will build through the session." },
+    "heavy_legs":     { "label": "Heavy legs",           "emoji": "🦵", "group": "rec",  "affects": { "lower": { "setReduction": 1 }, "plyo": { "setReduction": 1 }, "lower_core": { "setReduction": 1 } },                                             "note": "Reduce lower body and plyo by 1 set. Upper body unchanged." },
+    "upper_soreness": { "label": "Upper body soreness",  "emoji": "💪", "group": "rec",  "affects": { "upper_push": { "setReduction": 1 }, "upper_pull": { "setReduction": 1 }, "upper_arm": { "setReduction": 1 }, "carry": { "setReduction": 1 } },     "note": "Reduce upper body and carries by 1 set. Soreness is safe to train through — scapular work is maintained." },
+    "lower_soreness": { "label": "Lower body soreness",  "emoji": "🦵", "group": "rec",  "affects": { "lower": { "setReduction": 1 }, "lower_core": { "setReduction": 1 } },                                                                            "note": "Reduce lower body by 1 set." },
+    "hip_knee":       { "label": "Hip / knee tightness", "emoji": "⚠️", "group": "cau",  "affects": { "lower": { "note": "Shorten ROM" }, "plyo": { "setReduction": 1, "note": "Focus on landing quality" } },                                          "note": "Shorten ROM on lower body exercises. Reduce plyo by 1 set — prioritise landing over height." },
+    "shoulder":       { "label": "Shoulder tightness",   "emoji": "⚠️", "group": "cau",  "affects": { "upper_push": { "note": "Reduce load ~10–15%, avoid end-range" }, "upper_pull": { "note": "Bodyweight only if weighted" } },                       "note": "Reduce pressing load 10–15%. Pull-ups bodyweight only. Serratus and scapular work maintained." },
+    "dull_ache":      { "label": "Dull joint ache",      "emoji": "🔶", "group": "cau",  "affects": {},                                                                                                                                                    "note": "Monitor during warm-up. Skip that movement if ache increases. Log location in injury log." },
+    "sharp_pain":     { "label": "Sharp / acute pain",   "emoji": "🚨", "group": "warn", "isWarning": true, "affects": {},                                                                                                                                "note": "Do not train through sharp pain. Requires physiotherapist assessment before next session." }
   }
 }

@@ -1,4 +1,4 @@
-const CACHE = 'ballet-train-v15';
+const CACHE = 'ballet-train-v16';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon.svg', '/program.json'];
 
 self.addEventListener('install', e => {
