@@ -363,8 +363,8 @@ const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', 
 const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
 const SESS_LABEL   = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
 const SESS_BADGE   = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
-const TIER_LABEL   = { full:'', lite:'LITE', min:'MIN DOSE' };
-const TIER_CSS     = { full:'', lite:'tier-lite', min:'tier-min' };
+const TIER_LABEL   = { full:'', lite:'LITE', min:'MIN DOSE', locked:'' };
+const TIER_CSS     = { full:'', lite:'tier-lite', min:'tier-min', locked:'' };
 
 const INJURY_REGIONS  = ['Ankle','Knee','Hip','Lower Back','Hamstring','Groin','Shoulder','Wrist','Foot','Achilles','Other'];
 const SEVERITY_LABELS = ['','Minor tightness','Mild pain','Moderate pain','Significant — limit training','Acute — see physio'];
@@ -488,9 +488,17 @@ function setDhours(i,v) { getWeek(viewMonday).ballet[i].hours=v;     saveWeeks()
 // ═══════════════════════════════════════════════════════════
 // AUTO-ASSIGNMENT ENGINE v2
 // Graduated tiers · directional gap rule · retry logic
-// Returns { assigned, tiers, engineMods, reasons }
+// lockedAssignments: sessions already logged this week — their day
+// indices are fixed points the engine must not touch or conflict with.
+//
+// Real-life example: it is Wednesday. Push was done Monday (logged).
+// You changed Tuesday's rehearsal to a full day and want the plan updated.
+// The engine must see Monday as consumed by Push, respect the 48-hour
+// gap rule from Monday when placing Pull, and never re-assign Monday
+// to anything else. Without this, regenerating mid-week would treat
+// the whole week as blank and could conflict with completed sessions.
 // ═══════════════════════════════════════════════════════════
-function assignGymDays(ballet) {
+function assignGymDays(ballet, lockedAssignments = {}) {
 
   // ── Load calculation ─────────────────────────────────────
   function computeLoad(d) {
@@ -507,12 +515,32 @@ function assignGymDays(ballet) {
   const isOff = ballet.map(d => d.type === 'off');
 
   // ── Protected days — region-specific ─────────────────────
-  // perf day: no gym at all (upper=99, lower=99 already handles it via load)
-  // day BEFORE perf: no lower/plyo, upper lite permitted
-  // day AFTER perf: lower min only, upper lite only
-  const perfDays = new Set(ballet.reduce((acc,d,i) => d.type==='perf' ? [...acc,i] : acc, []));
+  const perfDays      = new Set(ballet.reduce((acc,d,i) => d.type==='perf' ? [...acc,i] : acc, []));
   const dayBeforePerf = new Set([...perfDays].map(i => i-1).filter(i => i >= 0));
   const dayAfterPerf  = new Set([...perfDays].map(i => i+1).filter(i => i < 7));
+
+  // ── Locked sessions ───────────────────────────────────────
+  // Pre-populate assigned and usedDays with completed sessions.
+  // These entries are FINAL — the engine will not overwrite them,
+  // will not place other sessions on those days, and will respect
+  // gap rules relative to them exactly as it would for newly placed sessions.
+  const assigned   = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
+  const tiers      = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
+  const engineMods = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
+  const reasons    = { AP:'',   AL:'',   AF:'',   B:'',   C:'',   D:'' };
+  const usedDays   = new Set();
+
+  // Seed the engine with locked (already-done) sessions first.
+  // This means the gap rule for Day C will correctly measure from a
+  // completed Day B even if Day B is now in the past.
+  Object.entries(lockedAssignments).forEach(([sk, dayIdx]) => {
+    if (dayIdx === null) return;
+    assigned[sk]   = dayIdx;
+    tiers[sk]      = 'locked';   // special marker — not rendered as a tier pill
+    engineMods[sk] = null;
+    reasons[sk]    = `${DAYS[dayIdx]} — completed ✓`;
+    usedDays.add(dayIdx);
+  });
 
   function slotBonus(i) {
     let b = 0;
@@ -522,14 +550,13 @@ function assignGymDays(ballet) {
   }
 
   // ── Tier bands ───────────────────────────────────────────
-  // Returns 'full'|'lite'|'min'|null for a given load score and region
   function upperTier(i) {
     if (perfDays.has(i)) return null;
     const u = loads[i].upper;
-    if (dayBeforePerf.has(i)) return u < 6.5 ? 'lite' : null;  // upper lite permitted day before perf
-    if (dayAfterPerf.has(i))  return u < 6.5 ? 'lite' : null;  // upper lite permitted day after perf
+    if (dayBeforePerf.has(i)) return u < 6.5 ? 'lite' : null;
+    if (dayAfterPerf.has(i))  return u < 6.5 ? 'lite' : null;
     if (u < 2.5)  return 'full';
-    if (u < 4.5)  return 'full';   // moderate — assign full, note in reason
+    if (u < 4.5)  return 'full';
     if (u < 5.5)  return 'lite';
     if (u < 6.5)  return 'min';
     return null;
@@ -537,11 +564,9 @@ function assignGymDays(ballet) {
 
   function lowerTier(i) {
     if (perfDays.has(i)) return null;
-    if (dayBeforePerf.has(i)) return null;  // no lower day before perf
+    if (dayBeforePerf.has(i)) return null;
     const l = loads[i].lower;
-    if (dayAfterPerf.has(i)) {              // day after perf: min lower only
-      return l < 7.0 ? 'min' : null;
-    }
+    if (dayAfterPerf.has(i)) return l < 7.0 ? 'min' : null;
     if (l < 2.5)  return 'full';
     if (l < 4.0)  return 'full';
     if (l < 5.5)  return 'lite';
@@ -549,7 +574,6 @@ function assignGymDays(ballet) {
     return null;
   }
 
-  // Engine mods derived from tier
   function engineModForTier(sessKey, tier) {
     if (!tier || tier === 'full') return null;
     const sess = PROG.sessions[sessKey];
@@ -558,13 +582,6 @@ function assignGymDays(ballet) {
     if (tier === 'min')  return { setReduction: 0, rpeCap: 6, isMin: true };
     return null;
   }
-
-  const assigned   = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const tiers      = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const engineMods = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const reasons    = { AP:'',   AL:'',   AF:'',   B:'',   C:'',   D:'' };
-
-  const usedDays   = new Set();
 
   // ── UPPER BODY assignment ─────────────────────────────────
   // Evaluate each day for upper tier, score, sort
@@ -775,9 +792,19 @@ function buildLowerReason(sess, dayIdx, ballet, loads, tier) {
   return parts.join(' · ') + '.';
 }
 
+function getLockedAssignments(wk) {
+  if (!wk.plan) return {};
+  const locked = {};
+  Object.entries(wk.plan.assigned).forEach(([sk, dayIdx]) => {
+    if (wk.logs[sk] && dayIdx !== null) locked[sk] = dayIdx;
+  });
+  return locked;
+}
+
 function generatePlan() {
   const wk = getWeek(viewMonday);
-  const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet);
+  const locked = wk.plan ? getLockedAssignments(wk) : {};
+  const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked);
   wk.plan = { assigned, tiers, engineMods, reasons, createdAt: new Date().toISOString() };
   saveWeeks();
   renderSchedule();
@@ -795,39 +822,74 @@ function buildWeekView(wk) {
 
   const editBar = editDaysMode ? `
     <div class="edit-mode-bar">
-      <span class="edit-mode-lbl">✏️ Tap any day to reassign</span>
+      <span class="edit-mode-lbl">✏️ Tap a pending day to reassign</span>
       <div class="edit-mode-actions">
         <button class="btn-undo" onclick="undoEditDays()">Undo</button>
         <button class="btn-done" onclick="exitEditDays()">Done</button>
       </div>
     </div>` : '';
 
+  // Today's day index within the viewed week (0=Mon…6=Sun). Negative = future week, >6 = past week.
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
+
   const dayCards = DAYS.map((day,i) => {
-    const ballet      = wk.ballet[i];
+    const ballet        = wk.ballet[i];
     const sessionsOnDay = dayToSessions[i] || [];
-    const sessionKey  = sessionsOnDay[0] || null;
-    const log         = sessionKey ? wk.logs[sessionKey] : null;
-    const isDone      = !!log;
-    const isConflict  = conflictDays.has(i);
-    const tier        = sessionKey ? (wk.plan.tiers?.[sessionKey] || 'full') : null;
+    const sessionKey    = sessionsOnDay[0] || null;
+    const log           = sessionKey ? wk.logs[sessionKey] : null;
+    const isDone        = !!log;
+    const isConflict    = conflictDays.has(i);
+    const tier          = sessionKey ? (wk.plan.tiers?.[sessionKey] || 'full') : null;
+    const isToday       = i === todayDayIdx;
+
+    // A session is locked in edit mode if it has already been logged.
+    // Logged = athlete already trained it — its day is a historical fact, not editable.
+    const isLocked = editDaysMode && isDone;
 
     const conflictNote = isConflict
       ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk => SESS_LABEL[sk]||sk).join(' + ')} — duplicate assignment</div>`
       : '';
-    const menuHTML = (editDaysMode && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay) : '';
+    // Menu only opens for non-locked days in edit mode
+    const menuHTML = (editDaysMode && !isLocked && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay, wk) : '';
 
     if (sessionKey) {
       const sess = PROG.sessions[sessionKey];
       const reason  = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
+
+      // Click behaviour:
+      // - Normal mode, done:    expand inline log
+      // - Normal mode, pending: open log flow
+      // - Edit mode, locked:    no action (session done, immoveable)
+      // - Edit mode, pending:   open session reassignment menu
       const clickAct = editDaysMode
-        ? `openEditDayMenu(${i})`
+        ? (isLocked ? '' : `openEditDayMenu(${i})`)
         : isDone ? `toggleHistEntry('${sessionKey}')` : `openLog('${sessionKey}',${i})`;
 
       const tierPill = (tier && tier !== 'full')
         ? `<span class="tier-pill ${TIER_CSS[tier]}">${TIER_LABEL[tier]}</span>` : '';
 
+      // Today indicator — amber left border on current day
+      const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
+
+      const rightIcon = editDaysMode
+        ? isLocked
+          // Lock icon — done session, cannot be moved
+          ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+          // Editable chevron
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
+        : isDone
+          ? '<span class="done-pill">✓ Done</span>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>';
+
+      const lockedNote = isLocked
+        ? `<div class="reason-text" style="color:var(--tx3);border-top:1px solid var(--bd);padding-top:8px">🔒 Already completed — day cannot be changed</div>`
+        : '';
+
       return `
-        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}" onclick="${clickAct}">
+        <div class="day-card${editDaysMode&&!isLocked?' editable':''}${isConflict?' conflict':''}"
+          style="${todayStyle}"
+          ${clickAct ? `onclick="${clickAct}"` : ''}>
           <div class="day-card-hdr">
             <div>
               <div class="row">
@@ -835,28 +897,26 @@ function buildWeekView(wk) {
                 ${tierPill}
                 <span class="sm b5" style="margin-left:4px">${sess.name}</span>
               </div>
-              <div class="day-meta">${day}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
+              <div class="day-meta">${day}${isToday?' · Today':''}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
             </div>
-            <div class="day-status">
-              ${editDaysMode
-                ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
-                : isDone
-                  ? '<span class="done-pill">✓ Done</span>'
-                  : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'}
-            </div>
+            <div class="day-status">${rightIcon}</div>
           </div>
           ${conflictNote}
+          ${lockedNote}
           ${reason ? `<div class="reason-text">🧠 ${reason}</div>` : ''}
           ${!editDaysMode && isDone && expandedHist===sessionKey ? buildInlineLog(log, sessionKey, wk) : ''}
         </div>
         ${menuHTML}`;
     } else {
-      const clickAct = editDaysMode ? `openEditDayMenu(${i})` : '';
+      const clickAct  = editDaysMode ? `openEditDayMenu(${i})` : '';
+      const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
       return `
-        <div class="day-card${editDaysMode?' editable':''}"${editDaysMode?` onclick="${clickAct}"`:''}>
+        <div class="day-card${editDaysMode?' editable':''}"
+          style="${todayStyle}"
+          ${editDaysMode?`onclick="${clickAct}"`:''}>
           <div class="day-card-hdr">
             <div>
-              <div class="sm b5" style="color:var(--tx3)">${day}</div>
+              <div class="sm b5" style="color:var(--tx3)">${day}${isToday?' <span style=\'color:var(--am);font-size:10px\'>TODAY</span>':''}</div>
               <div class="day-meta">${ballet.type?DTYPE_LABELS[ballet.type]:'Not scheduled'}</div>
             </div>
             <span class="rest-pill">${editDaysMode?'Tap to assign':ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
@@ -936,17 +996,38 @@ function getLoadAlert(currentLoad) {
 }
 
 // ── Session menu (edit days) ───────────────────────────────
-function buildSessionMenu(dayIdx, sessionsOnDay) {
-  const opts = Object.entries(PROG.sessions).map(([key,sess]) => `
-    <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
-      <div class="session-opt-lbl">
-        <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
-        <span class="sm">${sess.name}</span>
-      </div>
-      ${sessionsOnDay.includes(key)
-        ? '<span class="session-tick">✓</span>'
-        : '<span class="session-tick-empty"></span>'}
-    </div>`).join('');
+// wk is passed so we can check which sessions already have logs (locked).
+// Logged sessions are shown as informational only — cannot be reassigned.
+function buildSessionMenu(dayIdx, sessionsOnDay, wk) {
+  const opts = Object.entries(PROG.sessions).map(([key,sess]) => {
+    const hasLog    = !!wk.logs[key];
+    const isCurrent = sessionsOnDay.includes(key);
+
+    if (hasLog && !isCurrent) {
+      // Session is done on another day — show greyed out, not tappable
+      return `
+        <div class="session-opt" style="opacity:.35;pointer-events:none">
+          <div class="session-opt-lbl">
+            <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
+            <span class="sm dim">${sess.name}</span>
+            <span style="font-size:10px;color:var(--tx3);margin-left:4px">🔒 done</span>
+          </div>
+          <span class="session-tick-empty"></span>
+        </div>`;
+    }
+
+    return `
+      <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
+        <div class="session-opt-lbl">
+          <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
+          <span class="sm">${sess.name}</span>
+        </div>
+        ${isCurrent
+          ? '<span class="session-tick">✓</span>'
+          : '<span class="session-tick-empty"></span>'}
+      </div>`;
+  }).join('');
+
   const noGym = `
     <div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
       <div class="session-opt-lbl">
@@ -981,18 +1062,30 @@ function openEditDayMenu(dayIdx) {
 }
 function assignDaySession(dayIdx, sessionKey) {
   const wk = getWeek(viewMonday);
+
+  // Hard guard: never move a session that has already been logged.
+  if (sessionKey && wk.logs[sessionKey]) {
+    editDayMenu = null;
+    renderSchedule();
+    return;
+  }
+
   if (sessionKey) {
     wk.plan.assigned[sessionKey] = dayIdx;
-    // Recompute tier for new day position using current load data
-    const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet);
+    // Recompute tier for the new day — pass locked sessions so the engine
+    // computes the gap rule from completed sessions, not from a blank slate.
+    // Real-life: Pull moved to Thursday must respect that Push was done Monday.
+    const locked = getLockedAssignments(wk);
+    const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet, locked);
     wk.plan.tiers[sessionKey]      = newTiers[sessionKey]      || 'full';
     wk.plan.engineMods[sessionKey] = newMods[sessionKey]       || null;
   } else {
+    // "No gym" — only clears sessions that are NOT logged
     Object.keys(wk.plan.assigned).forEach(sk => {
-      if (wk.plan.assigned[sk] === dayIdx) {
-        wk.plan.assigned[sk] = null;
-        wk.plan.tiers[sk]      = null;
-        wk.plan.engineMods[sk] = null;
+      if (wk.plan.assigned[sk] === dayIdx && !wk.logs[sk]) {
+        wk.plan.assigned[sk]    = null;
+        wk.plan.tiers[sk]       = null;
+        wk.plan.engineMods[sk]  = null;
       }
     });
   }
@@ -1043,7 +1136,9 @@ function promptDel(k, e) { e.stopPropagation(); confirmDel = k; renderSchedule()
 // ═══════════════════════════════════════════════════════════
 function getSessionExercises(sessionKey, tier) {
   const all = PROG.sessions[sessionKey].exercises;
-  if (!tier || tier === 'full') return all;
+  // 'locked' is an engine marker for completed sessions — treat as full
+  // (the actual exercises used are recovered from log.exerciseIds anyway)
+  if (!tier || tier === 'full' || tier === 'locked') return all;
   if (tier === 'lite') return all.filter(ex => ex.lite === true);
   if (tier === 'min')  return all.filter(ex => ex.minDose === true);
   return all;
@@ -1053,7 +1148,13 @@ function openLog(sessionKey, dayIdx) {
   editDaysMode = false; editDayMenu = null;
   const wk       = getWeek(viewMonday);
   const existing = wk.logs[sessionKey];
-  const tier     = wk.plan?.tiers?.[sessionKey] || 'full';
+  // Tier resolution priority:
+  // 1. If editing an existing log, use the tier stored on that log
+  //    (the tier at the time of logging is the ground truth for exercise selection)
+  // 2. If plan tier is 'locked' (engine marker for completed session), fall back to 'full'
+  // 3. Otherwise use the plan tier
+  const planTier = wk.plan?.tiers?.[sessionKey] || 'full';
+  const tier     = existing?.tier || (planTier === 'locked' ? 'full' : planTier);
   const exercises = getSessionExercises(sessionKey, tier);
 
   lf = {
