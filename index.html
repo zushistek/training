@@ -583,21 +583,33 @@ function assignGymDays(ballet, lockedAssignments = {}) {
     return null;
   }
 
+  // Guard: returns true if a session key is already locked (done).
+  // Every assignment point must call this before writing to assigned/tiers/engineMods.
+  // This is the single source of truth that prevents overwriting completed sessions.
+  function isLocked(sk) { return Object.prototype.hasOwnProperty.call(lockedAssignments, sk); }
+
   // ── UPPER BODY assignment ─────────────────────────────────
-  // Evaluate each day for upper tier, score, sort
+  // Bug fix: exclude usedDays from candidates so locked days are never
+  // re-evaluated as slots for a different session.
   const upperCandidates = [];
   for (let i = 0; i < 7; i++) {
+    if (usedDays.has(i)) continue;          // ← skip days consumed by locked sessions
     const tier = upperTier(i);
     if (!tier) continue;
     upperCandidates.push({ idx:i, tier, score:loads[i].upper + slotBonus(i) });
   }
   upperCandidates.sort((a,b) => a.score - b.score);
 
+  // Determine which upper sessions still need placing
+  // (locked ones are already seeded — skip them entirely)
+  const needAP = !isLocked('AP');
+  const needAL = !isLocked('AL');
+  const needAF = !isLocked('AF');
+
   // Try to find two well-separated candidates for AP+AL split
-  // Both must be 'full' or 'full'-ish (score ≤ 4.5) for a true split
   let splitSlot1 = null, splitSlot2 = null;
   const splitCandidates = upperCandidates.filter(c => loads[c.idx].upper < 4.5);
-  if (splitCandidates.length >= 2) {
+  if (needAP && needAL && splitCandidates.length >= 2) {
     outer: for (let i = 0; i < splitCandidates.length; i++) {
       for (let j = i+1; j < splitCandidates.length; j++) {
         if (Math.abs(splitCandidates[i].idx - splitCandidates[j].idx) >= 2) {
@@ -610,115 +622,125 @@ function assignGymDays(ballet, lockedAssignments = {}) {
   }
 
   if (splitSlot1 && splitSlot2) {
-    // True Push/Pull split
+    // True Push/Pull split — only write sessions that are not locked
     const [early, late] = splitSlot1.idx < splitSlot2.idx
       ? [splitSlot1, splitSlot2] : [splitSlot2, splitSlot1];
-    assigned.AP = early.idx; tiers.AP = early.tier;
-    assigned.AL = late.idx;  tiers.AL = late.tier;
-    assigned.AF = null;      tiers.AF = null;
-    engineMods.AP = engineModForTier('AP', early.tier);
-    engineMods.AL = engineModForTier('AL', late.tier);
-    usedDays.add(early.idx); usedDays.add(late.idx);
-    reasons.AP = buildUpperReason('AP', early.idx, ballet, loads, true, early.tier);
-    reasons.AL = buildUpperReason('AL', late.idx,  ballet, loads, true, late.tier);
-    reasons.AF = 'Split week — Push and Pull assigned separately.';
+    if (needAP) {
+      assigned.AP = early.idx; tiers.AP = early.tier;
+      engineMods.AP = engineModForTier('AP', early.tier);
+      usedDays.add(early.idx);
+      reasons.AP = buildUpperReason('AP', early.idx, ballet, loads, true, early.tier);
+    }
+    if (needAL) {
+      assigned.AL = late.idx; tiers.AL = late.tier;
+      engineMods.AL = engineModForTier('AL', late.tier);
+      usedDays.add(late.idx);
+      reasons.AL = buildUpperReason('AL', late.idx, ballet, loads, true, late.tier);
+    }
+    if (needAF) {
+      assigned.AF = null; tiers.AF = null;
+      reasons.AF = 'Split week — Push and Pull assigned separately.';
+    }
   } else if (upperCandidates.length >= 1) {
-    // AF: use best available upper slot, even if moderate/heavy
-    // If two candidates exist: try AF on best day + AP or AL on second-best
+    // AF fallback — only assign AF / null out AP+AL if they are not locked
     const bestAF = upperCandidates[0];
-    assigned.AF = bestAF.idx; tiers.AF = bestAF.tier;
-    engineMods.AF = engineModForTier('AF', bestAF.tier);
-    usedDays.add(bestAF.idx);
-    assigned.AP = null; tiers.AP = null;
-    assigned.AL = null; tiers.AL = null;
-    reasons.AF = buildUpperReason('AF', bestAF.idx, ballet, loads, false, bestAF.tier);
-    reasons.AP = 'Full Body session covers push and pull this week.';
-    reasons.AL = 'Full Body session covers push and pull this week.';
+    if (needAF) {
+      assigned.AF = bestAF.idx; tiers.AF = bestAF.tier;
+      engineMods.AF = engineModForTier('AF', bestAF.tier);
+      usedDays.add(bestAF.idx);
+      reasons.AF = buildUpperReason('AF', bestAF.idx, ballet, loads, false, bestAF.tier);
+    }
+    // Only clear AP/AL if they were not already locked and done
+    if (needAP) { assigned.AP = null; tiers.AP = null; reasons.AP = 'Full Body session covers push and pull this week.'; }
+    if (needAL) { assigned.AL = null; tiers.AL = null; reasons.AL = 'Full Body session covers push and pull this week.'; }
 
     // Try to also place AP or AL on a second distinct upper slot
-    const secondAF = upperCandidates.find(c => c.idx !== bestAF.idx && Math.abs(c.idx - bestAF.idx) >= 2);
+    const secondAF = upperCandidates.find(c =>
+      c.idx !== bestAF.idx && Math.abs(c.idx - bestAF.idx) >= 2
+    );
     if (secondAF && loads[secondAF.idx].upper < 5.5) {
-      // Assign push-heavy focus on earlier day, AF on later (or vice versa)
       const isEarly = secondAF.idx < bestAF.idx;
       const pushKey = isEarly ? 'AP' : 'AL';
-      assigned[pushKey] = secondAF.idx;
-      tiers[pushKey]    = secondAF.tier;
-      engineMods[pushKey] = engineModForTier(pushKey, secondAF.tier);
-      usedDays.add(secondAF.idx);
-      reasons[pushKey] = buildUpperReason(pushKey, secondAF.idx, ballet, loads, false, secondAF.tier)
-        + ' Secondary upper session alongside Full Body.';
+      if (!isLocked(pushKey)) {
+        assigned[pushKey] = secondAF.idx;
+        tiers[pushKey]    = secondAF.tier;
+        engineMods[pushKey] = engineModForTier(pushKey, secondAF.tier);
+        usedDays.add(secondAF.idx);
+        reasons[pushKey] = buildUpperReason(pushKey, secondAF.idx, ballet, loads, false, secondAF.tier)
+          + ' Secondary upper session alongside Full Body.';
+      }
     }
   } else {
-    reasons.AF = reasons.AP = reasons.AL = 'No viable upper body slot this week — all days have excessive upper load or are performance-protected.';
+    // No viable upper slots — only update reasons for unlocked sessions
+    if (needAF) reasons.AF = 'No viable upper body slot this week — all days have excessive upper load or are performance-protected.';
+    if (needAP) reasons.AP = 'No viable upper body slot this week.';
+    if (needAL) reasons.AL = 'No viable upper body slot this week.';
   }
 
   // ── LOWER BODY: Day B ─────────────────────────────────────
-  let bestB = null, bestBTier = null, bestBScore = Infinity;
-  for (let i = 0; i < 7; i++) {
-    if (usedDays.has(i)) continue;
-    const tier = lowerTier(i);
-    if (!tier) continue;
-    const sc = loads[i].lower + slotBonus(i);
-    if (sc < bestBScore) { bestBScore = sc; bestB = i; bestBTier = tier; }
-  }
-  if (bestB !== null) {
-    assigned.B = bestB; tiers.B = bestBTier;
-    engineMods.B = engineModForTier('B', bestBTier);
-    usedDays.add(bestB);
-    reasons.B = buildLowerReason('B', bestB, ballet, loads, bestBTier);
-  } else {
-    reasons.B = 'No viable lower body slot — all days have heavy lower ballet load or are performance-protected. Prioritise Day C if possible.';
+  if (!isLocked('B')) {
+    let bestB = null, bestBTier = null, bestBScore = Infinity;
+    for (let i = 0; i < 7; i++) {
+      if (usedDays.has(i)) continue;
+      const tier = lowerTier(i);
+      if (!tier) continue;
+      const sc = loads[i].lower + slotBonus(i);
+      if (sc < bestBScore) { bestBScore = sc; bestB = i; bestBTier = tier; }
+    }
+    if (bestB !== null) {
+      assigned.B = bestB; tiers.B = bestBTier;
+      engineMods.B = engineModForTier('B', bestBTier);
+      usedDays.add(bestB);
+      reasons.B = buildLowerReason('B', bestB, ballet, loads, bestBTier);
+    } else {
+      reasons.B = 'No viable lower body slot — all days have heavy lower ballet load or are performance-protected.';
+    }
   }
 
   // ── LOWER BODY: Day C — directional gap rule ──────────────
-  // C must be ≥2 days AFTER B (B has more residual eccentric damage)
-  // B can follow C with only 1-day gap (C = neural, faster recovery)
-  // but if B follows C within 1 day, B is automatically downgraded one tier
-  let bestC = null, bestCTier = null, bestCScore = Infinity;
-  for (let i = 0; i < 7; i++) {
-    if (usedDays.has(i)) continue;
-    const tier = lowerTier(i);
-    if (!tier) continue;
-
-    // Directional gap enforcement
-    if (assigned.B !== null) {
-      // C must not be placed < 2 days AFTER B
-      if (i > assigned.B && (i - assigned.B) < 2) continue;
-      // C placed BEFORE B: B will follow within 1 day — penalise but allow
+  // C must be ≥2 days AFTER B (B causes more residual eccentric fatigue).
+  // B can follow C with only 1 day gap (C = neural fatigue, resolves faster).
+  // If B follows C within 1 day, B is auto-downgraded one tier — but only
+  // if B is not locked (done sessions keep their original tier).
+  if (!isLocked('C')) {
+    let bestC = null, bestCTier = null, bestCScore = Infinity;
+    for (let i = 0; i < 7; i++) {
+      if (usedDays.has(i)) continue;
+      const tier = lowerTier(i);
+      if (!tier) continue;
+      // Directional gap: C must not sit < 2 days AFTER B (locked or new)
+      if (assigned.B !== null && i > assigned.B && (i - assigned.B) < 2) continue;
+      let sc = loads[i].lower + slotBonus(i);
+      const adjReh = (i > 0 && ballet[i-1].type === 'reh') || (i < 6 && ballet[i+1].type === 'reh');
+      if (adjReh) sc += 3;
+      if (sc < bestCScore) { bestCScore = sc; bestC = i; bestCTier = tier; }
     }
 
-    let sc = loads[i].lower + slotBonus(i);
-    // Penalise C adjacent to full rehearsal days (plyo after heavy rehearsal = injury risk)
-    const adjReh = (i > 0 && ballet[i-1].type === 'reh') || (i < 6 && ballet[i+1].type === 'reh');
-    if (adjReh) sc += 3;
-    if (sc < bestCScore) { bestCScore = sc; bestC = i; bestCTier = tier; }
-  }
-
-  if (bestC !== null) {
-    // If C is before B and gap is only 1 day, downgrade B one tier
-    if (assigned.B !== null && bestC < assigned.B && (assigned.B - bestC) < 2) {
-      const tierOrder = ['full','lite','min'];
-      const bIdx = tierOrder.indexOf(tiers.B);
-      if (bIdx >= 0 && bIdx < tierOrder.length - 1) {
-        tiers.B = tierOrder[bIdx + 1];
-        engineMods.B = engineModForTier('B', tiers.B);
-        reasons.B += ` Day C precedes Day B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()} to protect recovery.`;
+    if (bestC !== null) {
+      // B precedes C by only 1 day — downgrade B if B is not locked
+      if (assigned.B !== null && bestC < assigned.B && (assigned.B - bestC) < 2 && !isLocked('B')) {
+        const tierOrder = ['full','lite','min'];
+        const bIdx = tierOrder.indexOf(tiers.B);
+        if (bIdx >= 0 && bIdx < tierOrder.length - 1) {
+          tiers.B = tierOrder[bIdx + 1];
+          engineMods.B = engineModForTier('B', tiers.B);
+          reasons.B += ` Day C precedes Day B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()} to protect recovery.`;
+        }
       }
+      assigned.C = bestC; tiers.C = bestCTier;
+      engineMods.C = engineModForTier('C', bestCTier);
+      usedDays.add(bestC);
+      reasons.C = buildLowerReason('C', bestC, ballet, loads, bestCTier);
+    } else {
+      reasons.C = 'No viable plyometric slot — insufficient gap from Day B or all lower days are performance-protected.';
     }
-    assigned.C = bestC; tiers.C = bestCTier;
-    engineMods.C = engineModForTier('C', bestCTier);
-    usedDays.add(bestC);
-    reasons.C = buildLowerReason('C', bestC, ballet, loads, bestCTier);
-  } else {
-    reasons.C = 'No viable plyometric slot — insufficient gap from Day B or all lower days are performance-protected.';
   }
 
   // ── RETRY PASS — fight for minimum 3 sessions ─────────────
-  // Count non-null non-D sessions
+  // Count all assigned non-null sessions (locked ones count — they are done)
   const coreCount = ['AP','AL','AF','B','C'].filter(k => assigned[k] !== null).length;
   if (coreCount < 3) {
-    // Try to recover a missed session on the best available day at min dose
-    const missed = ['B','C','AF'].filter(k => assigned[k] === null);
+    const missed = ['B','C','AF'].filter(k => assigned[k] === null && !isLocked(k));
     for (const sk of missed) {
       const isLower = sk === 'B' || sk === 'C';
       let bestRetry = null, bestRetryScore = Infinity;
@@ -733,25 +755,27 @@ function assignGymDays(ballet, lockedAssignments = {}) {
         engineMods[sk] = engineModForTier(sk, 'min');
         usedDays.add(bestRetry);
         reasons[sk] = `Minimum dose assigned on ${DAYS[bestRetry]} — recovery pass to preserve training frequency. Essential exercises only.`;
-        break; // recover one at a time
+        break;
       }
     }
   }
 
   // ── OPTIONAL Day D ─────────────────────────────────────────
-  let bestD = null, bestDScore = 999;
-  for (let i = 0; i < 7; i++) {
-    if (usedDays.has(i) || perfDays.has(i) || dayBeforePerf.has(i)) continue;
-    const total = loads[i].upper + loads[i].lower;
-    if (total >= 5) continue;
-    const sc = total + slotBonus(i);
-    if (sc < bestDScore) { bestDScore = sc; bestD = i; }
-  }
-  if (bestD !== null) {
-    assigned.D = bestD; tiers.D = 'full';
-    reasons.D  = `${DAYS[bestD]} — low-load slot. Optional hypertrophy day.`;
-  } else {
-    reasons.D = 'No clean optional slot this week — Day D skipped.';
+  if (!isLocked('D')) {
+    let bestD = null, bestDScore = 999;
+    for (let i = 0; i < 7; i++) {
+      if (usedDays.has(i) || perfDays.has(i) || dayBeforePerf.has(i)) continue;
+      const total = loads[i].upper + loads[i].lower;
+      if (total >= 5) continue;
+      const sc = total + slotBonus(i);
+      if (sc < bestDScore) { bestDScore = sc; bestD = i; }
+    }
+    if (bestD !== null) {
+      assigned.D = bestD; tiers.D = 'full';
+      reasons.D  = `${DAYS[bestD]} — low-load slot. Optional hypertrophy day.`;
+    } else {
+      reasons.D = 'No clean optional slot this week — Day D skipped.';
+    }
   }
 
   return { assigned, tiers, engineMods, reasons };
@@ -803,8 +827,25 @@ function getLockedAssignments(wk) {
 
 function generatePlan() {
   const wk = getWeek(viewMonday);
+  // Collect sessions already logged this week — their day assignments
+  // are fixed points the engine must not overwrite.
   const locked = wk.plan ? getLockedAssignments(wk) : {};
   const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked);
+
+  // After the engine runs, force locked sessions back to their original
+  // day indices. The engine seeds them correctly, but as a hard safety
+  // guarantee we overwrite here too — a logged session's day is its day,
+  // regardless of what any computation produced.
+  Object.entries(locked).forEach(([sk, dayIdx]) => {
+    assigned[sk] = dayIdx;
+    // Restore the tier from the stored log — the actual tier used when
+    // the session was trained. 'locked' is the engine's internal marker;
+    // the stored log.tier is the real value for display purposes.
+    tiers[sk] = wk.logs[sk]?.tier || 'full';
+    engineMods[sk] = null;
+    reasons[sk] = `${DAYS[dayIdx]} — completed ✓`;
+  });
+
   wk.plan = { assigned, tiers, engineMods, reasons, createdAt: new Date().toISOString() };
   saveWeeks();
   renderSchedule();
@@ -822,14 +863,14 @@ function buildWeekView(wk) {
 
   const editBar = editDaysMode ? `
     <div class="edit-mode-bar">
-      <span class="edit-mode-lbl">✏️ Tap a pending day to reassign</span>
+      <span class="edit-mode-lbl">✏️ Tap any day to reassign</span>
       <div class="edit-mode-actions">
         <button class="btn-undo" onclick="undoEditDays()">Undo</button>
         <button class="btn-done" onclick="exitEditDays()">Done</button>
       </div>
     </div>` : '';
 
-  // Today's day index within the viewed week (0=Mon…6=Sun). Negative = future week, >6 = past week.
+  // Today indicator — amber left border so athlete always knows where they are
   const todayDate = new Date(); todayDate.setHours(0,0,0,0);
   const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
 
@@ -843,53 +884,40 @@ function buildWeekView(wk) {
     const tier          = sessionKey ? (wk.plan.tiers?.[sessionKey] || 'full') : null;
     const isToday       = i === todayDayIdx;
 
-    // A session is locked in edit mode if it has already been logged.
-    // Logged = athlete already trained it — its day is a historical fact, not editable.
-    const isLocked = editDaysMode && isDone;
-
     const conflictNote = isConflict
       ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk => SESS_LABEL[sk]||sk).join(' + ')} — duplicate assignment</div>`
       : '';
-    // Menu only opens for non-locked days in edit mode
-    const menuHTML = (editDaysMode && !isLocked && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay, wk) : '';
+    // In edit mode every day opens the menu — no locking in the UI
+    const menuHTML = (editDaysMode && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay, wk) : '';
 
     if (sessionKey) {
-      const sess = PROG.sessions[sessionKey];
-      const reason  = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
+      const sess   = PROG.sessions[sessionKey];
+      const reason = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
 
-      // Click behaviour:
-      // - Normal mode, done:    expand inline log
-      // - Normal mode, pending: open log flow
-      // - Edit mode, locked:    no action (session done, immoveable)
-      // - Edit mode, pending:   open session reassignment menu
       const clickAct = editDaysMode
-        ? (isLocked ? '' : `openEditDayMenu(${i})`)
+        ? `openEditDayMenu(${i})`
         : isDone ? `toggleHistEntry('${sessionKey}')` : `openLog('${sessionKey}',${i})`;
 
-      const tierPill = (tier && tier !== 'full')
+      // Only show LITE/MIN pills — not 'locked' (engine internal marker)
+      const tierPill = (tier && tier !== 'full' && tier !== 'locked')
         ? `<span class="tier-pill ${TIER_CSS[tier]}">${TIER_LABEL[tier]}</span>` : '';
 
-      // Today indicator — amber left border on current day
       const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
 
       const rightIcon = editDaysMode
-        ? isLocked
-          // Lock icon — done session, cannot be moved
-          ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
-          // Editable chevron
+        // In edit mode: done sessions show ✓ Done pill (informational) + amber chevron
+        // so the athlete knows the session was trained but can still reassign
+        ? isDone
+          ? '<span class="done-pill" style="margin-right:6px">✓</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
           : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
         : isDone
           ? '<span class="done-pill">✓ Done</span>'
           : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>';
 
-      const lockedNote = isLocked
-        ? `<div class="reason-text" style="color:var(--tx3);border-top:1px solid var(--bd);padding-top:8px">🔒 Already completed — day cannot be changed</div>`
-        : '';
-
       return `
-        <div class="day-card${editDaysMode&&!isLocked?' editable':''}${isConflict?' conflict':''}"
+        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}"
           style="${todayStyle}"
-          ${clickAct ? `onclick="${clickAct}"` : ''}>
+          onclick="${clickAct}">
           <div class="day-card-hdr">
             <div>
               <div class="row">
@@ -902,13 +930,12 @@ function buildWeekView(wk) {
             <div class="day-status">${rightIcon}</div>
           </div>
           ${conflictNote}
-          ${lockedNote}
           ${reason ? `<div class="reason-text">🧠 ${reason}</div>` : ''}
           ${!editDaysMode && isDone && expandedHist===sessionKey ? buildInlineLog(log, sessionKey, wk) : ''}
         </div>
         ${menuHTML}`;
     } else {
-      const clickAct  = editDaysMode ? `openEditDayMenu(${i})` : '';
+      const clickAct   = editDaysMode ? `openEditDayMenu(${i})` : '';
       const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
       return `
         <div class="day-card${editDaysMode?' editable':''}"
@@ -996,37 +1023,45 @@ function getLoadAlert(currentLoad) {
 }
 
 // ── Session menu (edit days) ───────────────────────────────
-// wk is passed so we can check which sessions already have logs (locked).
-// Logged sessions are shown as informational only — cannot be reassigned.
+// In edit mode the user has full freedom — any session can be assigned
+// to any day regardless of whether it has been logged. Done sessions
+// are shown with a ✓ marker for context but are fully tappable.
+// The engine's locking only applies when regenerating the suggestion —
+// NOT here. The user's manual override is always authoritative.
 function buildSessionMenu(dayIdx, sessionsOnDay, wk) {
   const opts = Object.entries(PROG.sessions).map(([key,sess]) => {
     const hasLog    = !!wk.logs[key];
     const isCurrent = sessionsOnDay.includes(key);
-
-    if (hasLog && !isCurrent) {
-      // Session is done on another day — show greyed out, not tappable
-      return `
-        <div class="session-opt" style="opacity:.35;pointer-events:none">
-          <div class="session-opt-lbl">
-            <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
-            <span class="sm dim">${sess.name}</span>
-            <span style="font-size:10px;color:var(--tx3);margin-left:4px">🔒 done</span>
-          </div>
-          <span class="session-tick-empty"></span>
-        </div>`;
-    }
-
     return `
       <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
         <div class="session-opt-lbl">
           <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
           <span class="sm">${sess.name}</span>
+          ${hasLog ? '<span style="font-size:10px;color:var(--gn);margin-left:4px">✓ done</span>' : ''}
         </div>
         ${isCurrent
           ? '<span class="session-tick">✓</span>'
           : '<span class="session-tick-empty"></span>'}
       </div>`;
   }).join('');
+
+  // Tier picker — shown only when a session is currently assigned to this day
+  const currentKey = sessionsOnDay[0] || null;
+  const currentTier = currentKey ? (wk.plan.tiers?.[currentKey] || 'full') : null;
+  const tierPicker = currentKey ? `
+    <div style="padding:8px 14px;border-top:1px solid var(--bd)">
+      <div class="xs dimmer" style="margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;font-size:9px">Session volume</div>
+      <div style="display:flex;gap:5px">
+        ${['full','lite','min'].map(t => `
+          <button style="flex:1;padding:7px 0;border-radius:7px;border:1px solid;font-size:11px;font-weight:600;font-family:var(--mono,'DM Mono',monospace);transition:all .15s;
+            background:${currentTier===t?(t==='full'?'var(--gnd)':t==='lite'?'var(--amd)':'var(--cod)'):'var(--bg4)'};
+            color:${currentTier===t?(t==='full'?'var(--gn)':t==='lite'?'var(--am)':'var(--co)'):'var(--tx3)'};
+            border-color:${currentTier===t?(t==='full'?'var(--gn)':t==='lite'?'var(--am)':'var(--co)'):'var(--bd2)'}"
+            onclick="setSessionTier(${dayIdx},'${currentKey}','${t}');event.stopPropagation()">
+            ${t==='full'?'FULL':t==='lite'?'LITE':'MIN'}
+          </button>`).join('')}
+      </div>
+    </div>` : '';
 
   const noGym = `
     <div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
@@ -1038,12 +1073,18 @@ function buildSessionMenu(dayIdx, sessionsOnDay, wk) {
         ? '<span class="session-tick">✓</span>'
         : '<span class="session-tick-empty"></span>'}
     </div>`;
-  return `<div class="session-menu">${opts}${noGym}</div>`;
+  return `<div class="session-menu">${opts}${noGym}${tierPicker}</div>`;
 }
 
 function enterEditDays() {
   editDaysMode = true; editDayMenu = null;
-  editDaysSnapshot = JSON.parse(JSON.stringify(getWeek(viewMonday).plan.assigned));
+  const wk = getWeek(viewMonday);
+  // Snapshot both assigned days and tiers so undo restores the full state,
+  // including any tier the user manually changed during this edit session.
+  editDaysSnapshot = {
+    assigned: JSON.parse(JSON.stringify(wk.plan.assigned)),
+    tiers:    JSON.parse(JSON.stringify(wk.plan.tiers || {}))
+  };
   renderSchedule();
 }
 function exitEditDays() {
@@ -1052,7 +1093,8 @@ function exitEditDays() {
 }
 function undoEditDays() {
   const wk = getWeek(viewMonday);
-  wk.plan.assigned = JSON.parse(JSON.stringify(editDaysSnapshot));
+  wk.plan.assigned = JSON.parse(JSON.stringify(editDaysSnapshot.assigned));
+  wk.plan.tiers    = JSON.parse(JSON.stringify(editDaysSnapshot.tiers));
   editDaysMode = false; editDayMenu = null; editDaysSnapshot = null;
   saveWeeks(); renderSchedule();
 }
@@ -1063,33 +1105,46 @@ function openEditDayMenu(dayIdx) {
 function assignDaySession(dayIdx, sessionKey) {
   const wk = getWeek(viewMonday);
 
-  // Hard guard: never move a session that has already been logged.
-  if (sessionKey && wk.logs[sessionKey]) {
-    editDayMenu = null;
-    renderSchedule();
-    return;
-  }
-
   if (sessionKey) {
     wk.plan.assigned[sessionKey] = dayIdx;
     // Recompute tier for the new day — pass locked sessions so the engine
-    // computes the gap rule from completed sessions, not from a blank slate.
-    // Real-life: Pull moved to Thursday must respect that Push was done Monday.
+    // respects gap rules relative to completed sessions.
     const locked = getLockedAssignments(wk);
     const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet, locked);
-    wk.plan.tiers[sessionKey]      = newTiers[sessionKey]      || 'full';
-    wk.plan.engineMods[sessionKey] = newMods[sessionKey]       || null;
+    wk.plan.tiers[sessionKey]      = newTiers[sessionKey] || 'full';
+    wk.plan.engineMods[sessionKey] = newMods[sessionKey]  || null;
   } else {
-    // "No gym" — only clears sessions that are NOT logged
+    // "No gym" — clears all sessions on this day
     Object.keys(wk.plan.assigned).forEach(sk => {
-      if (wk.plan.assigned[sk] === dayIdx && !wk.logs[sk]) {
-        wk.plan.assigned[sk]    = null;
-        wk.plan.tiers[sk]       = null;
-        wk.plan.engineMods[sk]  = null;
+      if (wk.plan.assigned[sk] === dayIdx) {
+        wk.plan.assigned[sk]   = null;
+        wk.plan.tiers[sk]      = null;
+        wk.plan.engineMods[sk] = null;
       }
     });
   }
   editDayMenu = null;
+  renderSchedule();
+}
+
+// Manually override the tier for a session — user's explicit choice.
+// Stored without '-manual' suffix for display, but we track it as a
+// manual override so day reassignment doesn't overwrite it.
+function setSessionTier(dayIdx, sessionKey, tier) {
+  const wk = getWeek(viewMonday);
+  if (!sessionKey || wk.plan.assigned[sessionKey] !== dayIdx) return;
+  wk.plan.tiers[sessionKey] = tier;
+  // Derive engine mods from the manually chosen tier
+  const sess = PROG.sessions[sessionKey];
+  if (tier === 'lite') {
+    const lsr = sess.liteSetReduction || 0;
+    wk.plan.engineMods[sessionKey] = lsr > 0 ? { setReduction: lsr, rpeCap: null } : null;
+  } else if (tier === 'min') {
+    wk.plan.engineMods[sessionKey] = { setReduction: 0, rpeCap: 6, isMin: true };
+  } else {
+    wk.plan.engineMods[sessionKey] = null;
+  }
+  saveWeeks();
   renderSchedule();
 }
 
