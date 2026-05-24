@@ -498,7 +498,7 @@ function setDhours(i,v) { getWeek(viewMonday).ballet[i].hours=v;     saveWeeks()
 // to anything else. Without this, regenerating mid-week would treat
 // the whole week as blank and could conflict with completed sessions.
 // ═══════════════════════════════════════════════════════════
-function assignGymDays(ballet, lockedAssignments = {}) {
+function assignGymDays(ballet, lockedAssignments = {}, pastDays = new Set()) {
 
   // ── Load calculation ─────────────────────────────────────
   function computeLoad(d) {
@@ -536,11 +536,20 @@ function assignGymDays(ballet, lockedAssignments = {}) {
   Object.entries(lockedAssignments).forEach(([sk, dayIdx]) => {
     if (dayIdx === null) return;
     assigned[sk]   = dayIdx;
-    tiers[sk]      = 'locked';   // special marker — not rendered as a tier pill
+    tiers[sk]      = 'locked';
     engineMods[sk] = null;
     reasons[sk]    = `${DAYS[dayIdx]} — completed ✓`;
     usedDays.add(dayIdx);
   });
+
+  // Block past days from receiving new assignments.
+  // Days before today have already passed — the engine must not place
+  // pending sessions there. Locked sessions on past days are already
+  // seeded above and are not affected by this block.
+  // Real-life: today is Wednesday. Monday and Tuesday are in the past.
+  // The engine cannot suggest Push on Monday or Pull on Tuesday even if
+  // those days have low ballet load — they no longer exist this week.
+  pastDays.forEach(i => usedDays.add(i));
 
   function slotBonus(i) {
     let b = 0;
@@ -622,19 +631,20 @@ function assignGymDays(ballet, lockedAssignments = {}) {
   }
 
   if (splitSlot1 && splitSlot2) {
-    // True Push/Pull split — only write sessions that are not locked
     const [early, late] = splitSlot1.idx < splitSlot2.idx
       ? [splitSlot1, splitSlot2] : [splitSlot2, splitSlot1];
+    // Always mark both split slots as used — one may already be occupied by
+    // a locked session, but the other must be blocked too so B/D don't collide.
+    usedDays.add(early.idx);
+    usedDays.add(late.idx);
     if (needAP) {
       assigned.AP = early.idx; tiers.AP = early.tier;
       engineMods.AP = engineModForTier('AP', early.tier);
-      usedDays.add(early.idx);
       reasons.AP = buildUpperReason('AP', early.idx, ballet, loads, true, early.tier);
     }
     if (needAL) {
       assigned.AL = late.idx; tiers.AL = late.tier;
       engineMods.AL = engineModForTier('AL', late.tier);
-      usedDays.add(late.idx);
       reasons.AL = buildUpperReason('AL', late.idx, ballet, loads, true, late.tier);
     }
     if (needAF) {
@@ -817,33 +827,48 @@ function buildLowerReason(sess, dayIdx, ballet, loads, tier) {
 }
 
 function getLockedAssignments(wk) {
-  if (!wk.plan) return {};
+  // Reads directly from wk.logs so it works even when wk.plan is null
+  // (e.g. after the user clicks "← Edit schedule" which nulls wk.plan).
+  // log.dayIdx is stored by completeLog() at save time — this is the
+  // source of truth for which day a session was actually performed on.
   const locked = {};
-  Object.entries(wk.plan.assigned).forEach(([sk, dayIdx]) => {
-    if (wk.logs[sk] && dayIdx !== null) locked[sk] = dayIdx;
+  Object.entries(wk.logs || {}).forEach(([sk, log]) => {
+    if (log && log.dayIdx !== null && log.dayIdx !== undefined) {
+      locked[sk] = log.dayIdx;
+    }
   });
   return locked;
 }
 
 function generatePlan() {
   const wk = getWeek(viewMonday);
-  // Collect sessions already logged this week — their day assignments
-  // are fixed points the engine must not overwrite.
-  const locked = wk.plan ? getLockedAssignments(wk) : {};
-  const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked);
 
-  // After the engine runs, force locked sessions back to their original
-  // day indices. The engine seeds them correctly, but as a hard safety
-  // guarantee we overwrite here too — a logged session's day is its day,
-  // regardless of what any computation produced.
+  // Locked assignments: sessions already logged this week.
+  // Reads from wk.logs directly — works even if wk.plan was nulled
+  // by the user clicking "← Edit schedule".
+  const locked = getLockedAssignments(wk);
+
+  // Past days: days that have already passed in the current week.
+  // The engine must not place new sessions on these days — they are gone.
+  // Only applies to the current week; next week has no past days.
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
+  const pastDays = new Set();
+  for (let i = 0; i < todayDayIdx; i++) {
+    if (i >= 0 && i < 7) pastDays.add(i);
+  }
+
+  const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked, pastDays);
+
+  // Final hard override: force every logged session back to its recorded day
+  // and restore its real tier from the log. Double-layered protection —
+  // the engine should not overwrite these, but this guarantees it at the
+  // generatePlan level regardless of any internal engine path.
   Object.entries(locked).forEach(([sk, dayIdx]) => {
-    assigned[sk] = dayIdx;
-    // Restore the tier from the stored log — the actual tier used when
-    // the session was trained. 'locked' is the engine's internal marker;
-    // the stored log.tier is the real value for display purposes.
-    tiers[sk] = wk.logs[sk]?.tier || 'full';
+    assigned[sk]   = dayIdx;
+    tiers[sk]      = wk.logs[sk]?.tier || 'full';
     engineMods[sk] = null;
-    reasons[sk] = `${DAYS[dayIdx]} — completed ✓`;
+    reasons[sk]    = `${DAYS[dayIdx]} — completed ✓`;
   });
 
   wk.plan = { assigned, tiers, engineMods, reasons, createdAt: new Date().toISOString() };
@@ -1107,10 +1132,14 @@ function assignDaySession(dayIdx, sessionKey) {
 
   if (sessionKey) {
     wk.plan.assigned[sessionKey] = dayIdx;
-    // Recompute tier for the new day — pass locked sessions so the engine
-    // respects gap rules relative to completed sessions.
     const locked = getLockedAssignments(wk);
-    const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet, locked);
+    // Compute past days so tier recalculation respects the current point in
+    // the week — same logic as generatePlan.
+    const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+    const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
+    const pastDays = new Set();
+    for (let i = 0; i < todayDayIdx; i++) { if (i >= 0 && i < 7) pastDays.add(i); }
+    const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet, locked, pastDays);
     wk.plan.tiers[sessionKey]      = newTiers[sessionKey] || 'full';
     wk.plan.engineMods[sessionKey] = newMods[sessionKey]  || null;
   } else {
@@ -1124,6 +1153,7 @@ function assignDaySession(dayIdx, sessionKey) {
     });
   }
   editDayMenu = null;
+  saveWeeks();
   renderSchedule();
 }
 
@@ -1251,7 +1281,11 @@ function openLog(sessionKey, dayIdx) {
 
 function openEditLog(sessionKey, e) {
   e.stopPropagation();
-  openLog(sessionKey, getWeek(viewMonday).plan.assigned[sessionKey]);
+  const wk  = getWeek(viewMonday);
+  // Read dayIdx from the stored log — safer than plan.assigned which may be
+  // null if the user cleared the plan via editPlan() before editing.
+  const dayIdx = wk.logs[sessionKey]?.dayIdx ?? wk.plan?.assigned?.[sessionKey] ?? null;
+  openLog(sessionKey, dayIdx);
 }
 function renderLogFlow() {
   const el = document.getElementById('page-schedule');
@@ -1648,8 +1682,12 @@ function completeLog() {
   const entry = {
     id: Date.now().toString(), type:'training',
     date: new Date().toISOString(), sessionKey: lf.sessionKey,
+    // dayIdx stored on the log so locked assignments survive plan being cleared
+    // by editPlan(). getLockedAssignments reads this directly from wk.logs,
+    // independently of wk.plan state.
+    dayIdx: lf.dayIdx,
     tier: lf.tier,
-    exerciseIds: lf.exercises.map(e => e.id),  // store for accurate history lookup
+    exerciseIds: lf.exercises.map(e => e.id),
     exLogs: lf.exLogs, feel: lf.feel, duration: lf.duration||null,
     sRPE, notes: lf.notes, accuracy: acc, tags:[...lf.tags], mods: lf.mods
   };
