@@ -827,14 +827,17 @@ function buildLowerReason(sess, dayIdx, ballet, loads, tier) {
 }
 
 function getLockedAssignments(wk) {
-  // Reads directly from wk.logs so it works even when wk.plan is null
-  // (e.g. after the user clicks "← Edit schedule" which nulls wk.plan).
-  // log.dayIdx is stored by completeLog() at save time — this is the
-  // source of truth for which day a session was actually performed on.
+  // Reads from wk.logs — works even when wk.plan is null.
+  // log.dayIdx is the primary source (set by completeLog).
+  // Fallback: wk.plan.assigned for logs saved before dayIdx was introduced.
   const locked = {};
   Object.entries(wk.logs || {}).forEach(([sk, log]) => {
-    if (log && log.dayIdx !== null && log.dayIdx !== undefined) {
+    if (!log) return;
+    if (log.dayIdx !== null && log.dayIdx !== undefined) {
       locked[sk] = log.dayIdx;
+    } else if (wk.plan?.assigned?.[sk] !== null && wk.plan?.assigned?.[sk] !== undefined) {
+      // Old log without dayIdx — trust the current plan assignment as the day.
+      locked[sk] = wk.plan.assigned[sk];
     }
   });
   return locked;
@@ -843,14 +846,11 @@ function getLockedAssignments(wk) {
 function generatePlan() {
   const wk = getWeek(viewMonday);
 
-  // Locked assignments: sessions already logged this week.
-  // Reads from wk.logs directly — works even if wk.plan was nulled
-  // by the user clicking "← Edit schedule".
+  // Locked assignments — sessions already logged this week.
   const locked = getLockedAssignments(wk);
 
-  // Past days: days that have already passed in the current week.
-  // The engine must not place new sessions on these days — they are gone.
-  // Only applies to the current week; next week has no past days.
+  // Past days — days that have already passed in the current week.
+  // Engine uses this to block new placements on those days.
   const todayDate = new Date(); todayDate.setHours(0,0,0,0);
   const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
   const pastDays = new Set();
@@ -860,10 +860,31 @@ function generatePlan() {
 
   const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked, pastDays);
 
-  // Final hard override: force every logged session back to its recorded day
-  // and restore its real tier from the log. Double-layered protection —
-  // the engine should not overwrite these, but this guarantees it at the
-  // generatePlan level regardless of any internal engine path.
+  // ── PAST-DAY PRESERVATION ─────────────────────────────────
+  // Regeneration must never change anything on a past day.
+  // Rule: whatever was assigned in the current plan on a past day stays
+  // exactly as it was — logged or not, corrected manually or not.
+  // This is the final and definitive guarantee.
+  //
+  // Real-life: today is Wednesday. The user manually corrected Push to Monday
+  // in edit mode after the previous regeneration displaced it.
+  // On this new regeneration, Monday is a past day — it is frozen.
+  // The engine has already been blocked from placing anything new there.
+  // This step restores what was there before the engine ran, overriding
+  // any null the engine left behind.
+  if (wk.plan) {
+    Object.entries(wk.plan.assigned).forEach(([sk, dayIdx]) => {
+      if (dayIdx !== null && pastDays.has(dayIdx)) {
+        assigned[sk]    = dayIdx;
+        tiers[sk]       = wk.plan.tiers?.[sk] || 'full';
+        engineMods[sk]  = wk.plan.engineMods?.[sk] || null;
+        reasons[sk]     = wk.plan.reasons?.[sk] || `${DAYS[dayIdx]} — past day`;
+      }
+    });
+  }
+
+  // Logged sessions get their tier restored from the log itself
+  // (the actual tier used when training — ground truth).
   Object.entries(locked).forEach(([sk, dayIdx]) => {
     assigned[sk]   = dayIdx;
     tiers[sk]      = wk.logs[sk]?.tier || 'full';
@@ -1132,9 +1153,15 @@ function assignDaySession(dayIdx, sessionKey) {
 
   if (sessionKey) {
     wk.plan.assigned[sessionKey] = dayIdx;
+
+    // If this session has a log, update log.dayIdx to the new position.
+    // This ensures the next regeneration sees the corrected day as the
+    // locked day for this session — not the stale original position.
+    if (wk.logs[sessionKey]) {
+      wk.logs[sessionKey].dayIdx = dayIdx;
+    }
+
     const locked = getLockedAssignments(wk);
-    // Compute past days so tier recalculation respects the current point in
-    // the week — same logic as generatePlan.
     const todayDate = new Date(); todayDate.setHours(0,0,0,0);
     const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
     const pastDays = new Set();
