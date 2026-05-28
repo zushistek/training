@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0d0d0c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>Training v1.6</title>
+<title>Training v1.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -24,15 +24,11 @@
   --rd:#e04444;--rdd:#280a0a;
   --bl:#4a9fd4;--bld:#0a1e2e;
   --fl:#9b8fe8;--fld:#1a1835;
-  --st:env(safe-area-inset-top,0px);
-  --sb:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
-input,textarea,button,select{font-family:inherit}
-button{cursor:pointer}
-
-/* ── Layout ───────────────────────────────────────────── */
+input,textarea,button,select{font-family:inherit}button{cursor:pointer}
 #app{height:100dvh;display:flex;flex-direction:column}
 #hdr{background:var(--bg);border-bottom:1px solid var(--bd);padding:calc(var(--st) + 10px) 16px 0;flex-shrink:0}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:4px}
@@ -43,90 +39,62 @@ button{cursor:pointer}
 .tab.on{color:var(--am);border-bottom-color:var(--am)}
 #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{display:none}.page.on{display:block}
-
-/* ── Week nav ─────────────────────────────────────────── */
 .week-nav{display:flex;align-items:center;padding:10px 16px;gap:6px;background:var(--bg2);border-bottom:1px solid var(--bd)}
 .wnav-btn{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:6px 10px;color:var(--tx2);font-size:16px;line-height:1;transition:all .15s;flex-shrink:0}
 .wnav-btn:active{opacity:.7}
 .week-lbl{flex:1;text-align:center;font-size:13px;font-weight:500;color:var(--tx)}
 .week-tag{font-size:10px;color:var(--am);font-family:'DM Mono',monospace;display:block;text-align:center;margin-top:1px}
-
-/* ── Cards ────────────────────────────────────────────── */
 .card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;margin:0 16px 10px;overflow:hidden}
 .card-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
 .card-body{padding:14px}
-
-/* ── Badges ───────────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.05em;font-family:'DM Mono',monospace}
-.bap{background:var(--pud);color:var(--pu)}
-.bal{background:var(--bld);color:var(--bl)}
-.baf{background:var(--fld);color:var(--fl)}
-.bb{background:var(--gnd);color:var(--gn)}
-.bc{background:var(--amd);color:var(--am)}
-.bd{background:var(--cod);color:var(--co)}
+.bap{background:var(--pud);color:var(--pu)}.bal{background:var(--bld);color:var(--bl)}
+.baf{background:var(--fld);color:var(--fl)}.bb{background:var(--gnd);color:var(--gn)}
+.bc{background:var(--amd);color:var(--am)}.bd{background:var(--cod);color:var(--co)}
 .bpre{background:var(--bg4);color:var(--tx2)}
-
-/* ── Tier pill ────────────────────────────────────────── */
 .tier-pill{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;margin-left:5px;vertical-align:middle}
 .tier-lite{background:var(--amd);color:var(--am);border:1px solid var(--amm)}
 .tier-min{background:var(--cod);color:var(--co);border:1px solid var(--co)}
-
-/* ── Day type selector ────────────────────────────────── */
 .dtype-row{display:flex;gap:5px;flex-wrap:wrap}
 .dtype-btn{padding:7px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s;flex:1;text-align:center;min-width:0}
 .dtype-btn.on-perf{background:#2a0d1e;color:#e060a0;border-color:#e060a0}
 .dtype-btn.on-off{background:var(--gnd);color:var(--gn);border-color:var(--gn)}
 .dtype-btn.on-reh{background:var(--amd);color:var(--am);border-color:var(--am)}
 .dtype-btn.on-per{background:var(--pud);color:var(--pu);border-color:var(--pu)}
-
-/* ── Intensity ────────────────────────────────────────── */
 .int-row{display:flex;gap:4px}
 .int-btn{flex:1;padding:8px 0;border-radius:7px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;font-family:'DM Mono',monospace;transition:all .15s}
 .int-btn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
-
-/* ── Week schedule grid ───────────────────────────────── */
 .week-grid{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
 .day-card{border-radius:11px;border:1px solid var(--bd);overflow:hidden;background:var(--bg2)}
 .day-card-hdr{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.day-card-hdr.tappable:active{background:var(--bg3)}
+.day-card-hdr:active{background:var(--bg3)}
 .day-name{font-size:13px;font-weight:600}
 .day-meta{font-size:11px;color:var(--tx3);margin-top:2px}
 .day-status{display:flex;align-items:center;gap:6px}
 .done-pill{background:var(--gnd);color:var(--gn);border:1px solid var(--gn);border-radius:20px;font-size:10px;font-weight:600;padding:2px 8px;font-family:'DM Mono',monospace}
 .rest-pill{background:var(--bg4);color:var(--tx3);border-radius:20px;font-size:10px;padding:2px 8px}
-.reason-text{font-size:11px;color:var(--tx3);padding:0 13px 10px;line-height:1.4;border-top:1px solid var(--bd);padding-top:8px}
-
-/* ── Edit days ────────────────────────────────────────── */
+.reason-text{font-size:11px;color:var(--tx3);padding:8px 13px 10px;line-height:1.4;border-top:1px solid var(--bd)}
 .edit-mode-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--amd);border-bottom:1px solid var(--amm);margin-bottom:2px}
 .edit-mode-lbl{font-size:12px;font-weight:600;color:var(--am)}
 .edit-mode-actions{display:flex;gap:6px}
 .btn-done{background:var(--am);color:var(--bg);border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600}
 .btn-undo{background:var(--bg3);color:var(--tx2);border:1px solid var(--bd2);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:500}
-.day-card.editable{cursor:pointer;border-color:var(--bd2)}
-.day-card.editable:active{background:var(--bg3)}
+.day-card.editable{cursor:pointer;border-color:var(--bd2)}.day-card.editable:active{background:var(--bg3)}
 .day-card.conflict{border-color:var(--rd) !important}
 .conflict-note{font-size:11px;color:var(--rd);padding:0 13px 9px;line-height:1.4}
 .session-menu{background:var(--bg3);border-radius:10px;margin:0 13px 10px;overflow:hidden;border:1px solid var(--bd2)}
 .session-opt{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
-.session-opt:last-child{border-bottom:none}
-.session-opt:active{background:var(--bg4)}
+.session-opt:last-child{border-bottom:none}.session-opt:active{background:var(--bg4)}
 .session-opt-lbl{display:flex;align-items:center;gap:10px}
 .session-tick{color:var(--gn);font-size:16px;font-weight:700;width:18px;text-align:center}
 .session-tick-empty{width:18px;display:inline-block}
-
-/* ── Inputs ───────────────────────────────────────────── */
 .field{margin-bottom:12px}.field:last-child{margin-bottom:0}
 .lbl{font-size:12px;color:var(--tx3);margin-bottom:6px;display:block;letter-spacing:.02em;font-weight:500}
 input[type=text],textarea{width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;-webkit-appearance:none;transition:border-color .15s}
-input:focus,textarea:focus{border-color:var(--am)}
-textarea{resize:none;min-height:60px;line-height:1.4}
-
-/* ── Rating ───────────────────────────────────────────── */
+input:focus,textarea:focus{border-color:var(--am)}textarea{resize:none;min-height:60px;line-height:1.4}
 .rating{display:flex;gap:5px}
 .rbtn{flex:1;padding:10px 0;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;font-family:'DM Mono',monospace}
 .rbtn.on{background:var(--am);color:var(--bg);border-color:var(--am);font-weight:600}
-
-/* ── Buttons ──────────────────────────────────────────── */
 .btn-p{width:100%;background:var(--am);color:var(--bg);border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:600;letter-spacing:-.2px;transition:opacity .15s;margin:4px 0}
 .btn-p:active{opacity:.8}
 .btn-g{background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--tx2);font-weight:500;transition:all .15s}
@@ -135,24 +103,18 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .btn-d:active{background:var(--bg3)}
 .btn-back{background:none;border:none;color:var(--tx3);font-size:13px;padding:4px 0;display:flex;align-items:center;gap:4px}
 .btn-skip{background:none;border:none;color:var(--tx3);font-size:12px;text-decoration:underline;padding:4px 0}
-
-/* ── Utility ──────────────────────────────────────────── */
 .sm{font-size:13px}.xs{font-size:12px}.dim{color:var(--tx2)}.dimmer{color:var(--tx3)}
 .b6{font-weight:600}.b5{font-weight:500}.mono{font-family:'DM Mono',monospace}
 .mt1{margin-top:4px}.mt2{margin-top:8px}.mb1{margin-bottom:4px}
 .row{display:flex;align-items:center;gap:8px}.jcb{justify-content:space-between}
 .sec{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;padding:16px 18px 8px}
 .bpad{height:calc(var(--sb) + 24px)}
-
-/* ── Notices ──────────────────────────────────────────── */
 .notice{margin:0 16px 10px;padding:11px 13px;background:var(--amd);border:1px solid var(--amm);border-radius:10px;font-size:12px;color:var(--am);line-height:1.5}
 .notice strong{font-weight:600;display:block;margin-bottom:2px}
 .ndim{margin:0 16px 10px;padding:11px 13px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;font-size:12px;color:var(--tx3);line-height:1.5}
 .ndim strong{font-weight:600;color:var(--tx2);display:block;margin-bottom:2px}
 .nred{margin:0 16px 10px;padding:11px 13px;background:var(--rdd);border:1px solid var(--rd);border-radius:10px;font-size:12px;color:var(--rd);line-height:1.5}
 .nred strong{font-weight:600;display:block;margin-bottom:2px}
-
-/* ── Week summary card ────────────────────────────────── */
 .week-sum-card{margin:8px 16px 4px;padding:12px 14px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px}
 .week-sum-title{font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;font-family:'DM Mono',monospace}
 .week-sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px}
@@ -163,93 +125,59 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .week-sum-alert{padding:8px 10px;border-radius:7px;margin-top:6px;font-size:11px;line-height:1.4}
 .week-sum-alert.warn{background:var(--rdd);color:var(--rd);border:1px solid var(--rd)}
 .week-sum-alert.note{background:var(--amd);color:var(--am);border:1px solid var(--amm)}
-
-/* ── Tags ─────────────────────────────────────────────── */
 .tag-grp-lbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
 .tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .tag{padding:8px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:12px;font-weight:500;transition:all .15s}
 .tag.rec{background:var(--amd);color:var(--am);border-color:var(--am)}
 .tag.cau{background:var(--cod);color:var(--co);border-color:var(--co)}
 .tag.wrn{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
-
-/* ── Mod preview ──────────────────────────────────────── */
 .mod-box{padding:12px 14px;background:var(--bg);border:1px solid var(--amm);border-radius:10px;margin-bottom:12px}
 .mod-title{font-size:10px;font-weight:600;color:var(--am);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
 .mod-line{font-size:12px;color:var(--tx2);margin-bottom:4px;line-height:1.4;padding-left:8px;border-left:2px solid var(--amm)}
-.mod-source-engine{border-left-color:var(--bl)}
-.mod-source-tag{border-left-color:var(--am)}
-
-/* ── Exercise accordion ───────────────────────────────── */
+.mod-source-engine{border-left-color:var(--bl)}.mod-source-tag{border-left-color:var(--am)}
 .ex-hdr{padding:13px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:border-color .15s}
 .ex-hdr.open{border-bottom-color:var(--bd)}
 .ex-body{padding:12px 14px;background:var(--bg)}
 .chev{width:16px;height:16px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
 .chev.open{transform:rotate(90deg)}
-
-/* ── Warm-up ──────────────────────────────────────────── */
 .warmup-card{border-color:var(--amm)}
-.warmup-item{padding:8px 0;border-bottom:1px solid var(--bd)}
-.warmup-item:last-child{border-bottom:none;padding-bottom:0}
+.warmup-item{padding:8px 0;border-bottom:1px solid var(--bd)}.warmup-item:last-child{border-bottom:none;padding-bottom:0}
 .warmup-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px}
 .warmup-pre{font-size:11px;color:var(--am);font-family:'DM Mono',monospace}
 .warmup-note{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.4}
-
-/* ── Sided ────────────────────────────────────────────── */
 .sided-half{margin-bottom:8px}
 .sided-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-bottom:6px;display:inline-block}
-.sided-lbl.r{background:var(--amd);color:var(--am)}
-.sided-lbl.l{background:var(--bld);color:var(--bl)}
+.sided-lbl.r{background:var(--amd);color:var(--am)}.sided-lbl.l{background:var(--bld);color:var(--bl)}
 .sided-sep{height:1px;background:var(--bd);margin:8px 0}
-
-/* ── sRPE row ─────────────────────────────────────────── */
 .srpe-row{display:flex;align-items:center;gap:10px;margin-top:10px}
 .srpe-btn{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;min-width:120px;transition:border-color .15s}
 .srpe-btn:active{border-color:var(--am)}
 .srpe-val{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--tx)}
-.srpe-unit{font-size:11px;color:var(--tx3)}
-.srpe-note{font-size:11px;color:var(--tx3);flex:1}
-
-/* ── Accuracy ─────────────────────────────────────────── */
+.srpe-unit{font-size:11px;color:var(--tx3)}.srpe-note{font-size:11px;color:var(--tx3);flex:1}
 .acc{margin:0 16px 10px;padding:14px;border-radius:12px;border:1px solid var(--bd)}
-.acc.good{background:var(--gnd);border-color:var(--gn)}
-.acc.warn{background:var(--cod);border-color:var(--co)}
-.acc.note{background:var(--amd);border-color:var(--am)}
+.acc.good{background:var(--gnd);border-color:var(--gn)}.acc.warn{background:var(--cod);border-color:var(--co)}.acc.note{background:var(--amd);border-color:var(--am)}
 .acc-title{font-size:13px;font-weight:600;margin-bottom:4px}
 .acc.good .acc-title{color:var(--gn)}.acc.warn .acc-title{color:var(--co)}.acc.note .acc-title{color:var(--am)}
 .acc-detail{font-size:12px;color:var(--tx2);line-height:1.5}
 .acc-stat{font-size:11px;color:var(--tx3);margin-top:6px;font-family:'DM Mono',monospace}
-
-/* ── History ──────────────────────────────────────────── */
 .hflt-row{display:flex;align-items:center;gap:6px;padding:10px 16px 4px}
 .hflt{display:flex;gap:6px;flex:1}
 .flt{padding:6px 14px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:11px;font-weight:500;transition:all .15s}
 .flt.on{background:var(--am);color:var(--bg);border-color:var(--am)}
 .hent{margin:0 16px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
 .hent-hdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer}
-.hent-hdr:active{background:var(--bg3)}
-.hent-body{padding:0 14px 12px}
-.hex{font-size:12px;color:var(--tx3);margin-bottom:2px}
-.hex span{color:var(--tx2)}
+.hent-hdr:active{background:var(--bg3)}.hent-body{padding:0 14px 12px}
+.hex{font-size:12px;color:var(--tx3);margin-bottom:2px}.hex span{color:var(--tx2)}
 .del-btn{background:none;border:1px solid transparent;border-radius:6px;color:var(--tx3);font-size:11px;padding:4px 8px;transition:all .15s}
 .del-btn:active{background:var(--rdd);color:var(--rd);border-color:var(--rd)}
 .del-conf{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
-
-/* ── Injury (Body tab) ────────────────────────────────── */
 .inj-chips{display:flex;flex-wrap:wrap;gap:6px}
 .inj-chip{padding:7px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:12px;font-weight:500;transition:all .15s}
 .inj-chip.on{background:var(--cod);color:var(--co);border-color:var(--co)}
 .inj-status-pill{font-size:10px;padding:2px 7px;border-radius:10px;display:inline-block}
-.inj-status-active{background:var(--rdd);color:var(--rd)}
-.inj-status-monitoring{background:var(--amd);color:var(--am)}
-.inj-status-resolved{background:var(--gnd);color:var(--gn)}
-
-/* ── Empty ────────────────────────────────────────────── */
-.empty{text-align:center;padding:60px 24px}
-.emi{font-size:40px;margin-bottom:12px;opacity:.3}
-.emt{font-size:15px;font-weight:500;color:var(--tx2)}
-.ems{font-size:13px;color:var(--tx3);margin-top:4px}
-
-/* ── Touch picker ─────────────────────────────────────── */
+.inj-status-active{background:var(--rdd);color:var(--rd)}.inj-status-monitoring{background:var(--amd);color:var(--am)}.inj-status-resolved{background:var(--gnd);color:var(--gn)}
+.empty{text-align:center;padding:60px 24px}.emi{font-size:40px;margin-bottom:12px;opacity:.3}
+.emt{font-size:15px;font-weight:500;color:var(--tx2)}.ems{font-size:13px;color:var(--tx3);margin-top:4px}
 .picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
 .picker-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding-bottom:calc(var(--sb) + 8px);user-select:none;-webkit-user-select:none}
 .picker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd)}
@@ -266,15 +194,10 @@ textarea{resize:none;min-height:60px;line-height:1.4}
 .picker-mask-b{bottom:0;background:linear-gradient(to top,var(--bg2) 0%,transparent 100%)}
 .picker-line{position:absolute;left:8%;right:8%;top:50%;transform:translateY(-50%);height:44px;border-top:1px solid var(--bd2);border-bottom:1px solid var(--bd2);pointer-events:none;z-index:3}
 .picker-col-lbl{text-align:center;font-size:10px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase;padding:4px 0 10px;font-family:'DM Mono',monospace}
-
-/* ── Value buttons ────────────────────────────────────── */
 .val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:11px 14px;transition:border-color .15s;cursor:pointer}
 .val-btn:active{border-color:var(--am)}
 .val-btn-num{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--tx)}
-.val-btn-unit{font-size:11px;color:var(--tx3)}
-.val-btn-empty{font-size:14px;color:var(--tx3)}
-
-/* ── Set row ──────────────────────────────────────────── */
+.val-btn-unit{font-size:11px;color:var(--tx3)}.val-btn-empty{font-size:14px;color:var(--tx3)}
 .set-row{display:flex;gap:5px;margin-bottom:8px;align-items:center}
 .set-n{width:22px;height:22px;background:var(--bg4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--tx3);font-family:'DM Mono',monospace;flex-shrink:0}
 .plyo-done{flex:1;padding:10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);font-size:13px;font-weight:500;transition:all .15s;text-align:center}
@@ -286,7 +209,7 @@ textarea{resize:none;min-height:60px;line-height:1.4}
   <div id="hdr">
     <div class="hdr-row">
       <span class="hdr-title">Training</span>
-      <span class="hdr-ver">v1.6.0</span>
+      <span class="hdr-ver">v1.7.0</span>
     </div>
     <div class="tabs">
       <button class="tab on" onclick="nav('schedule',this)">Schedule</button>
@@ -300,7 +223,6 @@ textarea{resize:none;min-height:60px;line-height:1.4}
     <div id="page-body"     class="page"></div>
   </div>
 </div>
-
 <div id="picker-overlay" class="picker-overlay" style="display:none" onclick="pickerBgClick(event)">
   <div class="picker-sheet">
     <div class="picker-hdr">
@@ -310,15 +232,10 @@ textarea{resize:none;min-height:60px;line-height:1.4}
     <div id="picker-cols" class="picker-cols"></div>
   </div>
 </div>
-
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════════════
-// PROGRAM DATA
-// No inline fallback — SW caches after first online load.
-// ═══════════════════════════════════════════════════════════
+// ─── PROGRAM ────────────────────────────────────────────────
 let PROG = null;
-
 async function loadProgram() {
   try {
     const r = await fetch('program.json');
@@ -326,53 +243,41 @@ async function loadProgram() {
     throw new Error('HTTP ' + r.status);
   } catch(e) {
     document.getElementById('page-schedule').innerHTML = `
-      <div class="empty">
-        <div class="emi">⚠️</div>
-        <div class="emt">Program unavailable</div>
-        <div class="ems">Open the app once while connected to the internet.<br>After that it works fully offline.</div>
-      </div>`;
+      <div class="empty"><div class="emi">⚠️</div><div class="emt">Program unavailable</div>
+      <div class="ems">Open the app once while connected to the internet.</div></div>`;
   }
 }
-
-// ═══════════════════════════════════════════════════════════
-// STORAGE
-// ═══════════════════════════════════════════════════════════
-const save = (k, v) => { try { localStorage.setItem('bt2_' + k, JSON.stringify(v)); } catch(e){} };
-const load = k => { try { const v = localStorage.getItem('bt2_' + k); return v ? JSON.parse(v) : null; } catch(e){ return null; } };
-
-// ═══════════════════════════════════════════════════════════
-// DATE HELPERS
-// ═══════════════════════════════════════════════════════════
+// ─── STORAGE ────────────────────────────────────────────────
+const save = (k,v) => { try { localStorage.setItem('bt2_'+k, JSON.stringify(v)); } catch(e){} };
+const load = k => { try { const v=localStorage.getItem('bt2_'+k); return v?JSON.parse(v):null; } catch(e){ return null; } };
+// ─── DATES ──────────────────────────────────────────────────
 function getMondayOf(d) {
-  const dt = new Date(d), day = dt.getDay();
-  dt.setDate(dt.getDate() + (day === 0 ? -6 : 1 - day));
-  dt.setHours(0,0,0,0); return dt;
+  const dt=new Date(d), day=dt.getDay();
+  dt.setDate(dt.getDate()+(day===0?-6:1-day)); dt.setHours(0,0,0,0); return dt;
 }
 function weekKey(mon) { return mon.toISOString().split('T')[0]; }
 function fmtWeekLabel(mon) {
-  const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
-  const o = { day:'numeric', month:'short' };
+  const sun=new Date(mon); sun.setDate(sun.getDate()+6);
+  const o={day:'numeric',month:'short'};
   return `${mon.toLocaleDateString('en-GB',o)} – ${sun.toLocaleDateString('en-GB',o)}`;
 }
-
-// ═══════════════════════════════════════════════════════════
-// CONSTANTS
-// ═══════════════════════════════════════════════════════════
+// ─── CONSTANTS ──────────────────────────────────────────────
 const DAYS         = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DTYPE_LABELS = { perf:'Performance', off:'Day Off', reh:'Full Rehearsal', per:'Personal Training' };
 const DTYPE_CLASS  = { perf:'on-perf', off:'on-off', reh:'on-reh', per:'on-per' };
-const SESS_LABEL   = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
-const SESS_BADGE   = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
-const TIER_LABEL   = { full:'', lite:'LITE', min:'MIN DOSE', locked:'' };
-const TIER_CSS     = { full:'', lite:'tier-lite', min:'tier-min', locked:'' };
-
+// baseKey strips the _2, _3 suffix to get the real session key for PROG lookup
+function baseKey(sk) { return sk ? sk.replace(/_\d+$/, '') : sk; }
+// Display label and badge always use the base session key
+const SESS_LABEL = { AP:'PUSH', AL:'PULL', AF:'FULL', B:'B', C:'C', D:'D' };
+const SESS_BADGE = { AP:'bap', AL:'bal', AF:'baf', B:'bb', C:'bc', D:'bd' };
+const TIER_LABEL = { full:'', lite:'LITE', min:'MIN DOSE', locked:'' };
+const TIER_CSS   = { full:'', lite:'tier-lite', min:'tier-min', locked:'' };
+// All valid primary session keys (no suffixes)
+const ALL_SESS_KEYS = ['AP','AL','AF','B','C','D'];
 const INJURY_REGIONS  = ['Ankle','Knee','Hip','Lower Back','Hamstring','Groin','Shoulder','Wrist','Foot','Achilles','Other'];
 const SEVERITY_LABELS = ['','Minor tightness','Mild pain','Moderate pain','Significant — limit training','Acute — see physio'];
 const SEVERITY_COLORS = ['','var(--gn)','var(--am)','var(--co)','var(--rd)','var(--rd)'];
-
-// ═══════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════
+// ─── STATE ───────────────────────────────────────────────────
 let viewMonday   = getMondayOf(new Date());
 let weeks        = load('weeks')    || {};
 let injuries     = load('injuries') || [];
@@ -380,1923 +285,1014 @@ let histFilter   = 'all';
 let expandedHist = null;
 let confirmDel   = null;
 let lf           = null;
-
 let editDaysMode     = false;
 let editDayMenu      = null;
 let editDaysSnapshot = null;
-
+// showBalletForm: true = show schedule input even when plan exists (after editPlan())
+// Keeps wk.plan intact so generatePlan can read past-day assignments from it
+let showBalletForm   = false;
 let injuryFormOpen   = false;
 let injuryEditId     = null;
 let injuryFormData   = { region:'', severity:3, description:'', status:'active' };
 let injuryExpandedId = null;
-
-// ═══════════════════════════════════════════════════════════
-// WEEK HELPERS
-// ═══════════════════════════════════════════════════════════
+// ─── WEEK HELPERS ────────────────────────────────────────────
 function getWeek(mon) {
-  const k = weekKey(mon);
-  if (!weeks[k]) weeks[k] = {
-    ballet: DAYS.map(d => ({ day:d, type:null, intensity:3, hours:'' })),
-    plan: null, logs: {}
-  };
+  const k=weekKey(mon);
+  if (!weeks[k]) weeks[k]={ballet:DAYS.map(d=>({day:d,type:null,intensity:3,hours:''})),plan:null,logs:{}};
   return weeks[k];
 }
-function saveWeeks()    { save('weeks',    weeks);    }
-function saveInjuries() { save('injuries', injuries); }
-
-// ═══════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════
-function nav(name, el) {
+function saveWeeks()    { save('weeks',weeks); }
+function saveInjuries() { save('injuries',injuries); }
+// ─── NAV ────────────────────────────────────────────────────
+function nav(name,el) {
   if (lf && !confirm('Leave this session? Progress will be lost.')) return;
-  lf = null; editDaysMode = false; editDayMenu = null;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(t  => t.classList.remove('on'));
-  document.getElementById('page-' + name).classList.add('on');
+  lf=null; editDaysMode=false; editDayMenu=null; showBalletForm=false;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
   el.classList.add('on');
-  if (name === 'schedule') renderSchedule();
-  if (name === 'history')  renderHistory();
-  if (name === 'body')     renderBody();
+  if (name==='schedule') renderSchedule();
+  if (name==='history')  renderHistory();
+  if (name==='body')     renderBody();
 }
-
-// ═══════════════════════════════════════════════════════════
-// SCHEDULE PAGE
-// ═══════════════════════════════════════════════════════════
+// ─── SCHEDULE ───────────────────────────────────────────────
 function renderSchedule() {
   if (lf) { renderLogFlow(); return; }
-  const el = document.getElementById('page-schedule');
-  const wk = getWeek(viewMonday);
-  const cm = getMondayOf(new Date());
-  const nm = new Date(cm); nm.setDate(nm.getDate() + 7);
-  const isCurrent = weekKey(viewMonday) === weekKey(cm);
-  const isNext    = weekKey(viewMonday) === weekKey(nm);
-  const left  = isNext    ? `<button class="wnav-btn" onclick="changeWeek(-1)">‹</button>` : `<div style="width:37px"></div>`;
-  const right = isCurrent ? `<button class="wnav-btn" onclick="changeWeek(1)">›</button>`  : `<div style="width:37px"></div>`;
-  el.innerHTML = `
-    <div class="week-nav">
-      ${left}
-      <div style="flex:1;text-align:center">
-        <div class="week-lbl">${fmtWeekLabel(viewMonday)}</div>
-        <div class="week-tag">${isCurrent ? 'CURRENT WEEK' : 'NEXT WEEK'}</div>
-      </div>
-      ${right}
-    </div>` + (wk.plan ? buildWeekView(wk) : buildBalletInput(wk));
+  const el=document.getElementById('page-schedule');
+  const wk=getWeek(viewMonday);
+  const cm=getMondayOf(new Date()), nm=new Date(cm); nm.setDate(nm.getDate()+7);
+  const isCurrent=weekKey(viewMonday)===weekKey(cm);
+  const isNext=weekKey(viewMonday)===weekKey(nm);
+  const left=isNext?`<button class="wnav-btn" onclick="changeWeek(-1)">‹</button>`:`<div style="width:37px"></div>`;
+  const right=isCurrent?`<button class="wnav-btn" onclick="changeWeek(1)">›</button>`:`<div style="width:37px"></div>`;
+  el.innerHTML=`<div class="week-nav">${left}<div style="flex:1;text-align:center"><div class="week-lbl">${fmtWeekLabel(viewMonday)}</div><div class="week-tag">${isCurrent?'CURRENT WEEK':'NEXT WEEK'}</div></div>${right}</div>`
+    +(wk.plan&&!showBalletForm?buildWeekView(wk):buildBalletInput(wk));
 }
-
 function changeWeek(dir) {
-  const cm = getMondayOf(new Date()), nm = new Date(cm);
-  nm.setDate(nm.getDate() + 7);
-  viewMonday = dir > 0 ? nm : cm;
-  renderSchedule();
+  const cm=getMondayOf(new Date()),nm=new Date(cm); nm.setDate(nm.getDate()+7);
+  viewMonday=dir>0?nm:cm; renderSchedule();
 }
-
-// ── Ballet input ───────────────────────────────────────────
 function buildBalletInput(wk) {
-  const cards = wk.ballet.map((d,i) => {
-    const typebtns = Object.entries(DTYPE_LABELS).map(([k,lbl]) =>
+  const cards=wk.ballet.map((d,i)=>{
+    const typebtns=Object.entries(DTYPE_LABELS).map(([k,lbl])=>
       `<button class="dtype-btn${d.type===k?' '+DTYPE_CLASS[k]:''}" onclick="setDtype(${i},'${k}')">${lbl}</button>`
     ).join('');
-    const intbtns = [1,2,3,4,5].map(v =>
+    const intbtns=[1,2,3,4,5].map(v=>
       `<button class="int-btn${d.intensity===v?' on':''}" onclick="setDint(${i},${v})">${v}</button>`
     ).join('');
-    const showExtra = d.type && d.type !== 'off';
-    return `
-    <div class="card">
-      <div class="card-hdr"><div class="sm b6">${d.day}</div></div>
-      <div class="card-body">
-        <div class="field"><label class="lbl">Day type</label><div class="dtype-row">${typebtns}</div></div>
-        ${showExtra ? `
-        <div class="field"><label class="lbl">Intensity — 1 light · 3 moderate · 5 maximum</label><div class="int-row">${intbtns}</div></div>
-        <div class="field"><label class="lbl">Duration (hours, optional)</label>
-          <input type="text" inputmode="decimal" value="${d.hours}" placeholder="e.g. 2.5" oninput="setDhours(${i},this.value)">
-        </div>` : d.type==='off' ? '<div class="xs dimmer" style="margin-top:-4px">Rest day — prime gym candidate.</div>' : ''}
-      </div>
-    </div>`;
+    const showExtra=d.type&&d.type!=='off';
+    return `<div class="card"><div class="card-hdr"><div class="sm b6">${d.day}</div></div><div class="card-body">
+      <div class="field"><label class="lbl">Day type</label><div class="dtype-row">${typebtns}</div></div>
+      ${showExtra?`<div class="field"><label class="lbl">Intensity — 1 light · 3 moderate · 5 maximum</label><div class="int-row">${intbtns}</div></div>
+      <div class="field"><label class="lbl">Duration (hours, optional)</label>
+      <input type="text" inputmode="decimal" value="${d.hours}" placeholder="e.g. 2.5" oninput="setDhours(${i},this.value)"></div>`
+      :d.type==='off'?'<div class="xs dimmer" style="margin-top:-4px">Rest day — prime gym candidate.</div>':''}
+    </div></div>`;
   }).join('');
-  return `
-    <div class="sec">Ballet schedule</div>
-    <div class="notice"><strong>Enter this week's company schedule</strong>Day type and intensity guide the smart gym session assignment.</div>
-    ${cards}
-    <div style="padding:4px 16px 8px"><button class="btn-p" onclick="generatePlan()">Generate Gym Plan →</button></div>
-    <div class="bpad"></div>`;
+  return `<div class="sec">Ballet schedule</div>
+    <div class="notice"><strong>Enter this week's company schedule</strong>Day type and intensity guide smart gym session assignment.</div>
+    ${cards}<div style="padding:4px 16px 8px"><button class="btn-p" onclick="generatePlan()">Generate Gym Plan →</button></div><div class="bpad"></div>`;
 }
-
 function setDtype(i,v)  { getWeek(viewMonday).ballet[i].type=v;      saveWeeks(); renderSchedule(); }
 function setDint(i,v)   { getWeek(viewMonday).ballet[i].intensity=v; saveWeeks(); renderSchedule(); }
 function setDhours(i,v) { getWeek(viewMonday).ballet[i].hours=v;     saveWeeks(); }
-
-// ═══════════════════════════════════════════════════════════
-// AUTO-ASSIGNMENT ENGINE v2
-// Graduated tiers · directional gap rule · retry logic
-// lockedAssignments: sessions already logged this week — their day
-// indices are fixed points the engine must not touch or conflict with.
-//
-// Real-life example: it is Wednesday. Push was done Monday (logged).
-// You changed Tuesday's rehearsal to a full day and want the plan updated.
-// The engine must see Monday as consumed by Push, respect the 48-hour
-// gap rule from Monday when placing Pull, and never re-assign Monday
-// to anything else. Without this, regenerating mid-week would treat
-// the whole week as blank and could conflict with completed sessions.
-// ═══════════════════════════════════════════════════════════
-function assignGymDays(ballet, lockedAssignments = {}, pastDays = new Set()) {
-
-  // ── Load calculation ─────────────────────────────────────
+// ─── ENGINE v2 ───────────────────────────────────────────────
+// Graduated tiers · directional gap rule · retry · locked sessions · past days
+function assignGymDays(ballet, lockedAssignments={}, pastDays=new Set()) {
   function computeLoad(d) {
-    const hrs = Math.max(parseFloat(d.hours) || 0, 0.5);
-    const int = d.intensity || 3;
-    if (!d.type || d.type === 'off')  return { upper:0, lower:0 };
-    if (d.type === 'perf')            return { upper:99, lower:99 };
-    if (d.type === 'reh')             return { upper:int*hrs*0.4, lower:int*hrs*0.5 };
-    if (d.type === 'per')             return { upper:int*hrs*0.2, lower:int*hrs*0.8 };
-    return { upper:0, lower:0 };
+    const hrs=Math.max(parseFloat(d.hours)||0,0.5), int=d.intensity||3;
+    if (!d.type||d.type==='off')  return {upper:0,lower:0};
+    if (d.type==='perf')          return {upper:99,lower:99};
+    if (d.type==='reh')           return {upper:int*hrs*0.4,lower:int*hrs*0.5};
+    if (d.type==='per')           return {upper:int*hrs*0.2,lower:int*hrs*0.8};
+    return {upper:0,lower:0};
   }
-
-  const loads = ballet.map(computeLoad);
-  const isOff = ballet.map(d => d.type === 'off');
-
-  // ── Protected days — region-specific ─────────────────────
-  const perfDays      = new Set(ballet.reduce((acc,d,i) => d.type==='perf' ? [...acc,i] : acc, []));
-  const dayBeforePerf = new Set([...perfDays].map(i => i-1).filter(i => i >= 0));
-  const dayAfterPerf  = new Set([...perfDays].map(i => i+1).filter(i => i < 7));
-
-  // ── Locked sessions ───────────────────────────────────────
-  // Pre-populate assigned and usedDays with completed sessions.
-  // These entries are FINAL — the engine will not overwrite them,
-  // will not place other sessions on those days, and will respect
-  // gap rules relative to them exactly as it would for newly placed sessions.
-  const assigned   = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const tiers      = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const engineMods = { AP:null, AL:null, AF:null, B:null, C:null, D:null };
-  const reasons    = { AP:'',   AL:'',   AF:'',   B:'',   C:'',   D:'' };
-  const usedDays   = new Set();
-
-  // Seed the engine with locked (already-done) sessions first.
-  // This means the gap rule for Day C will correctly measure from a
-  // completed Day B even if Day B is now in the past.
-  Object.entries(lockedAssignments).forEach(([sk, dayIdx]) => {
-    if (dayIdx === null) return;
-    assigned[sk]   = dayIdx;
-    tiers[sk]      = 'locked';
-    engineMods[sk] = null;
-    reasons[sk]    = `${DAYS[dayIdx]} — completed ✓`;
-    usedDays.add(dayIdx);
+  const loads=ballet.map(computeLoad);
+  const isOff=ballet.map(d=>d.type==='off');
+  const perfDays=new Set(ballet.reduce((a,d,i)=>d.type==='perf'?[...a,i]:a,[]));
+  const dayBeforePerf=new Set([...perfDays].map(i=>i-1).filter(i=>i>=0));
+  const dayAfterPerf=new Set([...perfDays].map(i=>i+1).filter(i=>i<7));
+  // Engine only assigns primary base-key sessions
+  const assigned={AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const tiers={AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const engineMods={AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const reasons={AP:'',AL:'',AF:'',B:'',C:'',D:''};
+  const usedDays=new Set();
+  // Seed locked sessions — these days are fixed, engine builds around them
+  Object.entries(lockedAssignments).forEach(([sk,dayIdx])=>{
+    const bk=baseKey(sk);
+    if (dayIdx===null) return;
+    assigned[bk]=dayIdx; tiers[bk]='locked'; engineMods[bk]=null;
+    reasons[bk]=`${DAYS[dayIdx]} — completed ✓`; usedDays.add(dayIdx);
   });
-
-  // Block past days from receiving new assignments.
-  // Days before today have already passed — the engine must not place
-  // pending sessions there. Locked sessions on past days are already
-  // seeded above and are not affected by this block.
-  // Real-life: today is Wednesday. Monday and Tuesday are in the past.
-  // The engine cannot suggest Push on Monday or Pull on Tuesday even if
-  // those days have low ballet load — they no longer exist this week.
-  pastDays.forEach(i => usedDays.add(i));
-
-  function slotBonus(i) {
-    let b = 0;
-    if (isOff[i]) b -= 2;
-    if (i > 0 && isOff[i-1]) b -= 1;
-    return b;
-  }
-
-  // ── Tier bands ───────────────────────────────────────────
+  // Block past days from receiving new assignments
+  pastDays.forEach(i=>usedDays.add(i));
+  function slotBonus(i) { let b=0; if(isOff[i])b-=2; if(i>0&&isOff[i-1])b-=1; return b; }
   function upperTier(i) {
     if (perfDays.has(i)) return null;
-    const u = loads[i].upper;
-    if (dayBeforePerf.has(i)) return u < 6.5 ? 'lite' : null;
-    if (dayAfterPerf.has(i))  return u < 6.5 ? 'lite' : null;
-    if (u < 2.5)  return 'full';
-    if (u < 4.5)  return 'full';
-    if (u < 5.5)  return 'lite';
-    if (u < 6.5)  return 'min';
-    return null;
+    const u=loads[i].upper;
+    if (dayBeforePerf.has(i)||dayAfterPerf.has(i)) return u<6.5?'lite':null;
+    if (u<4.5) return 'full'; if (u<5.5) return 'lite'; if (u<6.5) return 'min'; return null;
   }
-
   function lowerTier(i) {
-    if (perfDays.has(i)) return null;
-    if (dayBeforePerf.has(i)) return null;
-    const l = loads[i].lower;
-    if (dayAfterPerf.has(i)) return l < 7.0 ? 'min' : null;
-    if (l < 2.5)  return 'full';
-    if (l < 4.0)  return 'full';
-    if (l < 5.5)  return 'lite';
-    if (l < 7.0)  return 'min';
+    if (perfDays.has(i)||dayBeforePerf.has(i)) return null;
+    const l=loads[i].lower;
+    if (dayAfterPerf.has(i)) return l<7.0?'min':null;
+    if (l<4.0) return 'full'; if (l<5.5) return 'lite'; if (l<7.0) return 'min'; return null;
+  }
+  function engineModForTier(sessKey,tier) {
+    if (!tier||tier==='full') return null;
+    const sess=PROG.sessions[baseKey(sessKey)];
+    const lsr=sess?.liteSetReduction||0;
+    if (tier==='lite') return lsr>0?{setReduction:lsr,rpeCap:null}:null;
+    if (tier==='min')  return {setReduction:0,rpeCap:6,isMin:true};
     return null;
   }
-
-  function engineModForTier(sessKey, tier) {
-    if (!tier || tier === 'full') return null;
-    const sess = PROG.sessions[sessKey];
-    const lsr  = sess.liteSetReduction || 0;
-    if (tier === 'lite') return lsr > 0 ? { setReduction: lsr, rpeCap: null } : null;
-    if (tier === 'min')  return { setReduction: 0, rpeCap: 6, isMin: true };
-    return null;
+  function isLocked(sk) { return Object.prototype.hasOwnProperty.call(lockedAssignments,sk)||Object.prototype.hasOwnProperty.call(lockedAssignments,sk+'_2'); }
+  // Upper assignment
+  const upperCandidates=[];
+  for (let i=0;i<7;i++) {
+    if (usedDays.has(i)) continue;
+    const tier=upperTier(i); if (!tier) continue;
+    upperCandidates.push({idx:i,tier,score:loads[i].upper+slotBonus(i)});
   }
-
-  // Guard: returns true if a session key is already locked (done).
-  // Every assignment point must call this before writing to assigned/tiers/engineMods.
-  // This is the single source of truth that prevents overwriting completed sessions.
-  function isLocked(sk) { return Object.prototype.hasOwnProperty.call(lockedAssignments, sk); }
-
-  // ── UPPER BODY assignment ─────────────────────────────────
-  // Bug fix: exclude usedDays from candidates so locked days are never
-  // re-evaluated as slots for a different session.
-  const upperCandidates = [];
-  for (let i = 0; i < 7; i++) {
-    if (usedDays.has(i)) continue;          // ← skip days consumed by locked sessions
-    const tier = upperTier(i);
-    if (!tier) continue;
-    upperCandidates.push({ idx:i, tier, score:loads[i].upper + slotBonus(i) });
-  }
-  upperCandidates.sort((a,b) => a.score - b.score);
-
-  // Determine which upper sessions still need placing
-  // (locked ones are already seeded — skip them entirely)
-  const needAP = !isLocked('AP');
-  const needAL = !isLocked('AL');
-  const needAF = !isLocked('AF');
-
-  // Try to find two well-separated candidates for AP+AL split
-  let splitSlot1 = null, splitSlot2 = null;
-  const splitCandidates = upperCandidates.filter(c => loads[c.idx].upper < 4.5);
-  if (needAP && needAL && splitCandidates.length >= 2) {
-    outer: for (let i = 0; i < splitCandidates.length; i++) {
-      for (let j = i+1; j < splitCandidates.length; j++) {
-        if (Math.abs(splitCandidates[i].idx - splitCandidates[j].idx) >= 2) {
-          splitSlot1 = splitCandidates[i];
-          splitSlot2 = splitCandidates[j];
-          break outer;
+  upperCandidates.sort((a,b)=>a.score-b.score);
+  const needAP=!isLocked('AP'), needAL=!isLocked('AL'), needAF=!isLocked('AF');
+  let splitSlot1=null, splitSlot2=null;
+  const splitCandidates=upperCandidates.filter(c=>loads[c.idx].upper<4.5);
+  if (needAP&&needAL&&splitCandidates.length>=2) {
+    outer: for (let i=0;i<splitCandidates.length;i++)
+      for (let j=i+1;j<splitCandidates.length;j++)
+        if (Math.abs(splitCandidates[i].idx-splitCandidates[j].idx)>=2) {
+          splitSlot1=splitCandidates[i]; splitSlot2=splitCandidates[j]; break outer;
         }
-      }
-    }
   }
-
-  if (splitSlot1 && splitSlot2) {
-    const [early, late] = splitSlot1.idx < splitSlot2.idx
-      ? [splitSlot1, splitSlot2] : [splitSlot2, splitSlot1];
-    // Always mark both split slots as used — one may already be occupied by
-    // a locked session, but the other must be blocked too so B/D don't collide.
-    usedDays.add(early.idx);
-    usedDays.add(late.idx);
-    if (needAP) {
-      assigned.AP = early.idx; tiers.AP = early.tier;
-      engineMods.AP = engineModForTier('AP', early.tier);
-      reasons.AP = buildUpperReason('AP', early.idx, ballet, loads, true, early.tier);
-    }
-    if (needAL) {
-      assigned.AL = late.idx; tiers.AL = late.tier;
-      engineMods.AL = engineModForTier('AL', late.tier);
-      reasons.AL = buildUpperReason('AL', late.idx, ballet, loads, true, late.tier);
-    }
-    if (needAF) {
-      assigned.AF = null; tiers.AF = null;
-      reasons.AF = 'Split week — Push and Pull assigned separately.';
-    }
-  } else if (upperCandidates.length >= 1) {
-    // AF fallback — only assign AF / null out AP+AL if they are not locked
-    const bestAF = upperCandidates[0];
-    if (needAF) {
-      assigned.AF = bestAF.idx; tiers.AF = bestAF.tier;
-      engineMods.AF = engineModForTier('AF', bestAF.tier);
-      usedDays.add(bestAF.idx);
-      reasons.AF = buildUpperReason('AF', bestAF.idx, ballet, loads, false, bestAF.tier);
-    }
-    // Only clear AP/AL if they were not already locked and done
-    if (needAP) { assigned.AP = null; tiers.AP = null; reasons.AP = 'Full Body session covers push and pull this week.'; }
-    if (needAL) { assigned.AL = null; tiers.AL = null; reasons.AL = 'Full Body session covers push and pull this week.'; }
-
-    // Try to also place AP or AL on a second distinct upper slot
-    const secondAF = upperCandidates.find(c =>
-      c.idx !== bestAF.idx && Math.abs(c.idx - bestAF.idx) >= 2
-    );
-    if (secondAF && loads[secondAF.idx].upper < 5.5) {
-      const isEarly = secondAF.idx < bestAF.idx;
-      const pushKey = isEarly ? 'AP' : 'AL';
-      if (!isLocked(pushKey)) {
-        assigned[pushKey] = secondAF.idx;
-        tiers[pushKey]    = secondAF.tier;
-        engineMods[pushKey] = engineModForTier(pushKey, secondAF.tier);
-        usedDays.add(secondAF.idx);
-        reasons[pushKey] = buildUpperReason(pushKey, secondAF.idx, ballet, loads, false, secondAF.tier)
-          + ' Secondary upper session alongside Full Body.';
-      }
+  if (splitSlot1&&splitSlot2) {
+    const [early,late]=splitSlot1.idx<splitSlot2.idx?[splitSlot1,splitSlot2]:[splitSlot2,splitSlot1];
+    usedDays.add(early.idx); usedDays.add(late.idx);
+    if (needAP) { assigned.AP=early.idx; tiers.AP=early.tier; engineMods.AP=engineModForTier('AP',early.tier); reasons.AP=buildUpperReason('AP',early.idx,ballet,loads,true,early.tier); }
+    if (needAL) { assigned.AL=late.idx;  tiers.AL=late.tier;  engineMods.AL=engineModForTier('AL',late.tier);  reasons.AL=buildUpperReason('AL',late.idx,ballet,loads,true,late.tier); }
+    if (needAF) { assigned.AF=null; tiers.AF=null; reasons.AF='Split week — Push and Pull assigned separately.'; }
+  } else if (upperCandidates.length>=1) {
+    const bestAF=upperCandidates[0];
+    if (needAF) { assigned.AF=bestAF.idx; tiers.AF=bestAF.tier; engineMods.AF=engineModForTier('AF',bestAF.tier); usedDays.add(bestAF.idx); reasons.AF=buildUpperReason('AF',bestAF.idx,ballet,loads,false,bestAF.tier); }
+    if (needAP) { assigned.AP=null; tiers.AP=null; reasons.AP='Full Body session covers push and pull this week.'; }
+    if (needAL) { assigned.AL=null; tiers.AL=null; reasons.AL='Full Body session covers push and pull this week.'; }
+    const secondAF=upperCandidates.find(c=>c.idx!==bestAF.idx&&Math.abs(c.idx-bestAF.idx)>=2);
+    if (secondAF&&loads[secondAF.idx].upper<5.5) {
+      const pushKey=secondAF.idx<bestAF.idx?'AP':'AL';
+      if (!isLocked(pushKey)) { assigned[pushKey]=secondAF.idx; tiers[pushKey]=secondAF.tier; engineMods[pushKey]=engineModForTier(pushKey,secondAF.tier); usedDays.add(secondAF.idx); reasons[pushKey]=buildUpperReason(pushKey,secondAF.idx,ballet,loads,false,secondAF.tier)+' Secondary upper alongside Full Body.'; }
     }
   } else {
-    // No viable upper slots — only update reasons for unlocked sessions
-    if (needAF) reasons.AF = 'No viable upper body slot this week — all days have excessive upper load or are performance-protected.';
-    if (needAP) reasons.AP = 'No viable upper body slot this week.';
-    if (needAL) reasons.AL = 'No viable upper body slot this week.';
+    if (needAF) reasons.AF='No viable upper body slot — all days have excessive load or are performance-protected.';
+    if (needAP) reasons.AP='No viable upper body slot.';
+    if (needAL) reasons.AL='No viable upper body slot.';
   }
-
-  // ── LOWER BODY: Day B ─────────────────────────────────────
+  // Day B
   if (!isLocked('B')) {
-    let bestB = null, bestBTier = null, bestBScore = Infinity;
-    for (let i = 0; i < 7; i++) {
-      if (usedDays.has(i)) continue;
-      const tier = lowerTier(i);
-      if (!tier) continue;
-      const sc = loads[i].lower + slotBonus(i);
-      if (sc < bestBScore) { bestBScore = sc; bestB = i; bestBTier = tier; }
-    }
-    if (bestB !== null) {
-      assigned.B = bestB; tiers.B = bestBTier;
-      engineMods.B = engineModForTier('B', bestBTier);
-      usedDays.add(bestB);
-      reasons.B = buildLowerReason('B', bestB, ballet, loads, bestBTier);
-    } else {
-      reasons.B = 'No viable lower body slot — all days have heavy lower ballet load or are performance-protected.';
-    }
+    let bestB=null,bestBTier=null,bestBScore=Infinity;
+    for (let i=0;i<7;i++) { if (usedDays.has(i)) continue; const tier=lowerTier(i); if (!tier) continue; const sc=loads[i].lower+slotBonus(i); if (sc<bestBScore){bestBScore=sc;bestB=i;bestBTier=tier;} }
+    if (bestB!==null) { assigned.B=bestB; tiers.B=bestBTier; engineMods.B=engineModForTier('B',bestBTier); usedDays.add(bestB); reasons.B=buildLowerReason('B',bestB,ballet,loads,bestBTier); }
+    else reasons.B='No viable lower body slot — ballet lower load too high all remaining days.';
   }
-
-  // ── LOWER BODY: Day C — directional gap rule ──────────────
-  // C must be ≥2 days AFTER B (B causes more residual eccentric fatigue).
-  // B can follow C with only 1 day gap (C = neural fatigue, resolves faster).
-  // If B follows C within 1 day, B is auto-downgraded one tier — but only
-  // if B is not locked (done sessions keep their original tier).
+  // Day C — directional gap rule: C must be ≥2 days AFTER B
   if (!isLocked('C')) {
-    let bestC = null, bestCTier = null, bestCScore = Infinity;
-    for (let i = 0; i < 7; i++) {
-      if (usedDays.has(i)) continue;
-      const tier = lowerTier(i);
-      if (!tier) continue;
-      // Directional gap: C must not sit < 2 days AFTER B (locked or new)
-      if (assigned.B !== null && i > assigned.B && (i - assigned.B) < 2) continue;
-      let sc = loads[i].lower + slotBonus(i);
-      const adjReh = (i > 0 && ballet[i-1].type === 'reh') || (i < 6 && ballet[i+1].type === 'reh');
-      if (adjReh) sc += 3;
-      if (sc < bestCScore) { bestCScore = sc; bestC = i; bestCTier = tier; }
+    let bestC=null,bestCTier=null,bestCScore=Infinity;
+    for (let i=0;i<7;i++) {
+      if (usedDays.has(i)) continue; const tier=lowerTier(i); if (!tier) continue;
+      if (assigned.B!==null&&i>assigned.B&&(i-assigned.B)<2) continue;
+      let sc=loads[i].lower+slotBonus(i);
+      if ((i>0&&ballet[i-1].type==='reh')||(i<6&&ballet[i+1].type==='reh')) sc+=3;
+      if (sc<bestCScore){bestCScore=sc;bestC=i;bestCTier=tier;}
     }
-
-    if (bestC !== null) {
-      // B precedes C by only 1 day — downgrade B if B is not locked
-      if (assigned.B !== null && bestC < assigned.B && (assigned.B - bestC) < 2 && !isLocked('B')) {
-        const tierOrder = ['full','lite','min'];
-        const bIdx = tierOrder.indexOf(tiers.B);
-        if (bIdx >= 0 && bIdx < tierOrder.length - 1) {
-          tiers.B = tierOrder[bIdx + 1];
-          engineMods.B = engineModForTier('B', tiers.B);
-          reasons.B += ` Day C precedes Day B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()} to protect recovery.`;
-        }
+    if (bestC!==null) {
+      if (assigned.B!==null&&bestC<assigned.B&&(assigned.B-bestC)<2&&!isLocked('B')) {
+        const ord=['full','lite','min']; const bi=ord.indexOf(tiers.B);
+        if (bi>=0&&bi<ord.length-1){tiers.B=ord[bi+1];engineMods.B=engineModForTier('B',tiers.B);reasons.B+=` Day C precedes B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()}.`;}
       }
-      assigned.C = bestC; tiers.C = bestCTier;
-      engineMods.C = engineModForTier('C', bestCTier);
-      usedDays.add(bestC);
-      reasons.C = buildLowerReason('C', bestC, ballet, loads, bestCTier);
-    } else {
-      reasons.C = 'No viable plyometric slot — insufficient gap from Day B or all lower days are performance-protected.';
-    }
+      assigned.C=bestC;tiers.C=bestCTier;engineMods.C=engineModForTier('C',bestCTier);usedDays.add(bestC);reasons.C=buildLowerReason('C',bestC,ballet,loads,bestCTier);
+    } else reasons.C='No viable plyometric slot — insufficient gap from Day B or performance-protected.';
   }
-
-  // ── RETRY PASS — fight for minimum 3 sessions ─────────────
-  // Count all assigned non-null sessions (locked ones count — they are done)
-  const coreCount = ['AP','AL','AF','B','C'].filter(k => assigned[k] !== null).length;
-  if (coreCount < 3) {
-    const missed = ['B','C','AF'].filter(k => assigned[k] === null && !isLocked(k));
+  // Retry pass — aim for ≥3 core sessions
+  const coreCount=['AP','AL','AF','B','C'].filter(k=>assigned[k]!==null).length;
+  if (coreCount<3) {
+    const missed=['B','C','AF'].filter(k=>assigned[k]===null&&!isLocked(k));
     for (const sk of missed) {
-      const isLower = sk === 'B' || sk === 'C';
-      let bestRetry = null, bestRetryScore = Infinity;
-      for (let i = 0; i < 7; i++) {
-        if (usedDays.has(i) || perfDays.has(i) || dayBeforePerf.has(i)) continue;
-        const sc = (isLower ? loads[i].lower : loads[i].upper) + slotBonus(i);
-        if (sc < bestRetryScore) { bestRetryScore = sc; bestRetry = i; }
+      const isLower=sk==='B'||sk==='C'; let bestR=null,bestRS=Infinity;
+      for (let i=0;i<7;i++) {
+        if (usedDays.has(i)||perfDays.has(i)||dayBeforePerf.has(i)) continue;
+        const sc=(isLower?loads[i].lower:loads[i].upper)+slotBonus(i);
+        if (sc<bestRS){bestRS=sc;bestR=i;}
       }
-      if (bestRetry !== null) {
-        assigned[sk] = bestRetry;
-        tiers[sk] = 'min';
-        engineMods[sk] = engineModForTier(sk, 'min');
-        usedDays.add(bestRetry);
-        reasons[sk] = `Minimum dose assigned on ${DAYS[bestRetry]} — recovery pass to preserve training frequency. Essential exercises only.`;
-        break;
-      }
+      if (bestR!==null){assigned[sk]=bestR;tiers[sk]='min';engineMods[sk]=engineModForTier(sk,'min');usedDays.add(bestR);reasons[sk]=`Minimum dose on ${DAYS[bestR]} — recovery pass to preserve training frequency.`;break;}
     }
   }
-
-  // ── OPTIONAL Day D ─────────────────────────────────────────
+  // Day D
   if (!isLocked('D')) {
-    let bestD = null, bestDScore = 999;
-    for (let i = 0; i < 7; i++) {
-      if (usedDays.has(i) || perfDays.has(i) || dayBeforePerf.has(i)) continue;
-      const total = loads[i].upper + loads[i].lower;
-      if (total >= 5) continue;
-      const sc = total + slotBonus(i);
-      if (sc < bestDScore) { bestDScore = sc; bestD = i; }
+    let bestD=null,bestDS=999;
+    for (let i=0;i<7;i++) {
+      if (usedDays.has(i)||perfDays.has(i)||dayBeforePerf.has(i)) continue;
+      const total=loads[i].upper+loads[i].lower; if (total>=5) continue;
+      const sc=total+slotBonus(i); if (sc<bestDS){bestDS=sc;bestD=i;}
     }
-    if (bestD !== null) {
-      assigned.D = bestD; tiers.D = 'full';
-      reasons.D  = `${DAYS[bestD]} — low-load slot. Optional hypertrophy day.`;
-    } else {
-      reasons.D = 'No clean optional slot this week — Day D skipped.';
-    }
+    if (bestD!==null){assigned.D=bestD;tiers.D='full';reasons.D=`${DAYS[bestD]} — low-load slot. Optional hypertrophy.`;}
+    else reasons.D='No clean optional slot — Day D skipped.';
   }
-
-  return { assigned, tiers, engineMods, reasons };
+  return {assigned,tiers,engineMods,reasons};
 }
-
-// ── Reason text builders ───────────────────────────────────
-function buildUpperReason(sess, dayIdx, ballet, loads, isSplit, tier) {
-  if (dayIdx === null) return '';
-  const d = ballet[dayIdx], dn = DAYS[dayIdx];
-  const parts = [];
-  if (d.type === 'off')             parts.push(`${dn} is a rest day — optimal upper body recovery state`);
-  else if (loads[dayIdx].upper < 2.5) parts.push(`${dn} has light upper ballet demand`);
-  else if (loads[dayIdx].upper < 4.5) parts.push(`${dn} has moderate upper load — gym after class`);
-  else                              parts.push(`${dn} has significant upper load — session compressed`);
-  if (isSplit) {
-    if (sess === 'AP') parts.push('Push first — overhead strength priority early in week');
-    if (sess === 'AL') parts.push('Pull second — 48h recovery gap from Push maintained');
-  }
-  if (tier === 'lite') parts.push('Lite volume — core exercises only, 1 set reduction applied');
-  if (tier === 'min')  parts.push('Minimum dose — primary lifts only, RPE capped at 6. Preserves neural stimulus.');
-  return parts.join(' · ') + '.';
+function buildUpperReason(sess,dayIdx,ballet,loads,isSplit,tier) {
+  if (dayIdx===null) return '';
+  const d=ballet[dayIdx],dn=DAYS[dayIdx],parts=[];
+  if (d.type==='off') parts.push(`${dn} is a rest day — optimal upper recovery state`);
+  else if (loads[dayIdx].upper<2.5) parts.push(`${dn} has light upper ballet demand`);
+  else if (loads[dayIdx].upper<4.5) parts.push(`${dn} has moderate upper load — gym after class`);
+  else parts.push(`${dn} has significant upper load — session compressed`);
+  if (isSplit){if(sess==='AP')parts.push('Push first');if(sess==='AL')parts.push('Pull second — 48h gap from Push');}
+  if (tier==='lite') parts.push('Lite volume — core exercises, 1 set reduction');
+  if (tier==='min')  parts.push('Minimum dose — primary lifts only, RPE ≤ 6');
+  return parts.join(' · ')+'.';
 }
-
-function buildLowerReason(sess, dayIdx, ballet, loads, tier) {
-  if (dayIdx === null) return '';
-  const d = ballet[dayIdx], dn = DAYS[dayIdx];
-  const parts = [];
-  if (d.type === 'off')              parts.push(`${dn} is a rest day — lowest lower body load`);
-  else if (loads[dayIdx].lower < 2.5)  parts.push(`${dn} has light lower ballet demand`);
-  else if (loads[dayIdx].lower < 4.0)  parts.push(`${dn} has moderate lower load`);
-  else                               parts.push(`${dn} has significant lower load — volume compressed`);
-  if (sess === 'C') {
-    parts.push('plyometrics — clear of adjacent full rehearsal days');
-    if (tier === 'min') parts.push('Approach Jump + Pogos only. 15 min. Maintains plyometric neural pathway.');
-  }
-  if (tier === 'lite') parts.push('Lite volume — posterior chain essentials, 1 set reduction applied');
-  if (tier === 'min' && sess === 'B') parts.push('Minimum dose — RDL + Nordic only. Hamstring protection maintained.');
-  return parts.join(' · ') + '.';
+function buildLowerReason(sess,dayIdx,ballet,loads,tier) {
+  if (dayIdx===null) return '';
+  const d=ballet[dayIdx],dn=DAYS[dayIdx],parts=[];
+  if (d.type==='off') parts.push(`${dn} is a rest day`);
+  else if (loads[dayIdx].lower<2.5) parts.push(`${dn} has light lower ballet demand`);
+  else if (loads[dayIdx].lower<4.0) parts.push(`${dn} has moderate lower load`);
+  else parts.push(`${dn} has significant lower load — volume compressed`);
+  if (sess==='C') { parts.push('plyometrics — clear of adjacent full rehearsals'); if (tier==='min') parts.push('Approach Jump + Pogos only — 15 min, maintains plyometric pathway.'); }
+  if (tier==='lite') parts.push('Lite volume — posterior chain essentials, 1 set reduction');
+  if (tier==='min'&&sess==='B') parts.push('Minimum dose — RDL + Nordic only.');
+  return parts.join(' · ')+'.';
 }
-
+// ─── LOCKED ASSIGNMENTS ──────────────────────────────────────
+// Reads from wk.logs — works even when wk.plan is null.
+// For new logs: uses log.dayIdx. For old logs: derives from log.date.
+// This is plan-independent and covers all logs ever saved.
 function getLockedAssignments(wk) {
-  // Reads from wk.logs — works even when wk.plan is null.
-  // log.dayIdx is the primary source (set by completeLog).
-  // Fallback: wk.plan.assigned for logs saved before dayIdx was introduced.
-  const locked = {};
-  Object.entries(wk.logs || {}).forEach(([sk, log]) => {
+  const locked={}, monMs=viewMonday.getTime();
+  Object.entries(wk.logs||{}).forEach(([sk,log])=>{
     if (!log) return;
-    if (log.dayIdx !== null && log.dayIdx !== undefined) {
-      locked[sk] = log.dayIdx;
-    } else if (wk.plan?.assigned?.[sk] !== null && wk.plan?.assigned?.[sk] !== undefined) {
-      // Old log without dayIdx — trust the current plan assignment as the day.
-      locked[sk] = wk.plan.assigned[sk];
+    let dayIdx=null;
+    if (log.dayIdx!==null&&log.dayIdx!==undefined) { dayIdx=log.dayIdx; }
+    else if (log.date) {
+      const ld=new Date(log.date); ld.setHours(0,0,0,0);
+      const idx=Math.round((ld.getTime()-monMs)/(1000*60*60*24));
+      if (idx>=0&&idx<=6) dayIdx=idx;
     }
+    if (dayIdx!==null) locked[sk]=dayIdx;
   });
   return locked;
 }
-
+// ─── GENERATE PLAN ───────────────────────────────────────────
 function generatePlan() {
-  const wk = getWeek(viewMonday);
-
-  // Locked assignments — sessions already logged this week.
-  const locked = getLockedAssignments(wk);
-
-  // Past days — days that have already passed in the current week.
-  // Engine uses this to block new placements on those days.
-  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
-  const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
-  const pastDays = new Set();
-  for (let i = 0; i < todayDayIdx; i++) {
-    if (i >= 0 && i < 7) pastDays.add(i);
-  }
-
-  const { assigned, tiers, engineMods, reasons } = assignGymDays(wk.ballet, locked, pastDays);
-
-  // ── PAST-DAY PRESERVATION ─────────────────────────────────
-  // Regeneration must never change anything on a past day.
-  // Rule: whatever was assigned in the current plan on a past day stays
-  // exactly as it was — logged or not, corrected manually or not.
-  // This is the final and definitive guarantee.
-  //
-  // Real-life: today is Wednesday. The user manually corrected Push to Monday
-  // in edit mode after the previous regeneration displaced it.
-  // On this new regeneration, Monday is a past day — it is frozen.
-  // The engine has already been blocked from placing anything new there.
-  // This step restores what was there before the engine ran, overriding
-  // any null the engine left behind.
-  if (wk.plan) {
-    Object.entries(wk.plan.assigned).forEach(([sk, dayIdx]) => {
-      if (dayIdx !== null && pastDays.has(dayIdx)) {
-        assigned[sk]    = dayIdx;
-        tiers[sk]       = wk.plan.tiers?.[sk] || 'full';
-        engineMods[sk]  = wk.plan.engineMods?.[sk] || null;
-        reasons[sk]     = wk.plan.reasons?.[sk] || `${DAYS[dayIdx]} — past day`;
-      }
-    });
-  }
-
-  // Logged sessions get their tier restored from the log itself
-  // (the actual tier used when training — ground truth).
-  Object.entries(locked).forEach(([sk, dayIdx]) => {
-    assigned[sk]   = dayIdx;
-    tiers[sk]      = wk.logs[sk]?.tier || 'full';
-    engineMods[sk] = null;
-    reasons[sk]    = `${DAYS[dayIdx]} — completed ✓`;
+  const wk=getWeek(viewMonday);
+  const locked=getLockedAssignments(wk);
+  // Past days: already elapsed — engine must not place sessions there
+  const todayDate=new Date(); todayDate.setHours(0,0,0,0);
+  const todayIdx=Math.round((todayDate.getTime()-viewMonday.getTime())/(1000*60*60*24));
+  const pastDays=new Set();
+  for (let i=0;i<todayIdx;i++){if(i>=0&&i<7)pastDays.add(i);}
+  const {assigned,tiers,engineMods,reasons}=assignGymDays(wk.ballet,locked,pastDays);
+  // Hard override: locked sessions are fixed — restore from logs
+  Object.entries(locked).forEach(([sk,dayIdx])=>{
+    const bk=baseKey(sk);
+    assigned[bk]=dayIdx; tiers[bk]=wk.logs[sk]?.tier||'full';
+    engineMods[bk]=null; reasons[bk]=`${DAYS[dayIdx]} — completed ✓`;
   });
-
-  wk.plan = { assigned, tiers, engineMods, reasons, createdAt: new Date().toISOString() };
-  saveWeeks();
-  renderSchedule();
+  // Preserve existing extra slots (e.g. AP_2) from old plan — don't wipe them
+  const newPlan={assigned,tiers,engineMods,reasons,createdAt:new Date().toISOString()};
+  if (wk.plan?.extraSlots) newPlan.extraSlots=wk.plan.extraSlots;
+  wk.plan=newPlan;
+  showBalletForm=false;
+  saveWeeks(); renderSchedule();
 }
-
-// ── Week view ──────────────────────────────────────────────
+// ─── EDIT PLAN ───────────────────────────────────────────────
+// Does NOT null wk.plan — keeps it so generatePlan can preserve past-day assignments
+function editPlan() { showBalletForm=true; renderSchedule(); }
+// ─── WEEK VIEW ───────────────────────────────────────────────
 function buildWeekView(wk) {
-  const summary = buildWeekSummary(wk);
-  const assignedArr = Object.entries(wk.plan.assigned).filter(([,idx]) => idx !== null);
-  const dayToSessions = {};
-  assignedArr.forEach(([sk,di]) => { if (!dayToSessions[di]) dayToSessions[di]=[]; dayToSessions[di].push(sk); });
-  const conflictDays = new Set(
-    Object.entries(dayToSessions).filter(([,arr]) => arr.length > 1).map(([di]) => Number(di))
-  );
-
-  const editBar = editDaysMode ? `
+  const summary=buildWeekSummary(wk);
+  // Build full session slot map including extra slots (AP_2, B_2 etc.)
+  const allSlots=getAllPlanSlots(wk.plan);
+  const dayToSlots={};
+  allSlots.forEach(({slotKey,dayIdx})=>{
+    if (dayIdx===null) return;
+    if (!dayToSlots[dayIdx]) dayToSlots[dayIdx]=[];
+    dayToSlots[dayIdx].push(slotKey);
+  });
+  // Conflict = more than one slot on same day
+  const conflictDays=new Set(Object.entries(dayToSlots).filter(([,arr])=>arr.length>1).map(([di])=>Number(di)));
+  const todayDate=new Date(); todayDate.setHours(0,0,0,0);
+  const todayDayIdx=Math.round((todayDate.getTime()-viewMonday.getTime())/(1000*60*60*24));
+  const editBar=editDaysMode?`
     <div class="edit-mode-bar">
       <span class="edit-mode-lbl">✏️ Tap any day to reassign</span>
       <div class="edit-mode-actions">
         <button class="btn-undo" onclick="undoEditDays()">Undo</button>
         <button class="btn-done" onclick="exitEditDays()">Done</button>
       </div>
-    </div>` : '';
-
-  // Today indicator — amber left border so athlete always knows where they are
-  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
-  const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
-
-  const dayCards = DAYS.map((day,i) => {
-    const ballet        = wk.ballet[i];
-    const sessionsOnDay = dayToSessions[i] || [];
-    const sessionKey    = sessionsOnDay[0] || null;
-    const log           = sessionKey ? wk.logs[sessionKey] : null;
-    const isDone        = !!log;
-    const isConflict    = conflictDays.has(i);
-    const tier          = sessionKey ? (wk.plan.tiers?.[sessionKey] || 'full') : null;
-    const isToday       = i === todayDayIdx;
-
-    const conflictNote = isConflict
-      ? `<div class="conflict-note">⚠ ${sessionsOnDay.map(sk => SESS_LABEL[sk]||sk).join(' + ')} — duplicate assignment</div>`
-      : '';
-    // In edit mode every day opens the menu — no locking in the UI
-    const menuHTML = (editDaysMode && editDayMenu === i) ? buildSessionMenu(i, sessionsOnDay, wk) : '';
-
-    if (sessionKey) {
-      const sess   = PROG.sessions[sessionKey];
-      const reason = !editDaysMode ? wk.plan.reasons[sessionKey] : null;
-
-      const clickAct = editDaysMode
-        ? `openEditDayMenu(${i})`
-        : isDone ? `toggleHistEntry('${sessionKey}')` : `openLog('${sessionKey}',${i})`;
-
-      // Only show LITE/MIN pills — not 'locked' (engine internal marker)
-      const tierPill = (tier && tier !== 'full' && tier !== 'locked')
-        ? `<span class="tier-pill ${TIER_CSS[tier]}">${TIER_LABEL[tier]}</span>` : '';
-
-      const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
-
-      const rightIcon = editDaysMode
-        // In edit mode: done sessions show ✓ Done pill (informational) + amber chevron
-        // so the athlete knows the session was trained but can still reassign
-        ? isDone
-          ? '<span class="done-pill" style="margin-right:6px">✓</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
-          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
-        : isDone
-          ? '<span class="done-pill">✓ Done</span>'
-          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>';
-
+    </div>`:'';
+  const dayCards=DAYS.map((day,i)=>{
+    const ballet=wk.ballet[i];
+    const slotsOnDay=dayToSlots[i]||[];
+    const slotKey=slotsOnDay[0]||null;
+    const sessKey=slotKey?baseKey(slotKey):null;
+    const log=slotKey?wk.logs[slotKey]:null;
+    const isDone=!!log;
+    const isConflict=conflictDays.has(i);
+    const tier=slotKey?(wk.plan.tiers?.[slotKey]||wk.plan.tiers?.[sessKey]||'full'):null;
+    const isToday=i===todayDayIdx;
+    const conflictNote=isConflict?`<div class="conflict-note">⚠ ${slotsOnDay.map(sk=>SESS_LABEL[baseKey(sk)]||sk).join(' + ')} — duplicate assignment</div>`:'';
+    const menuHTML=(editDaysMode&&editDayMenu===i)?buildSessionMenu(i,slotsOnDay,wk):'';
+    const todayStyle=isToday?'border-left:3px solid var(--am);':'';
+    if (sessKey) {
+      const sess=PROG.sessions[sessKey];
+      const reason=!editDaysMode?wk.plan.reasons[slotKey]||wk.plan.reasons[sessKey]:null;
+      const clickAct=editDaysMode?`openEditDayMenu(${i})`:isDone?`toggleHistEntry('${slotKey}')`: `openLog('${slotKey}',${i})`;
+      const tierPill=(tier&&tier!=='full'&&tier!=='locked')?`<span class="tier-pill ${TIER_CSS[tier]||''}">${TIER_LABEL[tier]||''}</span>`:'';
       return `
-        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}"
-          style="${todayStyle}"
-          onclick="${clickAct}">
+        <div class="day-card${editDaysMode?' editable':''}${isConflict?' conflict':''}" style="${todayStyle}" onclick="${clickAct}">
           <div class="day-card-hdr">
             <div>
               <div class="row">
-                <span class="badge ${SESS_BADGE[sessionKey]||'bpre'}">${SESS_LABEL[sessionKey]||sessionKey}</span>
-                ${tierPill}
+                <span class="badge ${SESS_BADGE[sessKey]||'bpre'}">${SESS_LABEL[sessKey]||sessKey}</span>${tierPill}
                 <span class="sm b5" style="margin-left:4px">${sess.name}</span>
               </div>
               <div class="day-meta">${day}${isToday?' · Today':''}${ballet.type?' · '+DTYPE_LABELS[ballet.type]:''}${ballet.hours?' · '+ballet.hours+'h':''}</div>
             </div>
-            <div class="day-status">${rightIcon}</div>
+            <div class="day-status">
+              ${editDaysMode
+                ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'
+                :isDone?'<span class="done-pill">✓ Done</span>'
+                :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>'}
+            </div>
           </div>
           ${conflictNote}
-          ${reason ? `<div class="reason-text">🧠 ${reason}</div>` : ''}
-          ${!editDaysMode && isDone && expandedHist===sessionKey ? buildInlineLog(log, sessionKey, wk) : ''}
-        </div>
-        ${menuHTML}`;
+          ${reason?`<div class="reason-text">🧠 ${reason}</div>`:''}
+          ${!editDaysMode&&isDone&&expandedHist===slotKey?buildInlineLog(log,slotKey,wk):''}
+        </div>${menuHTML}`;
     } else {
-      const clickAct   = editDaysMode ? `openEditDayMenu(${i})` : '';
-      const todayStyle = isToday ? 'border-left:3px solid var(--am);' : '';
+      const clickAct=editDaysMode?`openEditDayMenu(${i})`:'';
       return `
-        <div class="day-card${editDaysMode?' editable':''}"
-          style="${todayStyle}"
-          ${editDaysMode?`onclick="${clickAct}"`:''}>
+        <div class="day-card${editDaysMode?' editable':''}" style="${todayStyle}"${editDaysMode?` onclick="${clickAct}"`:''}>
           <div class="day-card-hdr">
-            <div>
-              <div class="sm b5" style="color:var(--tx3)">${day}${isToday?' <span style=\'color:var(--am);font-size:10px\'>TODAY</span>':''}</div>
-              <div class="day-meta">${ballet.type?DTYPE_LABELS[ballet.type]:'Not scheduled'}</div>
-            </div>
+            <div><div class="sm b5" style="color:var(--tx3)">${day}${isToday?' <span style="color:var(--am);font-size:10px">TODAY</span>':''}</div>
+            <div class="day-meta">${ballet.type?DTYPE_LABELS[ballet.type]:'Not scheduled'}</div></div>
             <span class="rest-pill">${editDaysMode?'Tap to assign':ballet.type==='perf'?'🎭 Perf':ballet.type==='off'?'Rest':'No gym'}</span>
           </div>
-        </div>
-        ${menuHTML}`;
+        </div>${menuHTML}`;
     }
   }).join('');
-
-  const actionRow = editDaysMode ? '' : `
+  const actionRow=editDaysMode?'':`
     <div style="padding:0 16px 8px;display:flex;gap:8px">
       <button class="btn-g" style="flex:1;text-align:center" onclick="editPlan()">← Edit schedule</button>
       <button class="btn-g" style="flex:1;text-align:center" onclick="enterEditDays()">✏️ Edit days</button>
     </div>`;
-
-  return `${editBar}${!editDaysMode?summary:''}
-    <div class="week-grid">${dayCards}</div>
-    ${actionRow}<div class="bpad"></div>`;
+  return `${editBar}${!editDaysMode?summary:''}<div class="week-grid">${dayCards}</div>${actionRow}<div class="bpad"></div>`;
 }
-
-// ── Week summary card ──────────────────────────────────────
+// Returns all assigned slot keys (including AP_2 etc.) with their day index
+function getAllPlanSlots(plan) {
+  if (!plan) return [];
+  const slots=[];
+  Object.entries(plan.assigned||{}).forEach(([sk,dayIdx])=>{ if (dayIdx!==null) slots.push({slotKey:sk,dayIdx}); });
+  Object.entries(plan.extraSlots||{}).forEach(([sk,dayIdx])=>{ if (dayIdx!==null) slots.push({slotKey:sk,dayIdx}); });
+  return slots;
+}
+// ─── WEEK SUMMARY ────────────────────────────────────────────
 function buildWeekSummary(wk) {
-  const logs    = Object.values(wk.logs || {});
-  const planned = Object.values(wk.plan?.assigned || {}).filter(v => v !== null).length;
-  const done    = logs.length;
-  if (done === 0 && planned === 0) return '';
-  const totalLoad = logs.reduce((s,l) => s + (l.sRPE||0), 0);
-  const logsWithFeel = logs.filter(l => l.feel);
-  const avgFeel = logsWithFeel.length
-    ? (logsWithFeel.reduce((s,l) => s+l.feel, 0) / logsWithFeel.length).toFixed(1) : null;
-  const logsWithAcc = logs.filter(l => l.accuracy?.rate !== undefined);
-  const avgAcc = logsWithAcc.length
-    ? Math.round(logsWithAcc.reduce((s,l) => s+l.accuracy.rate, 0) / logsWithAcc.length) : null;
-
-  const sc = (val, lbl) => `
-    <div class="week-sum-stat">
-      <div class="week-sum-val${val==='—'?' dim':''}">${val}</div>
-      <div class="week-sum-lbl">${lbl}</div>
-    </div>`;
-
-  const alert = totalLoad > 0 ? getLoadAlert(totalLoad) : null;
-  const alertHTML = alert ? `
-    <div class="week-sum-alert ${alert.level}">
-      <strong>${alert.level==='warn'?'⚠ Load spike':'📈 Load rising'}</strong>
-      This week's load is ${Math.round((alert.ratio-1)*100)}% above the 4-week average. Monitor recovery.
-    </div>` : '';
-
-  return `
-    <div class="week-sum-card">
-      <div class="week-sum-title">Week at a glance</div>
-      <div class="week-sum-grid">
-        ${sc(done+'/'+planned,'sessions')}
-        ${sc(totalLoad>0?totalLoad.toLocaleString():'—','load AU')}
-        ${sc(avgFeel!==null?avgFeel:'—','avg feel')}
-        ${sc(avgAcc!==null?avgAcc+'%':'—','accuracy')}
-      </div>
-      ${alertHTML}
-    </div>`;
+  const logs=Object.values(wk.logs||{});
+  const planned=getAllPlanSlots(wk.plan).length;
+  const done=logs.length;
+  if (done===0&&planned===0) return '';
+  const totalLoad=logs.reduce((s,l)=>s+(l.sRPE||0),0);
+  const lf2=logs.filter(l=>l.feel);
+  const avgFeel=lf2.length?(lf2.reduce((s,l)=>s+l.feel,0)/lf2.length).toFixed(1):null;
+  const la=logs.filter(l=>l.accuracy?.rate!==undefined);
+  const avgAcc=la.length?Math.round(la.reduce((s,l)=>s+l.accuracy.rate,0)/la.length):null;
+  const sc=(val,lbl)=>`<div class="week-sum-stat"><div class="week-sum-val${val==='—'?' dim':''}">${val}</div><div class="week-sum-lbl">${lbl}</div></div>`;
+  const alert=totalLoad>0?getLoadAlert(totalLoad):null;
+  const alertHTML=alert?`<div class="week-sum-alert ${alert.level}"><strong>${alert.level==='warn'?'⚠ Load spike':'📈 Load rising'}</strong>This week's load is ${Math.round((alert.ratio-1)*100)}% above the 4-week average.</div>`:'';
+  return `<div class="week-sum-card"><div class="week-sum-title">Week at a glance</div>
+    <div class="week-sum-grid">${sc(done+'/'+planned,'sessions')}${sc(totalLoad>0?totalLoad.toLocaleString():'—','load AU')}${sc(avgFeel!==null?avgFeel:'—','avg feel')}${sc(avgAcc!==null?avgAcc+'%':'—','accuracy')}</div>${alertHTML}</div>`;
 }
-
 function getLoadAlert(currentLoad) {
-  const recentLoads = [];
-  for (let w = 1; w <= 4; w++) {
-    const m = new Date(viewMonday); m.setDate(m.getDate() - w*7);
-    const wk = weeks[weekKey(m)];
-    if (wk) {
-      const l = Object.values(wk.logs||{}).reduce((s,lg) => s+(lg.sRPE||0), 0);
-      if (l > 0) recentLoads.push(l);
-    }
-  }
-  if (recentLoads.length < 2) return null;
-  const avg   = recentLoads.reduce((s,v) => s+v, 0) / recentLoads.length;
-  const ratio = currentLoad / avg;
-  if (ratio > 1.25) return { level:'warn', ratio, avg };
-  if (ratio > 1.15) return { level:'note', ratio, avg };
-  return null;
+  const recent=[];
+  for (let w=1;w<=4;w++){const m=new Date(viewMonday);m.setDate(m.getDate()-w*7);const wk=weeks[weekKey(m)];if(wk){const l=Object.values(wk.logs||{}).reduce((s,lg)=>s+(lg.sRPE||0),0);if(l>0)recent.push(l);}}
+  if (recent.length<2) return null;
+  const avg=recent.reduce((s,v)=>s+v,0)/recent.length, ratio=currentLoad/avg;
+  if (ratio>1.25) return {level:'warn',ratio,avg}; if (ratio>1.15) return {level:'note',ratio,avg}; return null;
 }
-
-// ── Session menu (edit days) ───────────────────────────────
-// In edit mode the user has full freedom — any session can be assigned
-// to any day regardless of whether it has been logged. Done sessions
-// are shown with a ✓ marker for context but are fully tappable.
-// The engine's locking only applies when regenerating the suggestion —
-// NOT here. The user's manual override is always authoritative.
-function buildSessionMenu(dayIdx, sessionsOnDay, wk) {
-  const opts = Object.entries(PROG.sessions).map(([key,sess]) => {
-    const hasLog    = !!wk.logs[key];
-    const isCurrent = sessionsOnDay.includes(key);
-    return `
-      <div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
-        <div class="session-opt-lbl">
-          <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
-          <span class="sm">${sess.name}</span>
-          ${hasLog ? '<span style="font-size:10px;color:var(--gn);margin-left:4px">✓ done</span>' : ''}
-        </div>
-        ${isCurrent
-          ? '<span class="session-tick">✓</span>'
-          : '<span class="session-tick-empty"></span>'}
-      </div>`;
+// ─── SESSION MENU ────────────────────────────────────────────
+// In edit mode: full freedom — any session assignable to any day.
+// Selecting a session REPLACES the existing session on that day (no stacking).
+// Done sessions shown with ✓ for context — still freely moveable by user.
+// A second slot of same type can be added via "+ Add 2nd slot" option.
+function buildSessionMenu(dayIdx,slotsOnDay,wk) {
+  const currentSlot=slotsOnDay[0]||null;
+  const opts=Object.entries(PROG.sessions).map(([key,sess])=>{
+    const anyDone=wk.logs[key]||wk.logs[key+'_2'];
+    const isCurrent=currentSlot?baseKey(currentSlot)===key:false;
+    return `<div class="session-opt" onclick="assignDaySession(${dayIdx},'${key}');event.stopPropagation()">
+      <div class="session-opt-lbl">
+        <span class="badge ${SESS_BADGE[key]||'bpre'}">${SESS_LABEL[key]||key}</span>
+        <span class="sm">${sess.name}</span>
+        ${anyDone?'<span style="font-size:10px;color:var(--gn);margin-left:4px">✓ done</span>':''}
+      </div>
+      ${isCurrent?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
+    </div>`;
   }).join('');
-
-  // Tier picker — shown only when a session is currently assigned to this day
-  const currentKey = sessionsOnDay[0] || null;
-  const currentTier = currentKey ? (wk.plan.tiers?.[currentKey] || 'full') : null;
-  const tierPicker = currentKey ? `
+  // Second-slot option — allows same session type twice a week
+  // Only shown when a session is currently on this day and no second slot exists on another day
+  const addSecondOpts=currentSlot?Object.keys(PROG.sessions).filter(key=>{
+    const bk=baseKey(currentSlot);
+    return key===bk && !getAllPlanSlots(wk.plan).some(s=>s.slotKey===bk+'_2');
+  }).map(key=>`
+    <div class="session-opt" onclick="addSecondSlot(${dayIdx},'${key}');event.stopPropagation()" style="border-top:1px solid var(--bd2)">
+      <div class="session-opt-lbl">
+        <span class="badge ${SESS_BADGE[key]||'bpre'}" style="opacity:.6">${SESS_LABEL[key]||key}</span>
+        <span class="sm dim">Add 2nd ${PROG.sessions[key].name} slot</span>
+      </div>
+      <span style="font-size:11px;color:var(--am)">+</span>
+    </div>`).join(''):'';
+  // Tier picker for current session
+  const currentTier=currentSlot?(wk.plan.tiers?.[currentSlot]||wk.plan.tiers?.[baseKey(currentSlot)]||'full'):null;
+  const tierPicker=currentSlot?`
     <div style="padding:8px 14px;border-top:1px solid var(--bd)">
       <div class="xs dimmer" style="margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;font-size:9px">Session volume</div>
       <div style="display:flex;gap:5px">
-        ${['full','lite','min'].map(t => `
-          <button style="flex:1;padding:7px 0;border-radius:7px;border:1px solid;font-size:11px;font-weight:600;font-family:var(--mono,'DM Mono',monospace);transition:all .15s;
+        ${['full','lite','min'].map(t=>`
+          <button style="flex:1;padding:7px 0;border-radius:7px;border:1px solid;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;
             background:${currentTier===t?(t==='full'?'var(--gnd)':t==='lite'?'var(--amd)':'var(--cod)'):'var(--bg4)'};
             color:${currentTier===t?(t==='full'?'var(--gn)':t==='lite'?'var(--am)':'var(--co)'):'var(--tx3)'};
             border-color:${currentTier===t?(t==='full'?'var(--gn)':t==='lite'?'var(--am)':'var(--co)'):'var(--bd2)'}"
-            onclick="setSessionTier(${dayIdx},'${currentKey}','${t}');event.stopPropagation()">
+            onclick="setSessionTier(${dayIdx},'${currentSlot}','${t}');event.stopPropagation()">
             ${t==='full'?'FULL':t==='lite'?'LITE':'MIN'}
           </button>`).join('')}
       </div>
-    </div>` : '';
-
-  const noGym = `
-    <div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
-      <div class="session-opt-lbl">
-        <span class="badge bpre">—</span>
-        <span class="sm dim">No gym this day</span>
-      </div>
-      ${sessionsOnDay.length===0
-        ? '<span class="session-tick">✓</span>'
-        : '<span class="session-tick-empty"></span>'}
-    </div>`;
-  return `<div class="session-menu">${opts}${noGym}${tierPicker}</div>`;
+    </div>`:'';
+  const noGym=`<div class="session-opt" onclick="assignDaySession(${dayIdx},null);event.stopPropagation()">
+    <div class="session-opt-lbl"><span class="badge bpre">—</span><span class="sm dim">No gym this day</span></div>
+    ${slotsOnDay.length===0?'<span class="session-tick">✓</span>':'<span class="session-tick-empty"></span>'}
+  </div>`;
+  return `<div class="session-menu">${opts}${addSecondOpts}${noGym}${tierPicker}</div>`;
 }
-
+// ─── EDIT DAYS MODE ──────────────────────────────────────────
 function enterEditDays() {
-  editDaysMode = true; editDayMenu = null;
-  const wk = getWeek(viewMonday);
-  // Snapshot both assigned days and tiers so undo restores the full state,
-  // including any tier the user manually changed during this edit session.
-  editDaysSnapshot = {
-    assigned: JSON.parse(JSON.stringify(wk.plan.assigned)),
-    tiers:    JSON.parse(JSON.stringify(wk.plan.tiers || {}))
+  editDaysMode=true; editDayMenu=null;
+  const wk=getWeek(viewMonday);
+  editDaysSnapshot={
+    assigned:JSON.parse(JSON.stringify(wk.plan.assigned)),
+    tiers:JSON.parse(JSON.stringify(wk.plan.tiers||{})),
+    extraSlots:JSON.parse(JSON.stringify(wk.plan.extraSlots||{}))
   };
   renderSchedule();
 }
-function exitEditDays() {
-  editDaysMode = false; editDayMenu = null; editDaysSnapshot = null;
-  saveWeeks(); renderSchedule();
+function exitEditDays()  { editDaysMode=false;editDayMenu=null;editDaysSnapshot=null;saveWeeks();renderSchedule(); }
+function undoEditDays()  {
+  const wk=getWeek(viewMonday);
+  wk.plan.assigned=JSON.parse(JSON.stringify(editDaysSnapshot.assigned));
+  wk.plan.tiers=JSON.parse(JSON.stringify(editDaysSnapshot.tiers));
+  wk.plan.extraSlots=JSON.parse(JSON.stringify(editDaysSnapshot.extraSlots));
+  editDaysMode=false;editDayMenu=null;editDaysSnapshot=null;saveWeeks();renderSchedule();
 }
-function undoEditDays() {
-  const wk = getWeek(viewMonday);
-  wk.plan.assigned = JSON.parse(JSON.stringify(editDaysSnapshot.assigned));
-  wk.plan.tiers    = JSON.parse(JSON.stringify(editDaysSnapshot.tiers));
-  editDaysMode = false; editDayMenu = null; editDaysSnapshot = null;
-  saveWeeks(); renderSchedule();
-}
-function openEditDayMenu(dayIdx) {
-  editDayMenu = editDayMenu === dayIdx ? null : dayIdx;
-  renderSchedule();
-}
-function assignDaySession(dayIdx, sessionKey) {
-  const wk = getWeek(viewMonday);
-
-  if (sessionKey) {
-    wk.plan.assigned[sessionKey] = dayIdx;
-
-    // If this session has a log, update log.dayIdx to the new position.
-    // This ensures the next regeneration sees the corrected day as the
-    // locked day for this session — not the stale original position.
-    if (wk.logs[sessionKey]) {
-      wk.logs[sessionKey].dayIdx = dayIdx;
-    }
-
-    const locked = getLockedAssignments(wk);
-    const todayDate = new Date(); todayDate.setHours(0,0,0,0);
-    const todayDayIdx = Math.round((todayDate - viewMonday) / (1000*60*60*24));
-    const pastDays = new Set();
-    for (let i = 0; i < todayDayIdx; i++) { if (i >= 0 && i < 7) pastDays.add(i); }
-    const { tiers: newTiers, engineMods: newMods } = assignGymDays(wk.ballet, locked, pastDays);
-    wk.plan.tiers[sessionKey]      = newTiers[sessionKey] || 'full';
-    wk.plan.engineMods[sessionKey] = newMods[sessionKey]  || null;
-  } else {
-    // "No gym" — clears all sessions on this day
-    Object.keys(wk.plan.assigned).forEach(sk => {
-      if (wk.plan.assigned[sk] === dayIdx) {
-        wk.plan.assigned[sk]   = null;
-        wk.plan.tiers[sk]      = null;
-        wk.plan.engineMods[sk] = null;
+function openEditDayMenu(dayIdx) { editDayMenu=editDayMenu===dayIdx?null:dayIdx; renderSchedule(); }
+// Replace-on-assign: selecting a session REPLACES the current session on that day.
+// No stacking — use addSecondSlot for a deliberate second slot.
+function assignDaySession(dayIdx,sessKey) {
+  const wk=getWeek(viewMonday);
+  if (sessKey) {
+    // Remove any existing non-extra-slot session on this day
+    Object.keys(wk.plan.assigned).forEach(sk=>{
+      if (wk.plan.assigned[sk]===dayIdx && baseKey(sk)!==sessKey) {
+        wk.plan.assigned[sk]=null;
+        wk.plan.tiers[sk]=null;
+        wk.plan.engineMods[sk]=null;
       }
     });
-  }
-  editDayMenu = null;
-  saveWeeks();
-  renderSchedule();
-}
-
-// Manually override the tier for a session — user's explicit choice.
-// Stored without '-manual' suffix for display, but we track it as a
-// manual override so day reassignment doesn't overwrite it.
-function setSessionTier(dayIdx, sessionKey, tier) {
-  const wk = getWeek(viewMonday);
-  if (!sessionKey || wk.plan.assigned[sessionKey] !== dayIdx) return;
-  wk.plan.tiers[sessionKey] = tier;
-  // Derive engine mods from the manually chosen tier
-  const sess = PROG.sessions[sessionKey];
-  if (tier === 'lite') {
-    const lsr = sess.liteSetReduction || 0;
-    wk.plan.engineMods[sessionKey] = lsr > 0 ? { setReduction: lsr, rpeCap: null } : null;
-  } else if (tier === 'min') {
-    wk.plan.engineMods[sessionKey] = { setReduction: 0, rpeCap: 6, isMin: true };
+    // Assign the new session
+    wk.plan.assigned[sessKey]=dayIdx;
+    const locked=getLockedAssignments(wk);
+    const todayDate=new Date();todayDate.setHours(0,0,0,0);
+    const todayIdx=Math.round((todayDate.getTime()-viewMonday.getTime())/(1000*60*60*24));
+    const pastDays=new Set();for(let i=0;i<todayIdx;i++){if(i>=0&&i<7)pastDays.add(i);}
+    const {tiers:newTiers,engineMods:newMods}=assignGymDays(wk.ballet,locked,pastDays);
+    wk.plan.tiers[sessKey]=newTiers[sessKey]||'full';
+    wk.plan.engineMods=wk.plan.engineMods||{};
+    wk.plan.engineMods[sessKey]=newMods[sessKey]||null;
   } else {
-    wk.plan.engineMods[sessionKey] = null;
+    // No gym — clear all slots on this day
+    Object.keys(wk.plan.assigned).forEach(sk=>{if(wk.plan.assigned[sk]===dayIdx){wk.plan.assigned[sk]=null;wk.plan.tiers[sk]=null;}});
+    Object.keys(wk.plan.extraSlots||{}).forEach(sk=>{if(wk.plan.extraSlots[sk]===dayIdx)delete wk.plan.extraSlots[sk];});
   }
-  saveWeeks();
-  renderSchedule();
+  editDayMenu=null; saveWeeks(); renderSchedule();
 }
-
-function editPlan()        { getWeek(viewMonday).plan = null; saveWeeks(); renderSchedule(); }
-function toggleHistEntry(k){ expandedHist = expandedHist===k ? null : k; renderSchedule(); }
-
-// ── Inline log ─────────────────────────────────────────────
-function buildInlineLog(log, sessionKey, wk) {
+// Add a second slot of the same session type on a different day
+function addSecondSlot(dayIdx,sessKey) {
+  const wk=getWeek(viewMonday);
+  if (!wk.plan.extraSlots) wk.plan.extraSlots={};
+  const slotKey=sessKey+'_2';
+  wk.plan.extraSlots[slotKey]=dayIdx;
+  if (!wk.plan.tiers) wk.plan.tiers={};
+  wk.plan.tiers[slotKey]='full';
+  editDayMenu=null; saveWeeks(); renderSchedule();
+}
+function setSessionTier(dayIdx,slotKey,tier) {
+  const wk=getWeek(viewMonday); if (!slotKey) return;
+  const bk=baseKey(slotKey);
+  wk.plan.tiers[slotKey]=tier; wk.plan.tiers[bk]=tier;
+  const sess=PROG.sessions[bk];
+  if (!wk.plan.engineMods) wk.plan.engineMods={};
+  if (tier==='lite'){const lsr=sess?.liteSetReduction||0;wk.plan.engineMods[slotKey]=lsr>0?{setReduction:lsr,rpeCap:null}:null;}
+  else if (tier==='min') wk.plan.engineMods[slotKey]={setReduction:0,rpeCap:6,isMin:true};
+  else wk.plan.engineMods[slotKey]=null;
+  saveWeeks(); renderSchedule();
+}
+function toggleHistEntry(k){expandedHist=expandedHist===k?null:k;renderSchedule();}
+// ─── INLINE LOG ──────────────────────────────────────────────
+function buildInlineLog(log,slotKey,wk) {
   if (!log) return '';
-  const exercises = log.exerciseIds
-    ? log.exerciseIds.map(id => PROG.sessions[sessionKey].exercises.find(e => e.id===id)).filter(Boolean)
-    : PROG.sessions[sessionKey].exercises;
-  const exLines = (log.exLogs||[]).map((el,i) => {
-    const ex   = exercises[i];
-    const name = ex?.name || `Exercise ${i+1}`;
-    const cnt  = ex?.sides ? (el.setsR?.length||0)+(el.setsL?.length||0) : (el.sets?.length||0);
-    const fmt  = countAndFmt(el, ex);
+  const sessKey=baseKey(slotKey);
+  const exercises=log.exerciseIds
+    ?log.exerciseIds.map(id=>PROG.sessions[sessKey]?.exercises.find(e=>e.id===id)).filter(Boolean)
+    :PROG.sessions[sessKey]?.exercises||[];
+  const exLines=(log.exLogs||[]).map((el,i)=>{
+    const ex=exercises[i]; const name=ex?.name||`Exercise ${i+1}`;
+    const cnt=ex?.sides?(el.setsR?.length||0)+(el.setsL?.length||0):(el.sets?.length||0);
+    const fmt=countAndFmt(el,ex);
     return `<div class="hex">${name}: <span>${cnt} sets${fmt!=='—'?' — '+fmt:''}</span></div>`;
   }).join('');
-  const acc = log.accuracy;
-  const ac  = acc ? (acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)') : 'var(--tx3)';
-  const tierNote = log.tier && log.tier !== 'full'
-    ? `<div class="xs dimmer mt1">${TIER_LABEL[log.tier]} session</div>` : '';
-  const sRPENote = log.sRPE
-    ? `<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min</div>` : '';
-  return `
-    <div style="padding:0 14px 12px;border-top:1px solid var(--bd)">
-      ${tierNote}${exLines}${sRPENote}
-      ${acc ? `<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}">
-        <div class="xs b6" style="color:${ac}">${acc.verdict}</div>
-        <div class="xs dimmer mt1">${acc.detail}</div>
-      </div>` : ''}
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn-g" style="flex:1;text-align:center;font-size:12px" onclick="openEditLog('${sessionKey}',event)">Edit log</button>
-        <button class="del-btn" onclick="promptDel('${sessionKey}',event)">Delete</button>
-      </div>
-    </div>`;
+  const acc=log.accuracy; const ac=acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
+  const tierNote=log.tier&&log.tier!=='full'?`<div class="xs dimmer mt1">${TIER_LABEL[log.tier]||log.tier} session</div>`:'';
+  const sRPENote=log.sRPE?`<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min</div>`:'';
+  return `<div style="padding:0 14px 12px;border-top:1px solid var(--bd)">
+    ${tierNote}${exLines}${sRPENote}
+    ${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}">
+      <div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn-g" style="flex:1;text-align:center;font-size:12px" onclick="openEditLog('${slotKey}',event)">Edit log</button>
+      <button class="del-btn" onclick="promptDel('${slotKey}',event)">Delete</button>
+    </div></div>`;
 }
-
-function promptDel(k, e) { e.stopPropagation(); confirmDel = k; renderSchedule(); }
-
-// ═══════════════════════════════════════════════════════════
-// LOG FLOW
-// ═══════════════════════════════════════════════════════════
-function getSessionExercises(sessionKey, tier) {
-  const all = PROG.sessions[sessionKey].exercises;
-  // 'locked' is an engine marker for completed sessions — treat as full
-  // (the actual exercises used are recovered from log.exerciseIds anyway)
-  if (!tier || tier === 'full' || tier === 'locked') return all;
-  if (tier === 'lite') return all.filter(ex => ex.lite === true);
-  if (tier === 'min')  return all.filter(ex => ex.minDose === true);
+function promptDel(k,e){e.stopPropagation();confirmDel=k;renderSchedule();}
+// ─── LOG FLOW ────────────────────────────────────────────────
+function getSessionExercises(sessKey,tier) {
+  const all=PROG.sessions[baseKey(sessKey)]?.exercises||[];
+  if (!tier||tier==='full'||tier==='locked') return all;
+  if (tier==='lite') return all.filter(ex=>ex.lite===true);
+  if (tier==='min')  return all.filter(ex=>ex.minDose===true);
   return all;
 }
-
-function openLog(sessionKey, dayIdx) {
-  editDaysMode = false; editDayMenu = null;
-  const wk       = getWeek(viewMonday);
-  const existing = wk.logs[sessionKey];
-  // Tier resolution priority:
-  // 1. If editing an existing log, use the tier stored on that log
-  //    (the tier at the time of logging is the ground truth for exercise selection)
-  // 2. If plan tier is 'locked' (engine marker for completed session), fall back to 'full'
-  // 3. Otherwise use the plan tier
-  const planTier = wk.plan?.tiers?.[sessionKey] || 'full';
-  const tier     = existing?.tier || (planTier === 'locked' ? 'full' : planTier);
-  const exercises = getSessionExercises(sessionKey, tier);
-
-  lf = {
-    sessionKey, dayIdx, tier,
-    exercises,                    // filtered list — all rendering uses this
-    step:         'presession',
-    tags:         [],
-    mods:         null,
-    modsAccepted: false,
-    exLogs:       exercises.map(ex => ex.sides ? { setsR:[], setsL:[] } : { sets:[] }),
-    openEx:       null,
-    warmupOpen:   false,
-    feel:         3,
-    duration:     0,
-    notes:        '',
-    accuracy:     null,
-    isEdit:       false,
-    presessionSaved: false
-  };
-
-  if (existing) {
-    lf.isEdit    = true;
-    lf.step      = 'logging';
-    lf.exLogs    = JSON.parse(JSON.stringify(existing.exLogs));
-    lf.feel      = existing.feel;
-    lf.duration  = existing.duration || 0;
-    lf.notes     = existing.notes;
-    lf.mods      = existing.mods || null;
-    lf.tags      = existing.tags || [];
-    // Restore exercise list from stored IDs for accurate edit display
-    if (existing.exerciseIds) {
-      lf.exercises = existing.exerciseIds
-        .map(id => PROG.sessions[sessionKey].exercises.find(e => e.id===id))
-        .filter(Boolean);
-    }
+function openLog(slotKey,dayIdx) {
+  editDaysMode=false;editDayMenu=null;
+  const wk=getWeek(viewMonday);
+  const existing=wk.logs[slotKey];
+  const sessKey=baseKey(slotKey);
+  const planTier=wk.plan?.tiers?.[slotKey]||wk.plan?.tiers?.[sessKey]||'full';
+  const tier=existing?.tier||(planTier==='locked'?'full':planTier);
+  const exercises=getSessionExercises(sessKey,tier);
+  lf={slotKey,sessKey,dayIdx,tier,exercises,step:'presession',tags:[],mods:null,modsAccepted:false,
+    exLogs:exercises.map(ex=>ex.sides?{setsR:[],setsL:[]}:{sets:[]}),
+    openEx:null,warmupOpen:false,feel:3,duration:0,notes:'',accuracy:null,isEdit:false,presessionSaved:false};
+  if (existing){
+    lf.isEdit=true;lf.step='logging';lf.exLogs=JSON.parse(JSON.stringify(existing.exLogs));
+    lf.feel=existing.feel;lf.duration=existing.duration||0;lf.notes=existing.notes;
+    lf.mods=existing.mods||null;lf.tags=existing.tags||[];
+    if (existing.exerciseIds){lf.exercises=existing.exerciseIds.map(id=>PROG.sessions[sessKey]?.exercises.find(e=>e.id===id)).filter(Boolean);}
   }
   renderSchedule();
 }
-
-function openEditLog(sessionKey, e) {
+function openEditLog(slotKey,e) {
   e.stopPropagation();
-  const wk  = getWeek(viewMonday);
-  // Read dayIdx from the stored log — safer than plan.assigned which may be
-  // null if the user cleared the plan via editPlan() before editing.
-  const dayIdx = wk.logs[sessionKey]?.dayIdx ?? wk.plan?.assigned?.[sessionKey] ?? null;
-  openLog(sessionKey, dayIdx);
+  const wk=getWeek(viewMonday);
+  const dayIdx=wk.logs[slotKey]?.dayIdx??wk.plan?.assigned?.[slotKey]??null;
+  openLog(slotKey,dayIdx);
 }
-function renderLogFlow() {
-  const el = document.getElementById('page-schedule');
-  const steps = { presession:buildPreSession, logging:buildLogSession, accuracy:buildAccuracyScreen };
-  el.innerHTML = (steps[lf.step] || buildPreSession)();
+function renderLogFlow(){
+  const el=document.getElementById('page-schedule');
+  const steps={presession:buildPreSession,logging:buildLogSession,accuracy:buildAccuracyScreen};
+  el.innerHTML=(steps[lf.step]||buildPreSession)();
 }
-function backToSchedule() { lf = null; expandedHist = null; renderSchedule(); }
-
-// ── Pre-session ────────────────────────────────────────────
+function backToSchedule(){lf=null;expandedHist=null;renderSchedule();}
+// ─── PRE-SESSION ──────────────────────────────────────────────
 function buildPreSession() {
-  const sess   = PROG.sessions[lf.sessionKey];
-  const tags   = PROG.tags;
-  const count  = lf.tags.length;
-  const hasWarn = lf.tags.includes('sharp_pain');
-  const recTags = Object.entries(tags).filter(([,t]) => t.group==='rec');
-  const cauTags = Object.entries(tags).filter(([,t]) => t.group==='cau'||t.group==='warn');
-
-  const tagBtn = (key, tag) => {
-    const isOn = lf.tags.includes(key);
-    const cls  = isOn ? (tag.group==='rec'?'rec':tag.group==='warn'?'wrn':'cau') : '';
-    const dis  = !isOn && count >= 3;
+  const sess=PROG.sessions[lf.sessKey];
+  const tags=PROG.tags, count=lf.tags.length, hasWarn=lf.tags.includes('sharp_pain');
+  const recTags=Object.entries(tags).filter(([,t])=>t.group==='rec');
+  const cauTags=Object.entries(tags).filter(([,t])=>t.group==='cau'||t.group==='warn');
+  const tagBtn=(key,tag)=>{
+    const isOn=lf.tags.includes(key),cls=isOn?(tag.group==='rec'?'rec':tag.group==='warn'?'wrn':'cau'):'',dis=!isOn&&count>=3;
     return `<button class="tag${cls?' '+cls:''}" onclick="toggleTag('${key}')"${dis?' style="opacity:.35;pointer-events:none"':''}>${tag.emoji} ${tag.label}</button>`;
   };
-
-  const activeInj = injuries.filter(inj => inj.status !== 'resolved');
-  const injNotice = activeInj.length > 0 ? `
-    <div class="ndim"><strong>Active injury flags</strong>
-      ${activeInj.map(inj =>
-        `<div class="xs mt1" style="color:${SEVERITY_COLORS[inj.severity]||'var(--co)'}">● ${inj.region} — ${SEVERITY_LABELS[inj.severity]}</div>`
-      ).join('')}
-      <div class="xs dimmer mt1">For context only — update in the Body tab.</div>
-    </div>` : '';
-
-  // Engine tier notice — explains pre-filtered exercises to athlete
-  const tierNotice = (lf.tier && lf.tier !== 'full') ? `
-    <div class="ndim" style="border-color:var(--bl)"><strong style="color:var(--bl)">
-      ${lf.tier==='lite'?'🔵 Lite session':'🟠 Minimum dose session'}
-    </strong>
-    ${lf.tier==='lite'
-      ? `The engine assigned lite volume based on this week's ballet load — ${lf.exercises.length} core exercises. Tags may apply further modifications.`
-      : `Minimum dose assigned — ${lf.exercises.length} essential exercises only, RPE capped at 6. This preserves the training stimulus during a high-load week.`}
-    </div>` : '';
-
-  const modPrev = count > 0 ? buildModPreview() : '';
-
-  return `
-    <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
-      <button class="btn-back" onclick="backToSchedule()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back
-      </button>
-      <button class="btn-skip" onclick="skipPresession()">Skip check-in →</button>
-    </div>
-    <div style="padding:0 16px 4px" class="row">
-      <span class="badge ${SESS_BADGE[lf.sessionKey]||'bpre'}">${SESS_LABEL[lf.sessionKey]||lf.sessionKey}</span>
-      ${lf.tier&&lf.tier!=='full'?`<span class="tier-pill ${TIER_CSS[lf.tier]}">${TIER_LABEL[lf.tier]}</span>`:''}
-      <span class="sm b5">${sess.name}</span>
-    </div>
-    <div class="sec" style="padding-top:12px">Pre-session check-in</div>
-    ${tierNotice}${injNotice}
-    <div class="card"><div class="card-body">
-      <div class="tag-grp-lbl">Recovery</div>
-      <div class="tags-wrap">${recTags.map(([k,t]) => tagBtn(k,t)).join('')}</div>
-      <div class="tag-grp-lbl">Caution</div>
-      <div class="tags-wrap">${cauTags.map(([k,t]) => tagBtn(k,t)).join('')}</div>
-      <div class="xs dimmer">${count>0?count+'/3 selected — tap to deselect':'Select up to 3 · or skip'}</div>
-    </div></div>
-    ${hasWarn?`<div class="nred"><strong>🚨 Sharp / acute pain flagged</strong>Do not train through sharp pain. Requires physiotherapist assessment before loading again.</div>`:''}
-    ${modPrev}
-    ${count>0&&!hasWarn?`<div style="padding:0 16px 8px;display:flex;flex-direction:column;gap:8px">
-      <button class="btn-p" onclick="acceptMods()">Accept modifications & begin →</button>
-      <button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Train as prescribed</button>
-    </div>`:hasWarn?`<div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Proceed anyway (not recommended)</button></div>`:''}
-    <div class="bpad"></div>`;
+  const activeInj=injuries.filter(inj=>inj.status!=='resolved');
+  const injNotice=activeInj.length>0?`<div class="ndim"><strong>Active injury flags</strong>${activeInj.map(inj=>`<div class="xs mt1" style="color:${SEVERITY_COLORS[inj.severity]||'var(--co)'}">● ${inj.region} — ${SEVERITY_LABELS[inj.severity]}</div>`).join('')}<div class="xs dimmer mt1">For context only — update in the Body tab.</div></div>`:'';
+  const tierNotice=(lf.tier&&lf.tier!=='full')?`<div class="ndim" style="border-color:var(--bl)"><strong style="color:var(--bl)">${lf.tier==='lite'?'🔵 Lite session':'🟠 Minimum dose session'}</strong>${lf.tier==='lite'?`Engine assigned lite volume — ${lf.exercises.length} core exercises.`:`Minimum dose — ${lf.exercises.length} essential exercises, RPE ≤ 6.`}</div>`:'';
+  const modPrev=count>0?buildModPreview():'';
+  return `<div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+    <button class="btn-back" onclick="backToSchedule()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back</button>
+    <button class="btn-skip" onclick="skipPresession()">Skip check-in →</button>
+  </div>
+  <div style="padding:0 16px 4px" class="row">
+    <span class="badge ${SESS_BADGE[lf.sessKey]||'bpre'}">${SESS_LABEL[lf.sessKey]||lf.sessKey}</span>
+    ${lf.tier&&lf.tier!=='full'?`<span class="tier-pill ${TIER_CSS[lf.tier]||''}">${TIER_LABEL[lf.tier]||''}</span>`:''}
+    <span class="sm b5">${sess.name}</span>
+  </div>
+  <div class="sec" style="padding-top:12px">Pre-session check-in</div>
+  ${tierNotice}${injNotice}
+  <div class="card"><div class="card-body">
+    <div class="tag-grp-lbl">Recovery</div><div class="tags-wrap">${recTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
+    <div class="tag-grp-lbl">Caution</div><div class="tags-wrap">${cauTags.map(([k,t])=>tagBtn(k,t)).join('')}</div>
+    <div class="xs dimmer">${count>0?count+'/3 selected — tap to deselect':'Select up to 3 · or skip'}</div>
+  </div></div>
+  ${hasWarn?`<div class="nred"><strong>🚨 Sharp / acute pain flagged</strong>Do not train through sharp pain. Physiotherapist assessment required.</div>`:''}
+  ${modPrev}
+  ${count>0&&!hasWarn?`<div style="padding:0 16px 8px;display:flex;flex-direction:column;gap:8px">
+    <button class="btn-p" onclick="acceptMods()">Accept modifications & begin →</button>
+    <button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Train as prescribed</button>
+  </div>`:hasWarn?`<div style="padding:0 16px 8px"><button class="btn-g" style="width:100%;text-align:center" onclick="skipPresession()">Proceed anyway (not recommended)</button></div>`:''}
+  <div class="bpad"></div>`;
 }
-
-// ── Mod preview — engine + tag sources visually separated ──
 function buildModPreview() {
-  const mods = computeMods(lf.tags, lf.sessionKey, lf.exercises);
-  const lines = [];
-
-  // Engine tier mods (shown separately)
-  const wk = getWeek(viewMonday);
-  const em = wk.plan?.engineMods?.[lf.sessionKey];
-  if (em) {
-    if (em.isMin) lines.push(`<div class="mod-line mod-source-engine">🔵 Engine: minimum dose — essential exercises only${em.rpeCap?', RPE ≤ '+em.rpeCap:''}</div>`);
-    else if (em.setReduction > 0) lines.push(`<div class="mod-line mod-source-engine">🔵 Engine: lite volume — −${em.setReduction} set per exercise</div>`);
-  }
-
-  // Tag mods per exercise
-  lf.exercises.forEach((ex,i) => {
-    const m = mods.exMods[i]; const parts = [];
-    if (m.setReduction > 0) parts.push(`→ ${m.adjSets} sets (was ${ex.sets})`);
-    if (m.notes.length) parts.push(...m.notes);
-    if (mods.globalRPECap && (ex.type==='loaded'||ex.type==='bodyweight')) parts.push(`cap RPE ${mods.globalRPECap}`);
-    if (parts.length) lines.push(`<div class="mod-line mod-source-tag">${ex.name} — ${parts.join(' · ')}</div>`);
+  const mods=computeMods(lf.tags,lf.sessKey,lf.exercises);
+  const wk=getWeek(viewMonday);
+  const em=wk.plan?.engineMods?.[lf.slotKey]||wk.plan?.engineMods?.[lf.sessKey];
+  const lines=[];
+  if (em){if(em.isMin)lines.push(`<div class="mod-line mod-source-engine">🔵 Engine: minimum dose${em.rpeCap?', RPE ≤ '+em.rpeCap:''}</div>`);
+  else if(em.setReduction>0)lines.push(`<div class="mod-line mod-source-engine">🔵 Engine: lite volume — −${em.setReduction} set per exercise</div>`);}
+  lf.exercises.forEach((ex,i)=>{
+    const m=mods.exMods[i];const parts=[];
+    if(m.setReduction>0)parts.push(`→ ${m.adjSets} sets (was ${ex.sets})`);
+    if(m.notes.length)parts.push(...m.notes);
+    if(mods.globalRPECap&&(ex.type==='loaded'||ex.type==='bodyweight'))parts.push(`cap RPE ${mods.globalRPECap}`);
+    if(parts.length)lines.push(`<div class="mod-line mod-source-tag">${ex.name} — ${parts.join(' · ')}</div>`);
   });
-
-  if (!lines.length) return '';
+  if(!lines.length) return '';
   return `<div class="card"><div class="card-body"><div class="mod-box"><div class="mod-title">Today's modifications</div>${lines.join('')}</div></div></div>`;
 }
-
-function toggleTag(key) {
-  const idx = lf.tags.indexOf(key);
-  if (idx > -1) lf.tags.splice(idx, 1);
-  else if (lf.tags.length < 3) lf.tags.push(key);
-  renderSchedule();
+function toggleTag(key){const idx=lf.tags.indexOf(key);if(idx>-1)lf.tags.splice(idx,1);else if(lf.tags.length<3)lf.tags.push(key);renderSchedule();}
+function acceptMods(){lf.mods=computeMods(lf.tags,lf.sessKey,lf.exercises);lf.modsAccepted=true;savePresession();lf.step='logging';renderSchedule();}
+function skipPresession(){lf.mods=null;lf.modsAccepted=false;savePresession();lf.step='logging';renderSchedule();}
+function savePresession(){
+  if(lf.presessionSaved||lf.isEdit||lf.tags.length===0)return;
+  const wk=getWeek(viewMonday);if(!wk.presessionLogs)wk.presessionLogs=[];
+  wk.presessionLogs.push({id:Date.now().toString(),type:'presession',date:new Date().toISOString(),sessionKey:lf.slotKey,tags:[...lf.tags],modsAccepted:lf.modsAccepted,sessionNotes:lf.tags.map(t=>PROG.tags[t]?.note).filter(Boolean)});
+  lf.presessionSaved=true;saveWeeks();
 }
-function acceptMods() {
-  lf.mods = computeMods(lf.tags, lf.sessionKey, lf.exercises);
-  lf.modsAccepted = true;
-  savePresession();
-  lf.step = 'logging';
-  renderSchedule();
-}
-function skipPresession() {
-  lf.mods = null; lf.modsAccepted = false;
-  savePresession();
-  lf.step = 'logging';
-  renderSchedule();
-}
-function savePresession() {
-  if (lf.presessionSaved || lf.isEdit || lf.tags.length === 0) return;
-  const wk = getWeek(viewMonday);
-  if (!wk.presessionLogs) wk.presessionLogs = [];
-  wk.presessionLogs.push({
-    id: Date.now().toString(), type:'presession', date:new Date().toISOString(),
-    sessionKey:lf.sessionKey, tags:[...lf.tags], modsAccepted:lf.modsAccepted,
-    sessionNotes: lf.tags.map(t => PROG.tags[t]?.note).filter(Boolean)
-  });
-  lf.presessionSaved = true;
-  saveWeeks();
-}
-
-// ── Log session ────────────────────────────────────────────
+// ─── LOG SESSION ──────────────────────────────────────────────
 function buildLogSession() {
-  const sess = PROG.sessions[lf.sessionKey];
-  const prevMon = new Date(viewMonday); prevMon.setDate(prevMon.getDate()-7);
-  const prevLog = weeks[weekKey(prevMon)]?.logs?.[lf.sessionKey];
-  const warmupCard = buildWarmupCard(sess);
-
-  // lf.exercises is the tier-filtered list — all rendering uses it
-  const exCards = lf.exercises.map((ex, i) => {
-    const exLog   = lf.exLogs[i];
-    const isOpen  = lf.openEx === i;
-    const mod     = lf.mods?.exMods?.[i];
-    const adjSets = computeAdjSets(ex, i, mod);
-
-    // Previous week reference — match by exercise id, not position
-    let prevRef = '';
-    if (prevLog?.exerciseIds) {
-      const prevIdx = prevLog.exerciseIds.indexOf(ex.id);
-      if (prevIdx > -1) {
-        const prevEx = prevLog.exLogs[prevIdx];
-        prevRef = buildPrevRef(prevEx, ex);
-      }
-    } else if (prevLog?.exLogs) {
-      // Legacy: positional match
-      const prevEx = prevLog.exLogs[i];
-      if (prevEx) prevRef = buildPrevRef(prevEx, ex);
+  const sess=PROG.sessions[lf.sessKey];
+  const prevMon=new Date(viewMonday);prevMon.setDate(prevMon.getDate()-7);
+  const prevLog=weeks[weekKey(prevMon)]?.logs?.[lf.slotKey]||weeks[weekKey(prevMon)]?.logs?.[lf.sessKey];
+  const warmupCard=buildWarmupCard(sess);
+  const exCards=lf.exercises.map((ex,i)=>{
+    const exLog=lf.exLogs[i],isOpen=lf.openEx===i;
+    const mod=lf.mods?.exMods?.[i];
+    const adjSets=computeAdjSets(ex,i,mod);
+    let prevRef='';
+    if(prevLog){
+      const pex=prevLog.exerciseIds?prevLog.exLogs[prevLog.exerciseIds.indexOf(ex.id)]:prevLog.exLogs?.[i];
+      if(pex)prevRef=buildPrevRef(pex,ex);
     }
-
-    const loggedCount = ex.sides
-      ? (exLog.setsR?.length||0)+(exLog.setsL?.length||0)
-      : (exLog.sets?.length||0);
-    const modNote = mod && mod.setReduction > 0
-      ? `<div class="xs" style="color:var(--am);margin-top:2px">↓ ${adjSets} sets today</div>` : '';
-
-    return `
-    <div class="card">
+    const loggedCount=ex.sides?(exLog.setsR?.length||0)+(exLog.setsL?.length||0):(exLog.sets?.length||0);
+    const modNote=mod&&mod.setReduction>0?`<div class="xs" style="color:var(--am);margin-top:2px">↓ ${adjSets} sets today</div>`:'';
+    return `<div class="card">
       <div class="ex-hdr${isOpen?' open':''}" onclick="toggleEx(${i})">
         <div style="flex:1;min-width:0">
           <div class="sm b5">${ex.name}</div>
           <div class="xs dimmer mt1">${ex.prescribed} · RPE ${ex.rpe}${loggedCount?' · '+loggedCount+' logged':''}</div>
-          ${modNote}
-          ${prevRef&&!isOpen?`<div class="xs mt1 mono" style="color:var(--tx3);font-size:10px">↩ ${prevRef}</div>`:''}
+          ${modNote}${prevRef&&!isOpen?`<div class="xs mt1 mono" style="color:var(--tx3);font-size:10px">↩ ${prevRef}</div>`:''}
         </div>
         <svg class="chev${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
       ${isOpen?`<div class="ex-body">
         ${prevRef?`<div class="xs mono mb1" style="color:var(--tx3);padding:5px 8px;background:var(--bg2);border-radius:6px;font-size:10px">↩ Last: ${prevRef}</div>`:''}
         ${ex.note?`<div class="xs dimmer mb1" style="line-height:1.4;font-size:11px;padding:4px 0">${ex.note}</div>`:''}
-        ${buildSetRowsNew(ex, exLog, i, adjSets)}
+        ${buildSetRowsNew(ex,exLog,i,adjSets)}
       </div>`:''}
     </div>`;
   }).join('');
-
-  const feelBtns = [1,2,3,4,5].map(v =>
-    `<button class="rbtn${lf.feel===v?' on':''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`
-  ).join('');
-  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
-  const durationBtn = `
-    <div class="srpe-row">
-      <button class="srpe-btn" onclick="openDurationPicker()">
-        ${lf.duration>0
-          ?`<span class="srpe-val">${lf.duration}</span><span class="srpe-unit">min</span>`
-          :'<span class="val-btn-empty">Set duration</span>'}
-      </button>
-      <span class="srpe-note">${sRPE!==null?`sRPE: <strong style="color:var(--tx)">${sRPE}</strong> AU`:'Session RPE × duration = training load'}</span>
-    </div>`;
-
-  const tierBadge = lf.tier && lf.tier !== 'full'
-    ? `<span class="tier-pill ${TIER_CSS[lf.tier]}">${TIER_LABEL[lf.tier]}</span>` : '';
-
-  return `
-    <div style="padding:12px 16px 8px;display:flex;align-items:center;gap:10px">
-      <button class="btn-back" onclick="${lf.isEdit?'backToSchedule()':'lf.step=\'presession\';renderSchedule()'}">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-        ${lf.isEdit?'Cancel':'Back'}
-      </button>
-      <span class="badge ${SESS_BADGE[lf.sessionKey]||'bpre'}">${SESS_LABEL[lf.sessionKey]||lf.sessionKey}</span>
-      ${tierBadge}
-      <span class="sm b5">${sess.name}</span>
-    </div>
-    ${warmupCard}
-    ${exCards}
-    <div class="card"><div class="card-body">
-      <div class="lbl">Overall session feel</div>
-      <div class="rating">${feelBtns}</div>
-      <div class="xs dimmer mt1" style="text-align:center">1 = Struggled · 3 = Expected · 5 = Strong</div>
-      <div class="lbl" style="margin-top:12px">Session duration (for training load)</div>
-      ${durationBtn}
-    </div></div>
-    <div class="card"><div class="card-body">
-      <div class="lbl">Notes (optional)</div>
-      <textarea placeholder="Anything notable..." oninput="lf.notes=this.value">${lf.notes}</textarea>
-    </div></div>
-    <div style="padding:0 16px 8px"><button class="btn-p" onclick="completeLog()">Save Session ✓</button></div>
-    <div class="bpad"></div>`;
+  const feelBtns=[1,2,3,4,5].map(v=>`<button class="rbtn${lf.feel===v?' on':''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`).join('');
+  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  const durationBtn=`<div class="srpe-row">
+    <button class="srpe-btn" onclick="openDurationPicker()">
+      ${lf.duration>0?`<span class="srpe-val">${lf.duration}</span><span class="srpe-unit">min</span>`:'<span class="val-btn-empty">Set duration</span>'}
+    </button>
+    <span class="srpe-note">${sRPE!==null?`sRPE: <strong style="color:var(--tx)">${sRPE}</strong> AU`:'Session RPE × duration = training load'}</span>
+  </div>`;
+  const tierBadge=lf.tier&&lf.tier!=='full'?`<span class="tier-pill ${TIER_CSS[lf.tier]||''}">${TIER_LABEL[lf.tier]||''}</span>`:'';
+  return `<div style="padding:12px 16px 8px;display:flex;align-items:center;gap:10px">
+    <button class="btn-back" onclick="${lf.isEdit?'backToSchedule()':'lf.step=\'presession\';renderSchedule()'}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>${lf.isEdit?'Cancel':'Back'}
+    </button>
+    <span class="badge ${SESS_BADGE[lf.sessKey]||'bpre'}">${SESS_LABEL[lf.sessKey]||lf.sessKey}</span>${tierBadge}
+    <span class="sm b5">${sess.name}</span>
+  </div>
+  ${warmupCard}${exCards}
+  <div class="card"><div class="card-body">
+    <div class="lbl">Overall session feel</div><div class="rating">${feelBtns}</div>
+    <div class="xs dimmer mt1" style="text-align:center">1 = Struggled · 3 = Expected · 5 = Strong</div>
+    <div class="lbl" style="margin-top:12px">Session duration (for training load)</div>${durationBtn}
+  </div></div>
+  <div class="card"><div class="card-body"><div class="lbl">Notes (optional)</div>
+    <textarea placeholder="Anything notable..." oninput="lf.notes=this.value">${lf.notes}</textarea>
+  </div></div>
+  <div style="padding:0 16px 8px"><button class="btn-p" onclick="completeLog()">Save Session ✓</button></div>
+  <div class="bpad"></div>`;
 }
-
-function buildPrevRef(prevEx, ex) {
-  if (!prevEx) return '';
-  if (ex.sides) {
-    const r = (prevEx.setsR||[]).map(s => fmtSet(s,ex)).filter(v => v!=='—');
-    const l = (prevEx.setsL||[]).map(s => fmtSet(s,ex)).filter(v => v!=='—');
-    return (r.length||l.length) ? `R: ${r.join(' ')||'—'} / L: ${l.join(' ')||'—'}` : '';
-  }
-  const parts = (prevEx.sets||[]).map(s => fmtSet(s,ex)).filter(v => v!=='—');
-  return parts.join('  ');
+function buildPrevRef(prevEx,ex) {
+  if(!prevEx)return '';
+  if(ex.sides){const r=(prevEx.setsR||[]).map(s=>fmtSet(s,ex)).filter(v=>v!=='—');const l=(prevEx.setsL||[]).map(s=>fmtSet(s,ex)).filter(v=>v!=='—');return(r.length||l.length)?`R: ${r.join(' ')||'—'} / L: ${l.join(' ')||'—'}`:''; }
+  const parts=(prevEx.sets||[]).map(s=>fmtSet(s,ex)).filter(v=>v!=='—');return parts.join('  ');
 }
-
-// Compute adjusted sets — merges engine tier reduction + tag reduction, takes max
-function computeAdjSets(ex, exIdx, tagMod) {
-  const wk = getWeek(viewMonday);
-  const em = wk.plan?.engineMods?.[lf.sessionKey];
-  const engineRed = (em && !em.isMin) ? (em.setReduction || 0) : 0;
-  const tagRed    = tagMod?.setReduction || 0;
-  const totalRed  = Math.max(engineRed, tagRed);
-  return Math.max(1, ex.sets - totalRed);
+function computeAdjSets(ex,exIdx,tagMod) {
+  const wk=getWeek(viewMonday);
+  const em=wk.plan?.engineMods?.[lf.slotKey]||wk.plan?.engineMods?.[lf.sessKey];
+  const engineRed=(em&&!em.isMin)?(em.setReduction||0):0;
+  const tagRed=tagMod?.setReduction||0;
+  return Math.max(1,ex.sets-Math.max(engineRed,tagRed));
 }
-
-// ── Warm-up card ───────────────────────────────────────────
 function buildWarmupCard(sess) {
-  if (!sess.warmup?.length) return '';
-  const isOpen = lf.warmupOpen;
-  const items  = sess.warmup.map(w => `
-    <div class="warmup-item">
-      <div class="warmup-name">${w.name}</div>
-      <div class="warmup-pre">${w.prescription}</div>
-      ${w.note?`<div class="warmup-note">${w.note}</div>`:''}
-    </div>`).join('');
-  return `
-    <div class="card warmup-card">
-      <div class="ex-hdr${isOpen?' open':''}" onclick="lf.warmupOpen=!lf.warmupOpen;renderSchedule()">
-        <div style="flex:1">
-          <div class="sm b5" style="color:var(--am)">▷ Warm-Up Sequence</div>
-          <div class="xs dimmer mt1">${sess.warmup.length} movements · ${isOpen?'tap to collapse':'tap to expand'}</div>
-        </div>
-        <svg class="chev${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-      </div>
-      ${isOpen?`<div class="ex-body">${items}</div>`:''}
-    </div>`;
+  if(!sess.warmup?.length)return '';
+  const isOpen=lf.warmupOpen;
+  const items=sess.warmup.map(w=>`<div class="warmup-item"><div class="warmup-name">${w.name}</div><div class="warmup-pre">${w.prescription}</div>${w.note?`<div class="warmup-note">${w.note}</div>`:''}</div>`).join('');
+  return `<div class="card warmup-card">
+    <div class="ex-hdr${isOpen?' open':''}" onclick="lf.warmupOpen=!lf.warmupOpen;renderSchedule()">
+      <div style="flex:1"><div class="sm b5" style="color:var(--am)">▷ Warm-Up Sequence</div>
+      <div class="xs dimmer mt1">${sess.warmup.length} movements · ${isOpen?'tap to collapse':'tap to expand'}</div></div>
+      <svg class="chev${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+    </div>${isOpen?`<div class="ex-body">${items}</div>`:''}
+  </div>`;
 }
-
-// ── Set rows ───────────────────────────────────────────────
-function buildSetRowsNew(ex, exLog, exIdx, adjSets) {
-  if (ex.sides) return buildSidedRows(ex, exLog, exIdx, adjSets);
-  const colLbls = ex.type==='loaded' ? ['REPS','KG','RPE']
-    : ex.type==='bodyweight' ? ['REPS','RPE']
-    : ex.type==='timed'||ex.type==='carry' ? ['SEC','RPE']
-    : ex.type==='jump' ? (ex.measureLabel==='cm'?['CM','QUAL','RPE']:['QUAL','RPE'])
-    : null;
-  const head = colLbls
-    ? `<div class="xs dimmer mono mb1" style="display:flex;gap:5px;padding-left:27px">${colLbls.map(l=>`<div style="flex:1;text-align:center">${l}</div>`).join('')}</div>`
-    : `<div class="xs dimmer mt1 mb1" style="padding-left:4px">Prescribed: ${ex.prescribed}</div>`;
-  const sets = exLog.sets||[];
-  const rows = sets.map((set,si) => buildSetRow(ex,set,exIdx,si,null)).join('');
-  const canAdd = sets.length < adjSets+2;
-  return head + rows + (canAdd?`<button class="btn-d" onclick="addSet(${exIdx},null)">+ Add Set</button>`:'');
+function buildSetRowsNew(ex,exLog,exIdx,adjSets) {
+  if(ex.sides)return buildSidedRows(ex,exLog,exIdx,adjSets);
+  const colLbls=ex.type==='loaded'?['REPS','KG','RPE']:ex.type==='bodyweight'?['REPS','RPE']:ex.type==='timed'||ex.type==='carry'?['SEC','RPE']:ex.type==='jump'?(ex.measureLabel==='cm'?['CM','QUAL','RPE']:['QUAL','RPE']):null;
+  const head=colLbls?`<div class="xs dimmer mono mb1" style="display:flex;gap:5px;padding-left:27px">${colLbls.map(l=>`<div style="flex:1;text-align:center">${l}</div>`).join('')}</div>`:`<div class="xs dimmer mt1 mb1" style="padding-left:4px">Prescribed: ${ex.prescribed}</div>`;
+  const sets=exLog.sets||[];
+  return head+sets.map((set,si)=>buildSetRow(ex,set,exIdx,si,null)).join('')+(sets.length<adjSets+2?`<button class="btn-d" onclick="addSet(${exIdx},null)">+ Add Set</button>`:'');
 }
-
-function buildSidedRows(ex, exLog, exIdx, adjSets) {
-  return [
-    { key:'setsR', label:'R', cls:'r' },
-    { key:'setsL', label:'L', cls:'l' }
-  ].map(({key,label,cls}) => {
-    const sets   = exLog[key]||[];
-    const rows   = sets.map((set,si) => buildSetRow(ex,set,exIdx,si,label)).join('');
-    const canAdd = sets.length < adjSets+2;
-    return `
-      <div class="sided-half">
-        <span class="sided-lbl ${cls}">${label}</span>
-        ${rows}
-        ${canAdd?`<button class="btn-d" onclick="addSet(${exIdx},'${label}')">+ Add ${label}</button>`:''}
-      </div>`;
+function buildSidedRows(ex,exLog,exIdx,adjSets) {
+  return [{key:'setsR',label:'R',cls:'r'},{key:'setsL',label:'L',cls:'l'}].map(({key,label,cls})=>{
+    const sets=exLog[key]||[];
+    return `<div class="sided-half"><span class="sided-lbl ${cls}">${label}</span>${sets.map((set,si)=>buildSetRow(ex,set,exIdx,si,label)).join('')}${sets.length<adjSets+2?`<button class="btn-d" onclick="addSet(${exIdx},'${label}')">+ Add ${label}</button>`:''}</div>`;
   }).join('<div class="sided-sep"></div>');
 }
-
-function buildSetRow(ex, set, exIdx, si, side) {
-  const sa  = side ? `,'${side}'` : ',null';
-  const oi  = 'openPicker';
-  if (ex.type === 'plyo') return `
-    <div class="set-row">
-      <div class="set-n">${si+1}</div>
-      <button class="plyo-done${set.done?' done':''}" onclick="updSet(${exIdx},${si},'done',${!set.done});renderSchedule()">${set.done?'✓ Done':'Tap to mark done'}</button>
-    </div>`;
-  if (ex.type === 'jump') {
-    const cm = ex.measureLabel === 'cm';
-    return `
-      <div class="set-row">
-        <div class="set-n">${si+1}</div>
-        ${cm?`<button class="val-btn" onclick="${oi}('cm',${exIdx},${si}${sa})" style="flex:1">
-          ${set.height!==undefined&&set.height!==''?`<span class="val-btn-num">${set.height}</span><span class="val-btn-unit">cm</span>`:'<span class="val-btn-empty">Height</span>'}
-        </button>`:''}
-        <button class="val-btn" onclick="${oi}('quality',${exIdx},${si}${sa})" style="flex:${cm?'0 0 78px':'1'}">
-          ${set.quality?`<span class="val-btn-num">${set.quality}</span><span class="val-btn-unit">Q</span>`:'<span class="val-btn-empty">Quality</span>'}
-        </button>
-        <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">
-          ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-        </button>
-      </div>`;
-  }
-  if (ex.type === 'loaded') return `
-    <div class="set-row">
-      <div class="set-n">${si+1}</div>
-      <button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sa})" style="flex:1">
-        ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
-      </button>
-      <button class="val-btn" onclick="${oi}('weight',${exIdx},${si}${sa})" style="flex:1">
-        ${set.weight!==undefined&&set.weight!==''?`<span class="val-btn-num">${set.weight}</span><span class="val-btn-unit">kg</span>`:'<span class="val-btn-empty">kg</span>'}
-      </button>
-      <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">
-        ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-      </button>
-    </div>`;
-  if (ex.type === 'bodyweight') return `
-    <div class="set-row">
-      <div class="set-n">${si+1}</div>
-      <button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sa})" style="flex:1">
-        ${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}
-      </button>
-      <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">
-        ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-      </button>
-    </div>`;
-  return `
-    <div class="set-row">
-      <div class="set-n">${si+1}</div>
-      <button class="val-btn" onclick="${oi}('sec',${exIdx},${si}${sa})" style="flex:1">
-        ${set.dur?`<span class="val-btn-num">${set.dur}</span><span class="val-btn-unit">sec</span>`:'<span class="val-btn-empty">Sec</span>'}
-      </button>
-      <button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">
-        ${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}
-      </button>
-    </div>`;
+function buildSetRow(ex,set,exIdx,si,side) {
+  const sa=side?`,'${side}'`:',null',oi='openPicker';
+  if(ex.type==='plyo')return `<div class="set-row"><div class="set-n">${si+1}</div><button class="plyo-done${set.done?' done':''}" onclick="updSet(${exIdx},${si},'done',${!set.done});renderSchedule()">${set.done?'✓ Done':'Tap to mark done'}</button></div>`;
+  if(ex.type==='jump'){const cm=ex.measureLabel==='cm';return `<div class="set-row"><div class="set-n">${si+1}</div>${cm?`<button class="val-btn" onclick="${oi}('cm',${exIdx},${si}${sa})" style="flex:1">${set.height!==undefined&&set.height!==''?`<span class="val-btn-num">${set.height}</span><span class="val-btn-unit">cm</span>`:'<span class="val-btn-empty">Height</span>'}</button>`:''}<button class="val-btn" onclick="${oi}('quality',${exIdx},${si}${sa})" style="flex:${cm?'0 0 78px':'1'}">${set.quality?`<span class="val-btn-num">${set.quality}</span><span class="val-btn-unit">Q</span>`:'<span class="val-btn-empty">Quality</span>'}</button><button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}</button></div>`;}
+  if(ex.type==='loaded')return `<div class="set-row"><div class="set-n">${si+1}</div><button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sa})" style="flex:1">${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}</button><button class="val-btn" onclick="${oi}('weight',${exIdx},${si}${sa})" style="flex:1">${set.weight!==undefined&&set.weight!==''?`<span class="val-btn-num">${set.weight}</span><span class="val-btn-unit">kg</span>`:'<span class="val-btn-empty">kg</span>'}</button><button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}</button></div>`;
+  if(ex.type==='bodyweight')return `<div class="set-row"><div class="set-n">${si+1}</div><button class="val-btn" onclick="${oi}('reps',${exIdx},${si}${sa})" style="flex:1">${set.reps?`<span class="val-btn-num">${set.reps}</span><span class="val-btn-unit">reps</span>`:'<span class="val-btn-empty">Reps</span>'}</button><button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}</button></div>`;
+  return `<div class="set-row"><div class="set-n">${si+1}</div><button class="val-btn" onclick="${oi}('sec',${exIdx},${si}${sa})" style="flex:1">${set.dur?`<span class="val-btn-num">${set.dur}</span><span class="val-btn-unit">sec</span>`:'<span class="val-btn-empty">Sec</span>'}</button><button class="val-btn" onclick="${oi}('rpe',${exIdx},${si}${sa})" style="flex:0 0 62px">${set.rpe?`<span class="val-btn-num">${set.rpe}</span><span class="val-btn-unit">RPE</span>`:'<span class="val-btn-empty">RPE</span>'}</button></div>`;
 }
-
-function toggleEx(i)  { lf.openEx = lf.openEx===i ? null : i; renderSchedule(); }
-
-function addSet(exIdx, side) {
-  const ex    = lf.exercises[exIdx];
-  const empty = ex.type==='jump'    ? { height:'', quality:'', rpe:'' }
-    : ex.type==='plyo'              ? { done:false }
-    : ex.type==='timed'||ex.type==='carry' ? { dur:'', rpe:'' }
-    : ex.type==='bodyweight'        ? { reps:'', rpe:'' }
-    : { reps:'', weight:'', rpe:'' };
-  if (side) {
-    const key = side==='R' ? 'setsR' : 'setsL';
-    if (!lf.exLogs[exIdx][key]) lf.exLogs[exIdx][key] = [];
-    lf.exLogs[exIdx][key].push({...empty});
-  } else {
-    if (!lf.exLogs[exIdx].sets) lf.exLogs[exIdx].sets = [];
-    lf.exLogs[exIdx].sets.push({...empty});
-  }
+function toggleEx(i){lf.openEx=lf.openEx===i?null:i;renderSchedule();}
+function addSet(exIdx,side){
+  const ex=lf.exercises[exIdx];
+  const empty=ex.type==='jump'?{height:'',quality:'',rpe:''}:ex.type==='plyo'?{done:false}:ex.type==='timed'||ex.type==='carry'?{dur:'',rpe:''}:ex.type==='bodyweight'?{reps:'',rpe:''}:{reps:'',weight:'',rpe:''};
+  if(side){const key=side==='R'?'setsR':'setsL';if(!lf.exLogs[exIdx][key])lf.exLogs[exIdx][key]=[];lf.exLogs[exIdx][key].push({...empty});}
+  else{if(!lf.exLogs[exIdx].sets)lf.exLogs[exIdx].sets=[];lf.exLogs[exIdx].sets.push({...empty});}
   renderSchedule();
 }
-
-function updSet(ei, si, field, val) { lf.exLogs[ei].sets[si][field] = val; }
-
-// ── Complete log ───────────────────────────────────────────
-function completeLog() {
-  const acc  = computeAccuracy(lf.exLogs, lf.exercises, lf.mods, lf.sessionKey);
-  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
-  const entry = {
-    id: Date.now().toString(), type:'training',
-    date: new Date().toISOString(), sessionKey: lf.sessionKey,
-    // dayIdx stored on the log so locked assignments survive plan being cleared
-    // by editPlan(). getLockedAssignments reads this directly from wk.logs,
-    // independently of wk.plan state.
-    dayIdx: lf.dayIdx,
-    tier: lf.tier,
-    exerciseIds: lf.exercises.map(e => e.id),
-    exLogs: lf.exLogs, feel: lf.feel, duration: lf.duration||null,
-    sRPE, notes: lf.notes, accuracy: acc, tags:[...lf.tags], mods: lf.mods
-  };
-  getWeek(viewMonday).logs[lf.sessionKey] = entry;
-  lf.accuracy = acc;
-  saveWeeks();
-  lf.step = 'accuracy';
-  renderSchedule();
+function updSet(ei,si,field,val){lf.exLogs[ei].sets[si][field]=val;}
+function completeLog(){
+  const acc=computeAccuracy(lf.exLogs,lf.exercises,lf.mods,lf.sessKey);
+  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  const entry={id:Date.now().toString(),type:'training',date:new Date().toISOString(),
+    sessionKey:lf.slotKey,dayIdx:lf.dayIdx,tier:lf.tier,
+    exerciseIds:lf.exercises.map(e=>e.id),exLogs:lf.exLogs,feel:lf.feel,
+    duration:lf.duration||null,sRPE,notes:lf.notes,accuracy:acc,tags:[...lf.tags],mods:lf.mods};
+  getWeek(viewMonday).logs[lf.slotKey]=entry;
+  lf.accuracy=acc;saveWeeks();lf.step='accuracy';renderSchedule();
 }
-
-function buildAccuracyScreen() {
-  const acc  = lf.accuracy;
-  const cls  = acc.level==='good'?'good':acc.level==='warn'?'warn':'note';
-  const sRPE = lf.duration > 0 ? lf.feel * 2 * lf.duration : null;
-  const tierNote = lf.tier && lf.tier !== 'full'
-    ? `<div class="xs dimmer mt1">${TIER_LABEL[lf.tier]} session</div>` : '';
-  return `
-    <div style="padding:12px 16px 8px"><button class="btn-back" onclick="backToSchedule()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back to schedule</button>
-    </div>
-    <div class="sec">Session saved</div>
-    <div class="acc ${cls}">
-      <div class="acc-title">${acc.verdict}</div>
-      <div class="acc-detail">${acc.detail}</div>
-      ${tierNote}
-      <div class="acc-stat">${acc.totalDone}/${acc.totalPrescribed} sets · ${acc.rate}% volume · Feel ${lf.feel}/5</div>
-      ${sRPE?`<div class="acc-stat" style="margin-top:3px">Training load: ${sRPE} AU (${lf.feel*2} RPE × ${lf.duration} min)</div>`:''}
-    </div>
-    ${lf.tags.length?`<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t=>PROG.tags[t]?.label||t).join(' · ')}</div>`:''}
-    <div style="padding:0 16px 8px"><button class="btn-p" onclick="backToSchedule()">Back to schedule ✓</button></div>
-    <div class="bpad"></div>`;
+function buildAccuracyScreen(){
+  const acc=lf.accuracy,cls=acc.level==='good'?'good':acc.level==='warn'?'warn':'note';
+  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  const tierNote=lf.tier&&lf.tier!=='full'?`<div class="xs dimmer mt1">${TIER_LABEL[lf.tier]||lf.tier} session</div>`:'';
+  return `<div style="padding:12px 16px 8px"><button class="btn-back" onclick="backToSchedule()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back to schedule</button></div>
+  <div class="sec">Session saved</div>
+  <div class="acc ${cls}"><div class="acc-title">${acc.verdict}</div><div class="acc-detail">${acc.detail}</div>${tierNote}
+    <div class="acc-stat">${acc.totalDone}/${acc.totalPrescribed} sets · ${acc.rate}% volume · Feel ${lf.feel}/5</div>
+    ${sRPE?`<div class="acc-stat" style="margin-top:3px">Training load: ${sRPE} AU (${lf.feel*2} RPE × ${lf.duration} min)</div>`:''}
+  </div>
+  ${lf.tags.length?`<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t=>PROG.tags[t]?.label||t).join(' · ')}</div>`:''}
+  <div style="padding:0 16px 8px"><button class="btn-p" onclick="backToSchedule()">Back to schedule ✓</button></div>
+  <div class="bpad"></div>`;
 }
-
-// ═══════════════════════════════════════════════════════════
-// TOUCH PICKER
-// ═══════════════════════════════════════════════════════════
-const ITEM_H   = 44;
-const VIEW_H   = 264;
-const CENTER_Y = Math.floor((VIEW_H - ITEM_H) / 2);
-
-let pickerCtx = null;
-const PICKER_RANGES = {
-  reps:    { items: Array.from({length:30},  (_,i) => i+1),       label:'Reps' },
-  weight:  { items: Array.from({length:201}, (_,i) => i),          label:'kg' },
-  rpe:     { items: Array.from({length:10},  (_,i) => i+1),       label:'RPE' },
-  sec:     { items: Array.from({length:120}, (_,i) => (i+1)*5),   label:'Seconds' },
-  cm:      { items: Array.from({length:31},  (_,i) => i*5),       label:'cm' },
-  quality: { items: [1,2,3,4,5],                                    label:'Quality' },
-  min:     { items: Array.from({length:34},  (_,i) => (i+3)*5),   label:'min' }
+// ─── PICKER ──────────────────────────────────────────────────
+const ITEM_H=44,VIEW_H=264,CENTER_Y=Math.floor((VIEW_H-ITEM_H)/2);
+let pickerCtx=null;
+const PICKER_RANGES={
+  reps:{items:Array.from({length:30},(_,i)=>i+1),label:'Reps'},
+  weight:{items:Array.from({length:201},(_,i)=>i),label:'kg'},
+  rpe:{items:Array.from({length:10},(_,i)=>i+1),label:'RPE'},
+  sec:{items:Array.from({length:120},(_,i)=>(i+1)*5),label:'Seconds'},
+  cm:{items:Array.from({length:31},(_,i)=>i*5),label:'cm'},
+  quality:{items:[1,2,3,4,5],label:'Quality'},
+  min:{items:Array.from({length:34},(_,i)=>(i+3)*5),label:'min'}
 };
-
-let pt = { startY:0, startOff:0, offset:0, idx:0, items:[], dragging:false, vel:0, lastY:0, lastT:0 };
-
-function idxToOffset(idx) { return CENTER_Y - idx * ITEM_H; }
-function offsetToIdx(off, len) { return Math.max(0, Math.min(Math.round((CENTER_Y - off) / ITEM_H), len-1)); }
-
-function _showPicker(range, startIdx) {
-  document.getElementById('picker-cols').innerHTML = `
-    <div style="flex:1">
-      <div class="picker-col-lbl">${range.label}</div>
-      <div class="picker-col" id="pc-main">
-        <div class="picker-viewport">
-          <div class="picker-list" id="picker-list">
-            ${range.items.map(v => `<div class="picker-item">${v}</div>`).join('')}
-          </div>
-        </div>
-        <div class="picker-mask-t"></div>
-        <div class="picker-mask-b"></div>
-        <div class="picker-line"></div>
-      </div>
-    </div>`;
-  pt.items = range.items; pt.idx = startIdx;
-  pt.offset = idxToOffset(startIdx); pt.dragging = false; pt.vel = 0;
-  const list = document.getElementById('picker-list');
-  list.style.transform = `translateY(${pt.offset}px)`;
-  _pickerHighlight();
-  const vp = document.querySelector('#pc-main .picker-viewport');
-  vp.addEventListener('touchstart',  _ptStart, {passive:false});
-  vp.addEventListener('touchmove',   _ptMove,  {passive:false});
-  vp.addEventListener('touchend',    _ptEnd,   {passive:false});
-  vp.addEventListener('touchcancel', _ptEnd,   {passive:false});
-  document.getElementById('picker-overlay').style.display = 'flex';
+let pt={startY:0,startOff:0,offset:0,idx:0,items:[],dragging:false,vel:0,lastY:0,lastT:0};
+function idxToOffset(idx){return CENTER_Y-idx*ITEM_H;}
+function offsetToIdx(off,len){return Math.max(0,Math.min(Math.round((CENTER_Y-off)/ITEM_H),len-1));}
+function _showPicker(range,startIdx){
+  document.getElementById('picker-cols').innerHTML=`<div style="flex:1"><div class="picker-col-lbl">${range.label}</div><div class="picker-col" id="pc-main"><div class="picker-viewport"><div class="picker-list" id="picker-list">${range.items.map(v=>`<div class="picker-item">${v}</div>`).join('')}</div></div><div class="picker-mask-t"></div><div class="picker-mask-b"></div><div class="picker-line"></div></div></div>`;
+  pt.items=range.items;pt.idx=startIdx;pt.offset=idxToOffset(startIdx);pt.dragging=false;pt.vel=0;
+  const list=document.getElementById('picker-list');list.style.transform=`translateY(${pt.offset}px)`;_pickerHighlight();
+  const vp=document.querySelector('#pc-main .picker-viewport');
+  vp.addEventListener('touchstart',_ptStart,{passive:false});vp.addEventListener('touchmove',_ptMove,{passive:false});
+  vp.addEventListener('touchend',_ptEnd,{passive:false});vp.addEventListener('touchcancel',_ptEnd,{passive:false});
+  document.getElementById('picker-overlay').style.display='flex';
 }
-
-function openPicker(field, exIdx, si, side) {
-  pickerCtx = { field, exIdx, si, side: side||null };
-  const range    = PICKER_RANGES[field];
-  const storeKey = field==='sec'?'dur':field==='cm'?'height':field;
-  let startVal   = null;
-  if (exIdx >= 0) {
-    const exLog   = lf.exLogs[exIdx];
-    const setsArr = side ? (side==='R'?exLog.setsR:exLog.setsL) : exLog.sets;
-    const curSet  = setsArr?.[si];
-    if (curSet && curSet[storeKey]!==undefined && curSet[storeKey]!=='') startVal = Number(curSet[storeKey]);
-    else if (si > 0) { const prev=setsArr?.[si-1]; if (prev&&prev[storeKey]!==undefined&&prev[storeKey]!=='') startVal=Number(prev[storeKey]); }
-  }
-  const defaults = { rpe:6, reps:4, weight:19, quality:3, cm:10, sec:5, min:8 };
-  const startIdx = startVal!==null
-    ? Math.max(0, range.items.indexOf(startVal))
-    : (defaults[field]!==undefined ? defaults[field] : 0);
-  document.getElementById('picker-label').textContent = range.label;
-  _showPicker(range, startIdx);
+function openPicker(field,exIdx,si,side){
+  pickerCtx={field,exIdx,si,side:side||null};
+  const range=PICKER_RANGES[field],storeKey=field==='sec'?'dur':field==='cm'?'height':field;
+  let startVal=null;
+  if(exIdx>=0){const exLog=lf.exLogs[exIdx];const setsArr=side?(side==='R'?exLog.setsR:exLog.setsL):exLog.sets;const curSet=setsArr?.[si];
+  if(curSet&&curSet[storeKey]!==undefined&&curSet[storeKey]!=='')startVal=Number(curSet[storeKey]);
+  else if(si>0){const prev=setsArr?.[si-1];if(prev&&prev[storeKey]!==undefined&&prev[storeKey]!=='')startVal=Number(prev[storeKey]);}}
+  const defaults={rpe:6,reps:4,weight:19,quality:3,cm:10,sec:5,min:8};
+  const startIdx=startVal!==null?Math.max(0,range.items.indexOf(startVal)):(defaults[field]!==undefined?defaults[field]:0);
+  document.getElementById('picker-label').textContent=range.label;_showPicker(range,startIdx);
 }
-
-function openDurationPicker() {
-  pickerCtx = { field:'min', exIdx:-1, si:-1, side:null };
-  const range = PICKER_RANGES.min;
-  const sv    = lf.duration || 45;
-  let si      = range.items.indexOf(sv);
-  if (si < 0) si = range.items.indexOf(45);
-  if (si < 0) si = 8;
-  document.getElementById('picker-label').textContent = 'Duration';
-  _showPicker(range, si);
+function openDurationPicker(){
+  pickerCtx={field:'min',exIdx:-1,si:-1,side:null};
+  const range=PICKER_RANGES.min,sv=lf.duration||45;
+  let si=range.items.indexOf(sv);if(si<0)si=range.items.indexOf(45);if(si<0)si=8;
+  document.getElementById('picker-label').textContent='Duration';_showPicker(range,si);
 }
-
-function _ptStart(e) {
-  e.preventDefault();
-  pt.dragging=true; pt.startY=e.touches[0].clientY;
-  pt.startOff=pt.offset; pt.vel=0; pt.lastY=pt.startY; pt.lastT=Date.now();
+function _ptStart(e){e.preventDefault();pt.dragging=true;pt.startY=e.touches[0].clientY;pt.startOff=pt.offset;pt.vel=0;pt.lastY=pt.startY;pt.lastT=Date.now();}
+function _ptMove(e){e.preventDefault();if(!pt.dragging)return;const y=e.touches[0].clientY,now=Date.now();pt.vel=(y-pt.lastY)/Math.max(1,now-pt.lastT);pt.lastY=y;pt.lastT=now;let off=pt.startOff+(y-pt.startY);const maxOff=idxToOffset(0),minOff=idxToOffset(pt.items.length-1);if(off>maxOff)off=maxOff+(off-maxOff)*0.25;if(off<minOff)off=minOff+(off-minOff)*0.25;pt.offset=off;const list=document.getElementById('picker-list');if(list)list.style.transform=`translateY(${off}px)`;pt.idx=offsetToIdx(off,pt.items.length);_pickerHighlight();}
+function _ptEnd(e){e.preventDefault();if(!pt.dragging)return;pt.dragging=false;let snap=offsetToIdx(pt.offset+pt.vel*80,pt.items.length);snap=Math.max(0,Math.min(snap,pt.items.length-1));pt.idx=snap;pt.offset=idxToOffset(snap);const list=document.getElementById('picker-list');if(list){list.style.transition='transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94)';list.style.transform=`translateY(${pt.offset}px)`;setTimeout(()=>{if(list)list.style.transition='';},250);}  _pickerHighlight();}
+function _pickerHighlight(){document.querySelectorAll('.picker-item').forEach((el,i)=>el.classList.toggle('sel',i===pt.idx));}
+function pickerDone(){
+  if(!pickerCtx){closePicker();return;}
+  const val=pt.items[pt.idx],{field,exIdx,si,side}=pickerCtx;
+  if(exIdx===-1){lf.duration=val;closePicker();renderSchedule();return;}
+  const storeKey=field==='sec'?'dur':field==='cm'?'height':field;
+  const exLog=lf.exLogs[exIdx];
+  if(side){const arr=side==='R'?exLog.setsR:exLog.setsL;if(arr?.[si]!==undefined)arr[si][storeKey]=val;}
+  else{if(exLog.sets?.[si]!==undefined)exLog.sets[si][storeKey]=val;}
+  closePicker();renderSchedule();
 }
-function _ptMove(e) {
-  e.preventDefault();
-  if (!pt.dragging) return;
-  const y=e.touches[0].clientY, now=Date.now();
-  pt.vel=(y-pt.lastY)/Math.max(1,now-pt.lastT); pt.lastY=y; pt.lastT=now;
-  let off = pt.startOff+(y-pt.startY);
-  const maxOff=idxToOffset(0), minOff=idxToOffset(pt.items.length-1);
-  if (off>maxOff) off=maxOff+(off-maxOff)*0.25;
-  if (off<minOff) off=minOff+(off-minOff)*0.25;
-  pt.offset=off;
-  const list=document.getElementById('picker-list');
-  if (list) list.style.transform=`translateY(${off}px)`;
-  pt.idx=offsetToIdx(off, pt.items.length);
-  _pickerHighlight();
-}
-function _ptEnd(e) {
-  e.preventDefault();
-  if (!pt.dragging) return;
-  pt.dragging=false;
-  let snap=offsetToIdx(pt.offset+pt.vel*80, pt.items.length);
-  snap=Math.max(0, Math.min(snap, pt.items.length-1));
-  pt.idx=snap; pt.offset=idxToOffset(snap);
-  const list=document.getElementById('picker-list');
-  if (list) {
-    list.style.transition='transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94)';
-    list.style.transform=`translateY(${pt.offset}px)`;
-    setTimeout(()=>{ if(list) list.style.transition=''; }, 250);
-  }
-  _pickerHighlight();
-}
-function _pickerHighlight() {
-  document.querySelectorAll('.picker-item').forEach((el,i) => el.classList.toggle('sel', i===pt.idx));
-}
-
-function pickerDone() {
-  if (!pickerCtx) { closePicker(); return; }
-  const val = pt.items[pt.idx];
-  const { field, exIdx, si, side } = pickerCtx;
-  if (exIdx === -1) { lf.duration=val; closePicker(); renderSchedule(); return; }
-  const storeKey = field==='sec'?'dur':field==='cm'?'height':field;
-  const exLog    = lf.exLogs[exIdx];
-  if (side) {
-    const arr = side==='R' ? exLog.setsR : exLog.setsL;
-    if (arr?.[si]!==undefined) arr[si][storeKey]=val;
-  } else {
-    if (exLog.sets?.[si]!==undefined) exLog.sets[si][storeKey]=val;
-  }
-  closePicker(); renderSchedule();
-}
-
-function closePicker() {
+function closePicker(){
   document.getElementById('picker-overlay').style.display='none';
-  const vp = document.querySelector('#pc-main .picker-viewport');
-  if (vp) {
-    vp.removeEventListener('touchstart',  _ptStart);
-    vp.removeEventListener('touchmove',   _ptMove);
-    vp.removeEventListener('touchend',    _ptEnd);
-    vp.removeEventListener('touchcancel', _ptEnd);
-  }
+  const vp=document.querySelector('#pc-main .picker-viewport');
+  if(vp){vp.removeEventListener('touchstart',_ptStart);vp.removeEventListener('touchmove',_ptMove);vp.removeEventListener('touchend',_ptEnd);vp.removeEventListener('touchcancel',_ptEnd);}
   pickerCtx=null;
 }
-function pickerBgClick(e) { if (e.target===document.getElementById('picker-overlay')) closePicker(); }
-
-// ═══════════════════════════════════════════════════════════
-// MODS & ACCURACY
-// computeMods now receives the filtered exercises list
-// ═══════════════════════════════════════════════════════════
-function computeMods(tags, sessionKey, exercises) {
-  const progTags = PROG.tags;
-  let globalRPECap = null;
-  const sessionNotes = tags.map(t => progTags[t]?.note).filter(Boolean);
-
-  // Also apply min-dose RPE cap from engine if present
-  const wk = getWeek(viewMonday);
-  const em = wk.plan?.engineMods?.[sessionKey];
-  if (em?.rpeCap) globalRPECap = em.rpeCap;
-
-  const exMods = exercises.map(ex => {
-    let setReduction = 0; const notes = [];
-    tags.forEach(tagKey => {
-      const tag = progTags[tagKey];
-      if (!tag || tag.isWarning) return;
-      if (tag.rpeCap) globalRPECap = globalRPECap ? Math.min(globalRPECap, tag.rpeCap) : tag.rpeCap;
-      const aff = tag.affects || {};
-      if (aff.ALL) setReduction = Math.max(setReduction, aff.ALL.setReduction||0);
-      ex.regions.forEach(r => {
-        if (aff[r]) {
-          setReduction = Math.max(setReduction, aff[r].setReduction||0);
-          if (aff[r].note) notes.push(aff[r].note);
-        }
-      });
+function pickerBgClick(e){if(e.target===document.getElementById('picker-overlay'))closePicker();}
+// ─── MODS & ACCURACY ─────────────────────────────────────────
+function computeMods(tags,sessKey,exercises){
+  const progTags=PROG.tags;let globalRPECap=null;
+  const wk=getWeek(viewMonday);
+  const em=wk.plan?.engineMods?.[lf?.slotKey]||wk.plan?.engineMods?.[baseKey(sessKey)];
+  if(em?.rpeCap)globalRPECap=em.rpeCap;
+  const sessionNotes=tags.map(t=>progTags[t]?.note).filter(Boolean);
+  const exMods=exercises.map(ex=>{
+    let setReduction=0;const notes=[];
+    tags.forEach(tagKey=>{
+      const tag=progTags[tagKey];if(!tag||tag.isWarning)return;
+      if(tag.rpeCap)globalRPECap=globalRPECap?Math.min(globalRPECap,tag.rpeCap):tag.rpeCap;
+      const aff=tag.affects||{};
+      if(aff.ALL)setReduction=Math.max(setReduction,aff.ALL.setReduction||0);
+      ex.regions.forEach(r=>{if(aff[r]){setReduction=Math.max(setReduction,aff[r].setReduction||0);if(aff[r].note)notes.push(aff[r].note);}});
     });
-    return { setReduction, adjSets: Math.max(1, ex.sets - setReduction), notes, rpeCap: globalRPECap };
+    return {setReduction,adjSets:Math.max(1,ex.sets-setReduction),notes,rpeCap:globalRPECap};
   });
-
-  return { exMods, globalRPECap, sessionNotes };
+  return {exMods,globalRPECap,sessionNotes};
 }
-
-function parseRPE(s) {
-  const p = String(s).replace('–','-').split('-').map(x => parseFloat(x.trim()));
-  return p.length===1 ? { min:p[0], max:p[0] } : { min:p[0], max:p[1] };
-}
-
-// computeAccuracy now receives exercises list explicitly — no internal PROG lookup
-function computeAccuracy(exLogs, exercises, mods, sessionKey) {
-  let totalP=0, totalD=0, rpeHigh=0, rpeLow=0;
-
-  // Apply min-dose RPE cap from engine for cap-checking
-  const wk  = getWeek(viewMonday);
-  const em  = wk.plan?.engineMods?.[sessionKey];
-  const cap = mods?.globalRPECap || em?.rpeCap || null;
-
-  exLogs.forEach((el,i) => {
-    const ex  = exercises[i];
-    if (!ex) return;
-    const adj = mods?.exMods?.[i]?.adjSets ?? ex.sets;
-
-    if (ex.sides) {
-      totalP += adj * 2;
-      totalD += (el.setsR?.length||0) + (el.setsL?.length||0);
-    } else {
-      totalP += adj;
-      totalD += el.sets?.length||0;
-    }
-
-    if (ex.type==='loaded'||ex.type==='bodyweight'||ex.type==='jump') {
-      const { min, max } = parseRPE(ex.rpe);
-      const effectiveMax = cap ? Math.min(max, cap) : max;
-      const allSets = ex.sides
-        ? [...(el.setsR||[]),...(el.setsL||[])]
-        : (el.sets||[]);
-      allSets.forEach(s => {
-        const r = parseFloat(s.rpe);
-        if (!isNaN(r)) {
-          if (r > effectiveMax + 0.5) rpeHigh++;
-          if (r < min - 1) rpeLow++;
-        }
-      });
+function parseRPE(s){const p=String(s).replace('–','-').split('-').map(x=>parseFloat(x.trim()));return p.length===1?{min:p[0],max:p[0]}:{min:p[0],max:p[1]};}
+function computeAccuracy(exLogs,exercises,mods,sessKey){
+  let totalP=0,totalD=0,rpeHigh=0,rpeLow=0;
+  const wk=getWeek(viewMonday);
+  const em=wk.plan?.engineMods?.[lf?.slotKey]||wk.plan?.engineMods?.[baseKey(sessKey)];
+  const cap=mods?.globalRPECap||em?.rpeCap||null;
+  exLogs.forEach((el,i)=>{
+    const ex=exercises[i];if(!ex)return;
+    const adj=mods?.exMods?.[i]?.adjSets??ex.sets;
+    if(ex.sides){totalP+=adj*2;totalD+=(el.setsR?.length||0)+(el.setsL?.length||0);}
+    else{totalP+=adj;totalD+=el.sets?.length||0;}
+    if(ex.type==='loaded'||ex.type==='bodyweight'||ex.type==='jump'){
+      const{min,max}=parseRPE(ex.rpe);const effectiveMax=cap?Math.min(max,cap):max;
+      const allSets=ex.sides?[...(el.setsR||[]),...(el.setsL||[])]:(el.sets||[]);
+      allSets.forEach(s=>{const r=parseFloat(s.rpe);if(!isNaN(r)){if(r>effectiveMax+0.5)rpeHigh++;if(r<min-1)rpeLow++;}});
     }
   });
-
-  const rate = totalP > 0 ? totalD / totalP : 1;
-  let verdict, detail, level;
-  if (rate>=0.9 && rpeHigh===0 && rpeLow===0) {
-    verdict='Session on target'; level='good';
-    detail='Volume and intensity matched the prescription.';
-  } else if (rpeHigh >= 2) {
-    verdict='Intensity exceeded prescription'; level='warn';
-    detail=`${rpeHigh} set${rpeHigh>1?'s':''} above prescribed RPE. Monitor recovery.`;
-  } else if (rate < 0.75) {
-    verdict='Volume incomplete'; level='note';
-    detail=`${totalD}/${totalP} sets completed. If fatigue-driven, note in next week's plan.`;
-  } else if (rpeLow >= 3) {
-    verdict='Session felt easy'; level='note';
-    detail='RPE consistently below target. Consider a small load increase next session.';
-  } else {
-    verdict='Session solid'; level='good';
-    detail='Minor deviations within acceptable range.';
-  }
-  return { verdict, detail, level, rate:Math.round(rate*100), totalDone:totalD, totalPrescribed:totalP };
+  const rate=totalP>0?totalD/totalP:1;
+  let verdict,detail,level;
+  if(rate>=0.9&&rpeHigh===0&&rpeLow===0){verdict='Session on target';level='good';detail='Volume and intensity matched the prescription.';}
+  else if(rpeHigh>=2){verdict='Intensity exceeded prescription';level='warn';detail=`${rpeHigh} set${rpeHigh>1?'s':''} above prescribed RPE. Monitor recovery.`;}
+  else if(rate<0.75){verdict='Volume incomplete';level='note';detail=`${totalD}/${totalP} sets completed. If fatigue-driven, note in next week's plan.`;}
+  else if(rpeLow>=3){verdict='Session felt easy';level='note';detail='RPE consistently below target. Consider a small load increase.';}
+  else{verdict='Session solid';level='good';detail='Minor deviations within acceptable range.';}
+  return{verdict,detail,level,rate:Math.round(rate*100),totalDone:totalD,totalPrescribed:totalP};
 }
-
-// ═══════════════════════════════════════════════════════════
-// FORMAT HELPERS
-// ═══════════════════════════════════════════════════════════
-function fmtSet(s, ex) {
-  if (!s||!ex) return '—';
-  if (ex.type==='plyo') return s.done?'✓':'—';
-  if (ex.type==='jump') {
-    const p=[];
-    if (s.height!==undefined&&s.height!=='') p.push(`${s.height}cm`);
-    if (s.quality) p.push(`Q${s.quality}`);
-    if (s.rpe)     p.push(`@${s.rpe}`);
-    return p.length?p.join(' '):'—';
-  }
-  if (ex.type==='timed'||ex.type==='carry') return s.dur?`${s.dur}s`:'—';
-  if (ex.type==='bodyweight') return s.reps?`${s.reps}r @${s.rpe||'?'}`:'—';
+// ─── FORMAT HELPERS ───────────────────────────────────────────
+function fmtSet(s,ex){
+  if(!s||!ex)return '—';
+  if(ex.type==='plyo')return s.done?'✓':'—';
+  if(ex.type==='jump'){const p=[];if(s.height!==undefined&&s.height!=='')p.push(`${s.height}cm`);if(s.quality)p.push(`Q${s.quality}`);if(s.rpe)p.push(`@${s.rpe}`);return p.length?p.join(' '):'—';}
+  if(ex.type==='timed'||ex.type==='carry')return s.dur?`${s.dur}s`:'—';
+  if(ex.type==='bodyweight')return s.reps?`${s.reps}r @${s.rpe||'?'}`:'—';
   return s.reps?`${s.reps}r · ${(s.weight!==undefined&&s.weight!=='')?s.weight:'?'}kg @${s.rpe||'?'}`:'—';
 }
-
-function countAndFmt(exLog, ex) {
-  if (!exLog) return '—';
-  if (ex?.sides) {
-    const r=(exLog.setsR||[]).map(s=>fmtSet(s,ex)).join('  ');
-    const l=(exLog.setsL||[]).map(s=>fmtSet(s,ex)).join('  ');
-    return `R: ${r||'—'} / L: ${l||'—'}`;
-  }
-  const sets=exLog.sets||[];
-  return sets.length?sets.map(s=>fmtSet(s,ex)).join('  '):'—';
+function countAndFmt(exLog,ex){
+  if(!exLog)return '—';
+  if(ex?.sides){const r=(exLog.setsR||[]).map(s=>fmtSet(s,ex)).join('  ');const l=(exLog.setsL||[]).map(s=>fmtSet(s,ex)).join('  ');return `R: ${r||'—'} / L: ${l||'—'}`;}
+  const sets=exLog.sets||[];return sets.length?sets.map(s=>fmtSet(s,ex)).join('  '):'—';
 }
-
-// ═══════════════════════════════════════════════════════════
-// HISTORY
-// ═══════════════════════════════════════════════════════════
-function renderHistory() {
-  const el = document.getElementById('page-history');
-  const allLogs = [];
-  Object.entries(weeks).forEach(([wk,data]) => {
-    Object.values(data.logs||{}).forEach(l  => allLogs.push({...l, weekKey:wk}));
-    (data.presessionLogs||[]).forEach(l      => allLogs.push({...l, weekKey:wk}));
+// ─── HISTORY ─────────────────────────────────────────────────
+function renderHistory(){
+  const el=document.getElementById('page-history');
+  const allLogs=[];
+  Object.entries(weeks).forEach(([wk,data])=>{
+    Object.values(data.logs||{}).forEach(l=>allLogs.push({...l,weekKey:wk}));
+    (data.presessionLogs||[]).forEach(l=>allLogs.push({...l,weekKey:wk}));
   });
-  allLogs.sort((a,b) => new Date(b.date)-new Date(a.date));
-  const filtered = histFilter==='all' ? allLogs : allLogs.filter(l => l.type===histFilter);
-
-  const filterRow = `
-    <div class="hflt-row">
-      <div class="hflt">
-        ${[{k:'all',l:'All'},{k:'training',l:'Training'},{k:'presession',l:'Pre-Session'}].map(({k,l}) =>
-          `<button class="flt${histFilter===k?' on':''}" onclick="setHFilter('${k}')">${l}</button>`
-        ).join('')}
-      </div>
-      ${allLogs.some(l=>l.type==='training')
-        ?`<button class="btn-g" style="font-size:11px;padding:6px 10px" onclick="exportCSV()">Export CSV</button>`:''}
-    </div>`;
-
-  if (!filtered.length) {
-    el.innerHTML = filterRow + `<div class="empty"><div class="emi">📊</div><div class="emt">No logs yet</div><div class="ems">Complete a session to see history</div></div>`;
-    return;
-  }
-  el.innerHTML = filterRow + `<div class="sec">${filtered.length} log${filtered.length!==1?'s':''}</div>` +
-    filtered.map(l => buildHistEntry(l)).join('') + '<div class="bpad"></div>';
+  allLogs.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const filtered=histFilter==='all'?allLogs:allLogs.filter(l=>l.type===histFilter);
+  const filterRow=`<div class="hflt-row"><div class="hflt">${[{k:'all',l:'All'},{k:'training',l:'Training'},{k:'presession',l:'Pre-Session'}].map(({k,l})=>`<button class="flt${histFilter===k?' on':''}" onclick="setHFilter('${k}')">${l}</button>`).join('')}</div>${allLogs.some(l=>l.type==='training')?`<button class="btn-g" style="font-size:11px;padding:6px 10px" onclick="exportCSV()">Export CSV</button>`:''}</div>`;
+  if(!filtered.length){el.innerHTML=filterRow+`<div class="empty"><div class="emi">📊</div><div class="emt">No logs yet</div><div class="ems">Complete a session to see history</div></div>`;return;}
+  el.innerHTML=filterRow+`<div class="sec">${filtered.length} log${filtered.length!==1?'s':''}</div>`+filtered.map(l=>buildHistEntry(l)).join('')+'<div class="bpad"></div>';
 }
-
-function setHFilter(f) { histFilter=f; expandedHist=null; confirmDel=null; renderHistory(); }
-
-function buildHistEntry(log) {
-  const isExp   = expandedHist === log.id;
-  const isTrain = log.type === 'training';
-  const ds = new Date(log.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-  const ts = new Date(log.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  const sessLabel = SESS_LABEL[log.sessionKey] || log.sessionKey || '?';
-  const sessBadge = SESS_BADGE[log.sessionKey] || 'bpre';
-  const typeLabel = isTrain ? 'TRAINING LOG' : 'PRE-SESSION';
-  const tierPill  = (log.tier&&log.tier!=='full')
-    ? `<span class="tier-pill ${TIER_CSS[log.tier]}">${TIER_LABEL[log.tier]}</span>` : '';
-
-  const right = isTrain ? `
-    <div style="text-align:right">
-      <div class="xs dimmer mb1">Feel</div>
-      <div class="mono b6" style="font-size:20px;color:${log.feel>=4?'var(--gn)':log.feel<=2?'var(--co)':'var(--tx2)'}">${log.feel}<span style="font-size:11px;color:var(--tx3)">/5</span></div>
-      ${log.sRPE?`<div class="xs dimmer" style="margin-top:2px">${log.sRPE} AU</div>`:''}
-    </div>` : `<div class="xs dimmer">${log.tags?.length||0} tag${log.tags?.length!==1?'s':''}</div>`;
-
-  let body = '';
-  if (isExp) {
-    if (isTrain) {
-      // Use stored exerciseIds for accurate name lookup
-      const exercises = log.exerciseIds
-        ? log.exerciseIds.map(id => PROG.sessions[log.sessionKey]?.exercises.find(e=>e.id===id)).filter(Boolean)
-        : (PROG.sessions[log.sessionKey]?.exercises || []);
-      const exLines = (log.exLogs||[]).map((el,i) => {
-        const ex   = exercises[i];
-        const name = ex?.name || `Exercise ${i+1}`;
-        const cnt  = ex?.sides?(el.setsR?.length||0)+(el.setsL?.length||0):(el.sets?.length||0);
-        const fmt  = countAndFmt(el, ex);
-        return `<div class="hex">${name}: <span>${cnt} sets${fmt!=='—'?' — '+fmt:''}</span></div>`;
-      }).join('');
-      const acc = log.accuracy;
-      const ac  = acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
-      const sRPELine = log.sRPE ? `<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min · Feel ${log.feel}/5</div>` : '';
-      body = `<div class="hent-body">
-        ${log.tier&&log.tier!=='full'?`<div class="xs dimmer mb1">${TIER_LABEL[log.tier]} session</div>`:''}
-        ${exLines}${sRPELine}
-        ${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}">
-          <div class="xs b6" style="color:${ac}">${acc.verdict}</div>
-          <div class="xs dimmer mt1">${acc.detail}</div>
-        </div>`:''}
-        ${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>`:''}
-        ${confirmDel===log.id
-          ?`<div class="del-conf">
-              <button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button>
-              <button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button>
-            </div>`
-          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
-      </div>`;
+function setHFilter(f){histFilter=f;expandedHist=null;confirmDel=null;renderHistory();}
+function buildHistEntry(log){
+  const isExp=expandedHist===log.id,isTrain=log.type==='training';
+  const ds=new Date(log.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  const ts=new Date(log.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const sk=log.sessionKey||'?';
+  const bk=baseKey(sk);
+  const sessLabel=SESS_LABEL[bk]||bk;
+  const sessBadge=SESS_BADGE[bk]||'bpre';
+  const typeLabel=isTrain?'TRAINING LOG':'PRE-SESSION';
+  const tierPill=(log.tier&&log.tier!=='full')?`<span class="tier-pill ${TIER_CSS[log.tier]||''}">${TIER_LABEL[log.tier]||''}</span>`:'';
+  const right=isTrain?`<div style="text-align:right"><div class="xs dimmer mb1">Feel</div><div class="mono b6" style="font-size:20px;color:${log.feel>=4?'var(--gn)':log.feel<=2?'var(--co)':'var(--tx2)'}">${log.feel}<span style="font-size:11px;color:var(--tx3)">/5</span></div>${log.sRPE?`<div class="xs dimmer" style="margin-top:2px">${log.sRPE} AU</div>`:''}</div>`:`<div class="xs dimmer">${log.tags?.length||0} tag${log.tags?.length!==1?'s':''}</div>`;
+  let body='';
+  if(isExp){
+    if(isTrain){
+      const exercises=log.exerciseIds?log.exerciseIds.map(id=>PROG.sessions[bk]?.exercises.find(e=>e.id===id)).filter(Boolean):(PROG.sessions[bk]?.exercises||[]);
+      const exLines=(log.exLogs||[]).map((el,i)=>{const ex=exercises[i];const name=ex?.name||`Exercise ${i+1}`;const cnt=ex?.sides?(el.setsR?.length||0)+(el.setsL?.length||0):(el.sets?.length||0);const fmt=countAndFmt(el,ex);return `<div class="hex">${name}: <span>${cnt} sets${fmt!=='—'?' — '+fmt:''}</span></div>`;}).join('');
+      const acc=log.accuracy;const ac=acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
+      const sRPELine=log.sRPE?`<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min · Feel ${log.feel}/5</div>`:'';
+      body=`<div class="hent-body">${log.tier&&log.tier!=='full'?`<div class="xs dimmer mb1">${TIER_LABEL[log.tier]||log.tier} session</div>`:''}${exLines}${sRPELine}${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}"><div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>`:''}${confirmDel===log.id?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`:`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}</div>`;
     } else {
-      const tList=(log.tags||[]).map(t=>
-        `<span class="tag ${PROG.tags[t]?.group==='warn'?'wrn':'rec'}" style="margin:2px">${PROG.tags[t]?.emoji||''} ${PROG.tags[t]?.label||t}</span>`
-      ).join('');
-      body=`<div class="hent-body">
-        ${tList||'<div class="xs dimmer">No tags — check-in skipped.</div>'}
-        ${(log.sessionNotes||[]).map(n=>`<div class="xs dimmer mt1">· ${n}</div>`).join('')}
-        <div class="xs dimmer mt2">Mods ${log.modsAccepted?'accepted':'not applied'}</div>
-        ${confirmDel===log.id
-          ?`<div class="del-conf">
-              <button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button>
-              <button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button>
-            </div>`
-          :`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}
-      </div>`;
+      const tList=(log.tags||[]).map(t=>`<span class="tag ${PROG.tags[t]?.group==='warn'?'wrn':'rec'}" style="margin:2px">${PROG.tags[t]?.emoji||''} ${PROG.tags[t]?.label||t}</span>`).join('');
+      body=`<div class="hent-body">${tList||'<div class="xs dimmer">No tags — check-in skipped.</div>'}${(log.sessionNotes||[]).map(n=>`<div class="xs dimmer mt1">· ${n}</div>`).join('')}<div class="xs dimmer mt2">Mods ${log.modsAccepted?'accepted':'not applied'}</div>${confirmDel===log.id?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`:`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}</div>`;
     }
   }
-
-  return `
-    <div class="hent">
-      <div class="hent-hdr" onclick="expandedHist=expandedHist==='${log.id}'?null:'${log.id}';confirmDel=null;renderHistory()">
-        <div>
-          <div style="margin-bottom:5px">
-            <span class="badge bpre" style="margin-right:4px">${typeLabel}</span>
-            <span class="badge ${sessBadge}">${sessLabel}</span>
-            ${tierPill}
-          </div>
-          <div class="xs dimmer">${ds} · ${ts}</div>
-        </div>
-        ${right}
-      </div>
-      ${body}
-    </div>`;
+  return `<div class="hent"><div class="hent-hdr" onclick="expandedHist=expandedHist==='${log.id}'?null:'${log.id}';confirmDel=null;renderHistory()"><div><div style="margin-bottom:5px"><span class="badge bpre" style="margin-right:4px">${typeLabel}</span><span class="badge ${sessBadge}">${sessLabel}</span>${tierPill}</div><div class="xs dimmer">${ds} · ${ts}</div></div>${right}</div>${body}</div>`;
 }
-
-function doDelete(logId, wkKey) {
-  const wk = weeks[wkKey];
-  if (!wk) return;
-  Object.keys(wk.logs||{}).forEach(k => { if (wk.logs[k].id===logId) delete wk.logs[k]; });
-  if (wk.presessionLogs) wk.presessionLogs = wk.presessionLogs.filter(l => l.id!==logId);
-  saveWeeks();
-  confirmDel=null; expandedHist=null;
-  renderHistory();
+function doDelete(logId,wkKey){
+  const wk=weeks[wkKey];if(!wk)return;
+  Object.keys(wk.logs||{}).forEach(k=>{if(wk.logs[k].id===logId)delete wk.logs[k];});
+  if(wk.presessionLogs)wk.presessionLogs=wk.presessionLogs.filter(l=>l.id!==logId);
+  saveWeeks();confirmDel=null;expandedHist=null;renderHistory();
 }
-
-function exportCSV() {
-  const rows = [['Date','Week','Session','Tier','Type','Feel','Duration(min)','sRPE(AU)','Volume%','Verdict','Tags','Notes']];
-  Object.entries(weeks).forEach(([wk,data]) => {
-    Object.values(data.logs||{}).forEach(log => {
-      rows.push([
-        new Date(log.date).toLocaleDateString('en-GB'),
-        wk, log.sessionKey, log.tier||'full', log.type,
-        log.feel??'', log.duration??'', log.sRPE??'',
-        log.accuracy?.rate??'',
-        (log.accuracy?.verdict||'').replace(/,/g,';'),
-        (log.tags||[]).join(' | '),
-        (log.notes||'').replace(/,/g,';').replace(/\n/g,' ')
-      ]);
-    });
-  });
-  const csv  = rows.map(r => r.map(v=>`"${v}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href=url; a.download=`training-${new Date().toISOString().split('T')[0]}.csv`;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
+function exportCSV(){
+  const rows=[['Date','Week','Session','Tier','Type','Feel','Duration(min)','sRPE(AU)','Volume%','Verdict','Tags','Notes']];
+  Object.entries(weeks).forEach(([wk,data])=>{Object.values(data.logs||{}).forEach(log=>{rows.push([new Date(log.date).toLocaleDateString('en-GB'),wk,log.sessionKey,log.tier||'full',log.type,log.feel??'',log.duration??'',log.sRPE??'',log.accuracy?.rate??'',(log.accuracy?.verdict||'').replace(/,/g,';'),(log.tags||[]).join(' | '),(log.notes||'').replace(/,/g,';').replace(/\n/g,' ')]);});});
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`training-${new Date().toISOString().split('T')[0]}.csv`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
-
-// ═══════════════════════════════════════════════════════════
-// BODY TAB — INJURY LOG
-// ═══════════════════════════════════════════════════════════
-function renderBody() {
-  const el       = document.getElementById('page-body');
-  const active   = injuries.filter(inj => inj.status!=='resolved');
-  const resolved = injuries.filter(inj => inj.status==='resolved');
-
-  const headerRow = `
-    <div style="padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between">
-      <span class="sm b6">Injury Log</span>
-      ${!injuryFormOpen?`<button class="btn-g" onclick="openInjuryForm()">+ Log injury</button>`:''}
-    </div>`;
-
-  el.innerHTML = headerRow
-    + (injuryFormOpen ? buildInjuryForm() : '')
-    + (active.length>0
-        ? `<div class="sec">Active (${active.length})</div>${active.map(buildInjuryEntry).join('')}`
-        : !injuryFormOpen
-          ? `<div class="ndim"><strong>No active injuries</strong>Log any pain, tightness, or concern here. Active entries appear as passive reminders in the pre-session screen.</div>`
-          : '')
-    + (resolved.length>0 ? `<div class="sec">Resolved (${resolved.length})</div>${resolved.map(buildInjuryEntry).join('')}` : '')
-    + '<div class="bpad"></div>';
+// ─── BODY TAB ────────────────────────────────────────────────
+function renderBody(){
+  const el=document.getElementById('page-body');
+  const active=injuries.filter(inj=>inj.status!=='resolved');
+  const resolved=injuries.filter(inj=>inj.status==='resolved');
+  el.innerHTML=`<div style="padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between"><span class="sm b6">Injury Log</span>${!injuryFormOpen?`<button class="btn-g" onclick="openInjuryForm()">+ Log injury</button>`:''}</div>`
+    +(injuryFormOpen?buildInjuryForm():'')
+    +(active.length>0?`<div class="sec">Active (${active.length})</div>${active.map(buildInjuryEntry).join('')}`:!injuryFormOpen?`<div class="ndim"><strong>No active injuries</strong>Log any pain, tightness, or concern here. Active entries appear as passive reminders in the pre-session screen.</div>`:'')
+    +(resolved.length>0?`<div class="sec">Resolved (${resolved.length})</div>${resolved.map(buildInjuryEntry).join('')}`:'')
+    +'<div class="bpad"></div>';
 }
-
-function buildInjuryForm() {
-  const d = injuryFormData;
-  const chips   = INJURY_REGIONS.map(r =>
-    `<button class="inj-chip${d.region===r?' on':''}" onclick="injuryFormData.region='${r}';renderBody()">${r}</button>`
-  ).join('');
-  const sevBtns = [1,2,3,4,5].map(v =>
-    `<button class="rbtn${d.severity===v?' on':''}" onclick="injuryFormData.severity=${v};renderBody()">${v}</button>`
-  ).join('');
-  const stOpts  = [{k:'active',l:'Active'},{k:'monitoring',l:'Monitoring'},{k:'resolved',l:'Resolved'}].map(({k,l}) =>
-    `<button class="dtype-btn${d.status===k?' on-reh':''}" onclick="injuryFormData.status='${k}';renderBody()">${l}</button>`
-  ).join('');
-  return `
-    <div class="card"><div class="card-body">
-      <div class="field"><label class="lbl">Body region</label><div class="inj-chips">${chips}</div></div>
-      <div class="field">
-        <label class="lbl">Severity — 1 minor tightness · 5 acute, see physio</label>
-        <div class="rating">${sevBtns}</div>
-        <div class="xs dimmer mt1" style="text-align:center">${SEVERITY_LABELS[d.severity]}</div>
-      </div>
-      <div class="field"><label class="lbl">Status</label><div class="dtype-row">${stOpts}</div></div>
-      <div class="field">
-        <label class="lbl">Description (location, onset, trigger)</label>
-        <textarea placeholder="e.g. Left Achilles — tightness during relevés, onset Tuesday after long rehearsal" oninput="injuryFormData.description=this.value">${d.description||''}</textarea>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-p" style="flex:1;margin:0" onclick="saveInjury()">Save</button>
-        <button class="btn-g" style="flex:0 0 80px" onclick="closeInjuryForm()">Cancel</button>
-      </div>
-    </div></div>`;
+function buildInjuryForm(){
+  const d=injuryFormData;
+  const chips=INJURY_REGIONS.map(r=>`<button class="inj-chip${d.region===r?' on':''}" onclick="injuryFormData.region='${r}';renderBody()">${r}</button>`).join('');
+  const sevBtns=[1,2,3,4,5].map(v=>`<button class="rbtn${d.severity===v?' on':''}" onclick="injuryFormData.severity=${v};renderBody()">${v}</button>`).join('');
+  const stOpts=[{k:'active',l:'Active'},{k:'monitoring',l:'Monitoring'},{k:'resolved',l:'Resolved'}].map(({k,l})=>`<button class="dtype-btn${d.status===k?' on-reh':''}" onclick="injuryFormData.status='${k}';renderBody()">${l}</button>`).join('');
+  return `<div class="card"><div class="card-body">
+    <div class="field"><label class="lbl">Body region</label><div class="inj-chips">${chips}</div></div>
+    <div class="field"><label class="lbl">Severity — 1 minor tightness · 5 acute, see physio</label><div class="rating">${sevBtns}</div><div class="xs dimmer mt1" style="text-align:center">${SEVERITY_LABELS[d.severity]}</div></div>
+    <div class="field"><label class="lbl">Status</label><div class="dtype-row">${stOpts}</div></div>
+    <div class="field"><label class="lbl">Description (location, onset, trigger)</label><textarea placeholder="e.g. Left Achilles — tightness during relevés, onset Tuesday after long rehearsal" oninput="injuryFormData.description=this.value">${d.description||''}</textarea></div>
+    <div style="display:flex;gap:8px"><button class="btn-p" style="flex:1;margin:0" onclick="saveInjury()">Save</button><button class="btn-g" style="flex:0 0 80px" onclick="closeInjuryForm()">Cancel</button></div>
+  </div></div>`;
 }
-
-function buildInjuryEntry(inj) {
-  const isExp = injuryExpandedId === inj.id;
-  const ds    = new Date(inj.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-  const col   = SEVERITY_COLORS[inj.severity]||'var(--tx3)';
-  const sPill = inj.status==='resolved'
-    ? `<span class="inj-status-pill inj-status-resolved">resolved</span>`
-    : inj.status==='monitoring'
-      ? `<span class="inj-status-pill inj-status-monitoring">monitoring</span>`
-      : `<span class="inj-status-pill inj-status-active">active</span>`;
-  return `
-    <div class="hent">
-      <div class="hent-hdr" onclick="injuryExpandedId=injuryExpandedId==='${inj.id}'?null:'${inj.id}';renderBody()">
-        <div>
-          <div class="sm b5" style="margin-bottom:3px">${inj.region} <span style="font-size:11px;color:${col}">● ${SEVERITY_LABELS[inj.severity]}</span></div>
-          <div class="xs dimmer">${ds} · ${sPill}</div>
-        </div>
-        <svg class="chev${isExp?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-      </div>
-      ${isExp?`<div class="hent-body">
-        ${inj.description?`<div class="xs" style="color:var(--tx2);margin-bottom:10px;line-height:1.5">${inj.description}</div>`:''}
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${inj.status!=='resolved'?`<button class="btn-g" style="font-size:12px" onclick="resolveInjury('${inj.id}')">✓ Mark resolved</button>`:''}
-          <button class="btn-g" style="font-size:12px" onclick="editInjury('${inj.id}')">Edit</button>
-          <button class="del-btn" onclick="deleteInjury('${inj.id}')">Delete</button>
-        </div>
-      </div>`:''}
-    </div>`;
+function buildInjuryEntry(inj){
+  const isExp=injuryExpandedId===inj.id;
+  const ds=new Date(inj.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const col=SEVERITY_COLORS[inj.severity]||'var(--tx3)';
+  const sPill=inj.status==='resolved'?`<span class="inj-status-pill inj-status-resolved">resolved</span>`:inj.status==='monitoring'?`<span class="inj-status-pill inj-status-monitoring">monitoring</span>`:`<span class="inj-status-pill inj-status-active">active</span>`;
+  return `<div class="hent"><div class="hent-hdr" onclick="injuryExpandedId=injuryExpandedId==='${inj.id}'?null:'${inj.id}';renderBody()"><div><div class="sm b5" style="margin-bottom:3px">${inj.region} <span style="font-size:11px;color:${col}">● ${SEVERITY_LABELS[inj.severity]}</span></div><div class="xs dimmer">${ds} · ${sPill}</div></div><svg class="chev${isExp?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg></div>${isExp?`<div class="hent-body">${inj.description?`<div class="xs" style="color:var(--tx2);margin-bottom:10px;line-height:1.5">${inj.description}</div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap">${inj.status!=='resolved'?`<button class="btn-g" style="font-size:12px" onclick="resolveInjury('${inj.id}')">✓ Mark resolved</button>`:''}<button class="btn-g" style="font-size:12px" onclick="editInjury('${inj.id}')">Edit</button><button class="del-btn" onclick="deleteInjury('${inj.id}')">Delete</button></div></div>`:''}</div>`;
 }
-
-function openInjuryForm()  { injuryFormOpen=true; injuryEditId=null; injuryFormData={region:'',severity:3,description:'',status:'active'}; renderBody(); }
-function closeInjuryForm() { injuryFormOpen=false; injuryEditId=null; renderBody(); }
-function editInjury(id) {
-  const inj=injuries.find(i=>i.id===id); if(!inj) return;
-  injuryFormOpen=true; injuryEditId=id;
-  injuryFormData={region:inj.region,severity:inj.severity,description:inj.description,status:inj.status};
-  renderBody();
-}
-function saveInjury() {
-  if (!injuryFormData.region) { alert('Please select a body region.'); return; }
-  if (injuryEditId) {
-    const idx=injuries.findIndex(i=>i.id===injuryEditId);
-    if (idx>-1) injuries[idx]={...injuries[idx],...injuryFormData};
-  } else {
-    injuries.unshift({id:Date.now().toString(),date:new Date().toISOString(),...injuryFormData});
-  }
-  saveInjuries(); injuryFormOpen=false; injuryEditId=null; renderBody();
-}
-function resolveInjury(id) {
-  const inj=injuries.find(i=>i.id===id);
-  if (inj) { inj.status='resolved'; inj.resolvedDate=new Date().toISOString(); }
-  saveInjuries(); renderBody();
-}
-function deleteInjury(id) {
-  injuries=injuries.filter(i=>i.id!==id);
-  injuryExpandedId=null; saveInjuries(); renderBody();
-}
-
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-loadProgram().then(() => { if (PROG) renderSchedule(); });
+function openInjuryForm(){injuryFormOpen=true;injuryEditId=null;injuryFormData={region:'',severity:3,description:'',status:'active'};renderBody();}
+function closeInjuryForm(){injuryFormOpen=false;injuryEditId=null;renderBody();}
+function editInjury(id){const inj=injuries.find(i=>i.id===id);if(!inj)return;injuryFormOpen=true;injuryEditId=id;injuryFormData={region:inj.region,severity:inj.severity,description:inj.description,status:inj.status};renderBody();}
+function saveInjury(){if(!injuryFormData.region){alert('Please select a body region.');return;}if(injuryEditId){const idx=injuries.findIndex(i=>i.id===injuryEditId);if(idx>-1)injuries[idx]={...injuries[idx],...injuryFormData};}else{injuries.unshift({id:Date.now().toString(),date:new Date().toISOString(),...injuryFormData});}saveInjuries();injuryFormOpen=false;injuryEditId=null;renderBody();}
+function resolveInjury(id){const inj=injuries.find(i=>i.id===id);if(inj){inj.status='resolved';inj.resolvedDate=new Date().toISOString();}saveInjuries();renderBody();}
+function deleteInjury(id){injuries=injuries.filter(i=>i.id!==id);injuryExpandedId=null;saveInjuries();renderBody();}
+// ─── INIT ────────────────────────────────────────────────────
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+loadProgram().then(()=>{if(PROG)renderSchedule();});
 </script>
 </body>
 </html>
+HTMLEOF
