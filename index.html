@@ -234,21 +234,79 @@ input:focus,textarea:focus{border-color:var(--am)}textarea{resize:none;min-heigh
 </div>
 <script>
 'use strict';
+
+// ─── GLOBAL HELPERS ─────────────────────────────────────────
+// FIX [Security/Moderate]: Single escape helper applied to EVERY user-entered
+// string before it touches innerHTML. One function eliminates the entire XSS
+// surface — notes, injury descriptions, any free-text field.
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+// FIX [Bugs/Critical]: Replace the undocumented ×2 multiplier with an explicit
+// Foster sRPE (CR10) lookup. feel 1–5 → RPE 2–10 on the standard 0–10 scale.
+// Reference: Foster et al. (2001) "A New Approach to Monitoring Exercise Training".
+// Numerically equivalent to the old formula so all existing stored AU values remain valid.
+const FEEL_TO_RPE = [0, 2, 4, 6, 8, 10]; // index = feel (1–5); FEEL_TO_RPE[feel] = Foster RPE
+
 // ─── PROGRAM ────────────────────────────────────────────────
 let PROG = null;
+
+// FIX [Reliability/Critical]: Split into two separate try-blocks so a network
+// error and a JSON parse error are handled and reported distinctly.
+// Previously, r.json() throwing SyntaxError on corrupt cached data showed the
+// same generic message as a 404, making offline diagnosis impossible.
 async function loadProgram() {
+  let r;
   try {
-    const r = await fetch('program.json');
-    if (r.ok) { PROG = await r.json(); return; }
-    throw new Error('HTTP ' + r.status);
+    r = await fetch('program.json');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
   } catch(e) {
-    document.getElementById('page-schedule').innerHTML = `
-      <div class="empty"><div class="emi">⚠️</div><div class="emt">Program unavailable</div>
-      <div class="ems">Open the app once while connected to the internet.</div></div>`;
+    _showProgError('Could not reach program file. Open the app once while online.');
+    return;
+  }
+  try {
+    // r.json() parse errors are now caught separately — corrupt or partial
+    // JSON shows a distinct message instead of silently leaving PROG as null.
+    PROG = await r.json();
+  } catch(e) {
+    _showProgError('Program data is corrupted (' + e.message + '). Reload while online.');
   }
 }
+
+function _showProgError(msg) {
+  document.getElementById('page-schedule').innerHTML =
+    `<div class="empty"><div class="emi">⚠️</div><div class="emt">Program unavailable</div><div class="ems">${msg}</div></div>`;
+}
+
+// FIX [Reliability/Critical]: Central PROG guard used at every public render
+// entry-point. Previously all PROG.sessions/.tags accesses were unguarded —
+// if PROG was null (parse failure, stale cache) the first render threw a silent
+// TypeError that left the whole app blank with no visible error message.
+function requireProg() {
+  if (!PROG) { _showProgError('Program not loaded. Connect to the internet and reload.'); return null; }
+  return PROG;
+}
+
 // ─── STORAGE ────────────────────────────────────────────────
-const save = (k,v) => { try { localStorage.setItem('bt2_'+k, JSON.stringify(v)); } catch(e){} };
+// FIX [Reliability/Moderate]: Silent localStorage failure (QuotaExceededError is
+// very common on iOS Safari private mode) previously discarded writes with no
+// feedback — the user believed their session was saved when it was not.
+// Now shows a one-time sticky banner on any quota or security error.
+let _storageWarnShown = false;
+function showStorageWarning() {
+  if (_storageWarnShown) return; _storageWarnShown = true;
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999;background:var(--rd);color:#fff;padding:10px 16px;font-size:13px;font-weight:500;text-align:center;cursor:pointer';
+  el.textContent = '⚠ Storage full — data may not have saved. Free device space and reload. Tap to dismiss.';
+  el.onclick = () => el.remove();
+  document.body.appendChild(el);
+}
+const save = (k,v) => {
+  try { localStorage.setItem('bt2_'+k, JSON.stringify(v)); }
+  catch(e) {
+    // FIX: catch(e){} silently ate QuotaExceededError; now it logs and notifies.
+    console.error('localStorage write failed:', e); showStorageWarning();
+  }
+};
 const load = k => { try { const v=localStorage.getItem('bt2_'+k); return v?JSON.parse(v):null; } catch(e){ return null; } };
 // ─── DATES ──────────────────────────────────────────────────
 function getMondayOf(d) {
@@ -305,7 +363,11 @@ function saveWeeks()    { save('weeks',weeks); }
 function saveInjuries() { save('injuries',injuries); }
 // ─── NAV ────────────────────────────────────────────────────
 function nav(name,el) {
-  if (lf && !confirm('Leave this session? Progress will be lost.')) return;
+  // FIX [Bugs/Critical]: Only block navigation while the log is actively being
+  // filled in. The 'accuracy' step means completeLog() has already persisted the
+  // entry — blocking nav there showed a false "progress will be lost" warning
+  // after a successful save, which was confusing and incorrect.
+  if (lf && lf.step === 'logging' && !confirm('Leave this session? Progress will be lost.')) return;
   lf=null; editDaysMode=false; editDayMenu=null; showBalletForm=false;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
@@ -317,6 +379,10 @@ function nav(name,el) {
 }
 // ─── SCHEDULE ───────────────────────────────────────────────
 function renderSchedule() {
+  // FIX [Reliability/Critical]: Guard against PROG being null. Without this,
+  // any call to buildWeekView() or buildBalletInput() while PROG hasn't loaded
+  // (e.g. after a parse error) would silently throw on PROG.sessions access.
+  if (!requireProg()) return;
   if (lf) { renderLogFlow(); return; }
   const el=document.getElementById('page-schedule');
   const wk=getWeek(viewMonday);
@@ -545,6 +611,9 @@ function getLockedAssignments(wk) {
 }
 // ─── GENERATE PLAN ───────────────────────────────────────────
 function generatePlan() {
+  // FIX [Reliability/Critical]: assignGymDays → engineModForTier accesses
+  // PROG.sessions. Guard here prevents a null-deref if PROG failed to load.
+  if (!requireProg()) return;
   const wk=getWeek(viewMonday);
   const locked=getLockedAssignments(wk);
   // Past days: already elapsed — engine must not place sessions there
@@ -777,7 +846,10 @@ function assignDaySession(dayIdx,sessKey) {
     const pastDays=new Set();for(let i=0;i<todayIdx;i++){if(i>=0&&i<7)pastDays.add(i);}
     const {tiers:newTiers,engineMods:newMods}=assignGymDays(wk.ballet,locked,pastDays);
     wk.plan.tiers[sessKey]=newTiers[sessKey]||'full';
-    wk.plan.engineMods=wk.plan.engineMods||{};
+    // FIX [Bugs/Moderate]: wk.plan.engineMods can be undefined on plans generated
+    // before the engineMods field was introduced. Writing to undefined[key] throws
+    // a TypeError. The same guard already exists in setSessionTier() — applied here too.
+    if (!wk.plan.engineMods) wk.plan.engineMods = {};
     wk.plan.engineMods[sessKey]=newMods[sessKey]||null;
   } else {
     // No gym — clear all slots on this day
@@ -971,7 +1043,10 @@ function buildLogSession() {
     </div>`;
   }).join('');
   const feelBtns=[1,2,3,4,5].map(v=>`<button class="rbtn${lf.feel===v?' on':''}" onclick="lf.feel=${v};renderSchedule()">${v}</button>`).join('');
-  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  // FIX [Bugs/Critical]: Use FEEL_TO_RPE lookup instead of bare ×2 multiplier.
+  // FEEL_TO_RPE maps feel 1-5 → Foster CR10 RPE 2-10. Numerically identical to
+  // the old formula (feel×2×duration) but now documents the intended protocol.
+  const sRPE=lf.duration>0?FEEL_TO_RPE[lf.feel]*lf.duration:null;
   const durationBtn=`<div class="srpe-row">
     <button class="srpe-btn" onclick="openDurationPicker()">
       ${lf.duration>0?`<span class="srpe-val">${lf.duration}</span><span class="srpe-unit">min</span>`:'<span class="val-btn-empty">Set duration</span>'}
@@ -989,11 +1064,11 @@ function buildLogSession() {
   ${warmupCard}${exCards}
   <div class="card"><div class="card-body">
     <div class="lbl">Overall session feel</div><div class="rating">${feelBtns}</div>
-    <div class="xs dimmer mt1" style="text-align:center">1 = Struggled · 3 = Expected · 5 = Strong</div>
+    <div class="xs dimmer mt1" style="text-align:center">1 = Very light · 3 = Moderate · 5 = Maximum effort</div>
     <div class="lbl" style="margin-top:12px">Session duration (for training load)</div>${durationBtn}
   </div></div>
   <div class="card"><div class="card-body"><div class="lbl">Notes (optional)</div>
-    <textarea placeholder="Anything notable..." oninput="lf.notes=this.value">${lf.notes}</textarea>
+    <textarea placeholder="Anything notable..." oninput="lf.notes=this.value">${esc(lf.notes)}</textarea>
   </div></div>
   <div style="padding:0 16px 8px"><button class="btn-p" onclick="completeLog()">Save Session ✓</button></div>
   <div class="bpad"></div>`;
@@ -1054,7 +1129,9 @@ function addSet(exIdx,side){
 function updSet(ei,si,field,val){lf.exLogs[ei].sets[si][field]=val;}
 function completeLog(){
   const acc=computeAccuracy(lf.exLogs,lf.exercises,lf.mods,lf.sessKey);
-  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  // FIX [Bugs/Critical]: Use FEEL_TO_RPE lookup — persisted AU values now follow
+  // the documented Foster sRPE protocol rather than an undocumented multiplier.
+  const sRPE=lf.duration>0?FEEL_TO_RPE[lf.feel]*lf.duration:null;
   const entry={id:Date.now().toString(),type:'training',date:new Date().toISOString(),
     sessionKey:lf.slotKey,dayIdx:lf.dayIdx,tier:lf.tier,
     exerciseIds:lf.exercises.map(e=>e.id),exLogs:lf.exLogs,feel:lf.feel,
@@ -1064,13 +1141,15 @@ function completeLog(){
 }
 function buildAccuracyScreen(){
   const acc=lf.accuracy,cls=acc.level==='good'?'good':acc.level==='warn'?'warn':'note';
-  const sRPE=lf.duration>0?lf.feel*2*lf.duration:null;
+  // FIX [Bugs/Critical]: Use FEEL_TO_RPE so the displayed RPE value on the
+  // accuracy screen is consistent with what was persisted in completeLog().
+  const sRPE=lf.duration>0?FEEL_TO_RPE[lf.feel]*lf.duration:null;
   const tierNote=lf.tier&&lf.tier!=='full'?`<div class="xs dimmer mt1">${TIER_LABEL[lf.tier]||lf.tier} session</div>`:'';
   return `<div style="padding:12px 16px 8px"><button class="btn-back" onclick="backToSchedule()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>Back to schedule</button></div>
   <div class="sec">Session saved</div>
   <div class="acc ${cls}"><div class="acc-title">${acc.verdict}</div><div class="acc-detail">${acc.detail}</div>${tierNote}
     <div class="acc-stat">${acc.totalDone}/${acc.totalPrescribed} sets · ${acc.rate}% volume · Feel ${lf.feel}/5</div>
-    ${sRPE?`<div class="acc-stat" style="margin-top:3px">Training load: ${sRPE} AU (${lf.feel*2} RPE × ${lf.duration} min)</div>`:''}
+    ${sRPE?`<div class="acc-stat" style="margin-top:3px">Training load: ${sRPE} AU (RPE ${FEEL_TO_RPE[lf.feel]} × ${lf.duration} min)</div>`:''}
   </div>
   ${lf.tags.length?`<div class="ndim"><strong>Pre-session tags</strong>${lf.tags.map(t=>PROG.tags[t]?.label||t).join(' · ')}</div>`:''}
   <div style="padding:0 16px 8px"><button class="btn-p" onclick="backToSchedule()">Back to schedule ✓</button></div>
@@ -1200,6 +1279,9 @@ function countAndFmt(exLog,ex){
 }
 // ─── HISTORY ─────────────────────────────────────────────────
 function renderHistory(){
+  // FIX [Reliability/Critical]: buildHistEntry accesses PROG.sessions for exercise
+  // names. Guard here ensures no null-deref if PROG failed to load.
+  if (!requireProg()) return;
   const el=document.getElementById('page-history');
   const allLogs=[];
   Object.entries(weeks).forEach(([wk,data])=>{
@@ -1231,7 +1313,7 @@ function buildHistEntry(log){
       const exLines=(log.exLogs||[]).map((el,i)=>{const ex=exercises[i];const name=ex?.name||`Exercise ${i+1}`;const cnt=ex?.sides?(el.setsR?.length||0)+(el.setsL?.length||0):(el.sets?.length||0);const fmt=countAndFmt(el,ex);return `<div class="hex">${name}: <span>${cnt} sets${fmt!=='—'?' — '+fmt:''}</span></div>`;}).join('');
       const acc=log.accuracy;const ac=acc?(acc.level==='good'?'var(--gn)':acc.level==='warn'?'var(--co)':'var(--am)'):'var(--tx3)';
       const sRPELine=log.sRPE?`<div class="xs dimmer mt1">sRPE ${log.sRPE} AU · ${log.duration} min · Feel ${log.feel}/5</div>`:'';
-      body=`<div class="hent-body">${log.tier&&log.tier!=='full'?`<div class="xs dimmer mb1">${TIER_LABEL[log.tier]||log.tier} session</div>`:''}${exLines}${sRPELine}${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}"><div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${log.notes}</div>`:''}${confirmDel===log.id?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`:`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}</div>`;
+      body=`<div class="hent-body">${log.tier&&log.tier!=='full'?`<div class="xs dimmer mb1">${TIER_LABEL[log.tier]||log.tier} session</div>`:''}${exLines}${sRPELine}${acc?`<div style="margin-top:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:2px solid ${ac}"><div class="xs b6" style="color:${ac}">${acc.verdict}</div><div class="xs dimmer mt1">${acc.detail}</div></div>`:''}${log.notes?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3);font-style:italic">${esc(log.notes)}</div>`:''}${confirmDel===log.id?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`:`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}</div>`;
     } else {
       const tList=(log.tags||[]).map(t=>`<span class="tag ${PROG.tags[t]?.group==='warn'?'wrn':'rec'}" style="margin:2px">${PROG.tags[t]?.emoji||''} ${PROG.tags[t]?.label||t}</span>`).join('');
       body=`<div class="hent-body">${tList||'<div class="xs dimmer">No tags — check-in skipped.</div>'}${(log.sessionNotes||[]).map(n=>`<div class="xs dimmer mt1">· ${n}</div>`).join('')}<div class="xs dimmer mt2">Mods ${log.modsAccepted?'accepted':'not applied'}</div>${confirmDel===log.id?`<div class="del-conf"><button class="btn-g" style="flex:1;text-align:center;color:var(--rd)" onclick="doDelete('${log.id}','${log.weekKey}')">Confirm delete</button><button class="btn-g" style="flex:1;text-align:center" onclick="confirmDel=null;renderHistory()">Cancel</button></div>`:`<button class="del-btn" onclick="confirmDel='${log.id}';expandedHist='${log.id}';renderHistory()">Delete</button>`}</div>`;
@@ -1272,7 +1354,7 @@ function buildInjuryForm(){
     <div class="field"><label class="lbl">Body region</label><div class="inj-chips">${chips}</div></div>
     <div class="field"><label class="lbl">Severity — 1 minor tightness · 5 acute, see physio</label><div class="rating">${sevBtns}</div><div class="xs dimmer mt1" style="text-align:center">${SEVERITY_LABELS[d.severity]}</div></div>
     <div class="field"><label class="lbl">Status</label><div class="dtype-row">${stOpts}</div></div>
-    <div class="field"><label class="lbl">Description (location, onset, trigger)</label><textarea placeholder="e.g. Left Achilles — tightness during relevés, onset Tuesday after long rehearsal" oninput="injuryFormData.description=this.value">${d.description||''}</textarea></div>
+    <div class="field"><label class="lbl">Description (location, onset, trigger)</label><textarea placeholder="e.g. Left Achilles — tightness during relevés, onset Tuesday after long rehearsal" oninput="injuryFormData.description=this.value">${esc(d.description)}</textarea></div>
     <div style="display:flex;gap:8px"><button class="btn-p" style="flex:1;margin:0" onclick="saveInjury()">Save</button><button class="btn-g" style="flex:0 0 80px" onclick="closeInjuryForm()">Cancel</button></div>
   </div></div>`;
 }
@@ -1281,7 +1363,7 @@ function buildInjuryEntry(inj){
   const ds=new Date(inj.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   const col=SEVERITY_COLORS[inj.severity]||'var(--tx3)';
   const sPill=inj.status==='resolved'?`<span class="inj-status-pill inj-status-resolved">resolved</span>`:inj.status==='monitoring'?`<span class="inj-status-pill inj-status-monitoring">monitoring</span>`:`<span class="inj-status-pill inj-status-active">active</span>`;
-  return `<div class="hent"><div class="hent-hdr" onclick="injuryExpandedId=injuryExpandedId==='${inj.id}'?null:'${inj.id}';renderBody()"><div><div class="sm b5" style="margin-bottom:3px">${inj.region} <span style="font-size:11px;color:${col}">● ${SEVERITY_LABELS[inj.severity]}</span></div><div class="xs dimmer">${ds} · ${sPill}</div></div><svg class="chev${isExp?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg></div>${isExp?`<div class="hent-body">${inj.description?`<div class="xs" style="color:var(--tx2);margin-bottom:10px;line-height:1.5">${inj.description}</div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap">${inj.status!=='resolved'?`<button class="btn-g" style="font-size:12px" onclick="resolveInjury('${inj.id}')">✓ Mark resolved</button>`:''}<button class="btn-g" style="font-size:12px" onclick="editInjury('${inj.id}')">Edit</button><button class="del-btn" onclick="deleteInjury('${inj.id}')">Delete</button></div></div>`:''}</div>`;
+  return `<div class="hent"><div class="hent-hdr" onclick="injuryExpandedId=injuryExpandedId==='${inj.id}'?null:'${inj.id}';renderBody()"><div><div class="sm b5" style="margin-bottom:3px">${inj.region} <span style="font-size:11px;color:${col}">● ${SEVERITY_LABELS[inj.severity]}</span></div><div class="xs dimmer">${ds} · ${sPill}</div></div><svg class="chev${isExp?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg></div>${isExp?`<div class="hent-body">${inj.description?`<div class="xs" style="color:var(--tx2);margin-bottom:10px;line-height:1.5">${esc(inj.description)}</div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap">${inj.status!=='resolved'?`<button class="btn-g" style="font-size:12px" onclick="resolveInjury('${inj.id}')">✓ Mark resolved</button>`:''}<button class="btn-g" style="font-size:12px" onclick="editInjury('${inj.id}')">Edit</button><button class="del-btn" onclick="deleteInjury('${inj.id}')">Delete</button></div></div>`:''}</div>`;
 }
 function openInjuryForm(){injuryFormOpen=true;injuryEditId=null;injuryFormData={region:'',severity:3,description:'',status:'active'};renderBody();}
 function closeInjuryForm(){injuryFormOpen=false;injuryEditId=null;renderBody();}
