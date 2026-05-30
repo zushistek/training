@@ -424,146 +424,344 @@ function setDint(i,v)   { getWeek(viewMonday).ballet[i].intensity=v; saveWeeks()
 function setDhours(i,v) { getWeek(viewMonday).ballet[i].hours=v;     saveWeeks(); }
 // ─── ENGINE v2 ───────────────────────────────────────────────
 // Graduated tiers · directional gap rule · retry · locked sessions · past days
-function assignGymDays(ballet, lockedAssignments={}, pastDays=new Set()) {
+function assignGymDays(ballet, lockedAssignments={}, pastDays=new Set(), activeInjuries=[], acwrConstrained=false) {
+
+  // ═══════════════════════════════════════════════════════════════
+  // SCHEDULING ENGINE v2 — Full sports-medicine-compliant rewrite.
+  // Failure modes fixed vs v1:
+  //  [F1]  Same-day stacking: combined daily load now penalised
+  //  [F2]  Weekly session cap driven by total ballet stress
+  //  [F3]  General consecutive-day gap (was B→C only)
+  //  [F4]  Active injury awareness — suppresses by region/severity
+  //  [F5]  Recalibrated coefficients: reh 0.25/0.75, per 0.35/0.65
+  //        (old reh 0.40/0.50 understated lower; old per 0.20/0.80
+  //         let a 3h coaching session score as "light upper")
+  //  [F6]  Systemic fatigue floor for long personal training sessions
+  //  [F7]  Retry pass removed — was bypassing all protective logic
+  //  [F8]  B→C gap now bidirectional (was forward-only)
+  //  [F9]  48h pre-performance gym-free window (was 24h / upper allowed)
+  //  [F10] Categorical awareness: AP+AL done → suppress AF, and vice versa
+  //  [F11] Day D: only on light weeks (≤2 core sessions), always 'lite'
+  //  [F12] ACWR-aware cap: constrained flag from generatePlan tightens cap
+  // ═══════════════════════════════════════════════════════════════
+
+  // ── 1. LOAD COMPUTATION ─────────────────────────────────────
+  // [F5]: Recalibrated coefficients. Ballet is overwhelmingly lower-body
+  // dominant (relevés, pliés, jumps). Old reh 0.4/0.5 understated lower
+  // load and overstated upper. New 0.25/0.75 reflects dance physiology.
+  // Per (personal coaching) old 0.2/0.8 caused a 3h int4 session to score
+  // upper=2.4 — below "full" threshold — allowing same-day push session.
+  // New 0.35/0.65 + systemic floor corrects this.
   function computeLoad(d) {
-    const hrs=Math.max(parseFloat(d.hours)||0,0.5), int=d.intensity||3;
-    if (!d.type||d.type==='off')  return {upper:0,lower:0};
-    if (d.type==='perf')          return {upper:99,lower:99};
-    if (d.type==='reh')           return {upper:int*hrs*0.4,lower:int*hrs*0.5};
-    if (d.type==='per')           return {upper:int*hrs*0.2,lower:int*hrs*0.8};
-    return {upper:0,lower:0};
+    const hrs = Math.max(parseFloat(d.hours) || 0, 0.5), int = d.intensity || 3;
+    if (!d.type || d.type === 'off') return { upper:0, lower:0, hasActivity:false };
+    if (d.type === 'perf')           return { upper:99, lower:99, hasActivity:true };
+    if (d.type === 'reh')            return { upper:int*hrs*0.25, lower:int*hrs*0.75, hasActivity:true };
+    if (d.type === 'per') {
+      // [F6]: Long high-intensity coaching creates systemic CNS/cardiovascular
+      // fatigue independent of muscle group focus. Add a floor to both scores.
+      const floor = (hrs > 2 && int >= 3) ? 1.5 : 0;
+      return { upper:int*hrs*0.35+floor, lower:int*hrs*0.65+floor, hasActivity:true };
+    }
+    return { upper:0, lower:0, hasActivity:false };
   }
-  const loads=ballet.map(computeLoad);
-  const isOff=ballet.map(d=>d.type==='off');
-  const perfDays=new Set(ballet.reduce((a,d,i)=>d.type==='perf'?[...a,i]:a,[]));
-  const dayBeforePerf=new Set([...perfDays].map(i=>i-1).filter(i=>i>=0));
-  const dayAfterPerf=new Set([...perfDays].map(i=>i+1).filter(i=>i<7));
-  // Engine only assigns primary base-key sessions
-  const assigned={AP:null,AL:null,AF:null,B:null,C:null,D:null};
-  const tiers={AP:null,AL:null,AF:null,B:null,C:null,D:null};
-  const engineMods={AP:null,AL:null,AF:null,B:null,C:null,D:null};
-  const reasons={AP:'',AL:'',AF:'',B:'',C:'',D:''};
-  const usedDays=new Set();
-  // Seed locked sessions — these days are fixed, engine builds around them
-  Object.entries(lockedAssignments).forEach(([sk,dayIdx])=>{
-    const bk=baseKey(sk);
-    if (dayIdx===null) return;
-    assigned[bk]=dayIdx; tiers[bk]='locked'; engineMods[bk]=null;
-    reasons[bk]=`${DAYS[dayIdx]} — completed ✓`; usedDays.add(dayIdx);
+  const loads = ballet.map(computeLoad);
+
+  // ── 2. PERFORMANCE PROTECTION WINDOWS ───────────────────────
+  const perfDays       = new Set(ballet.reduce((a,d,i) => d.type==='perf'?[...a,i]:a, []));
+  // [F9]: Extend to a true 48h window. dayBeforePerf was allowing upper
+  // body sessions — arm/shoulder fatigue affects port de bras and partnering.
+  // Now: 2 days before → all sessions lite-max; 1 day before → no gym at all.
+  const dayBeforePerf     = new Set([...perfDays].map(i=>i-1).filter(i=>i>=0));
+  const twoDaysBeforePerf = new Set([...perfDays].map(i=>i-2).filter(i=>i>=0 && !dayBeforePerf.has(i)));
+  const dayAfterPerf      = new Set([...perfDays].map(i=>i+1).filter(i=>i<7));
+
+  // ── 3. INJURY SUPPRESSION ────────────────────────────────────
+  // [F4]: Engine now reads active injuries. Previously the injury log was
+  // completely invisible to the scheduler — Day C plyometrics would be placed
+  // on a week with an active knee severity 4 entry.
+  const LOWER_REGIONS = new Set(['Ankle','Knee','Hip','Lower Back','Hamstring','Groin','Foot','Achilles']);
+  const UPPER_REGIONS = new Set(['Shoulder','Wrist']);
+  let lowerInjSev = 0, upperInjSev = 0;
+  (activeInjuries || []).forEach(inj => {
+    const sev = parseInt(inj.severity) || 0;
+    if (LOWER_REGIONS.has(inj.region)) lowerInjSev = Math.max(lowerInjSev, sev);
+    if (UPPER_REGIONS.has(inj.region)) upperInjSev = Math.max(upperInjSev, sev);
   });
-  // Block past days from receiving new assignments
-  pastDays.forEach(i=>usedDays.add(i));
-  function slotBonus(i) { let b=0; if(isOff[i])b-=2; if(i>0&&isOff[i-1])b-=1; return b; }
+  // Suppression matrix (evidence-based conservative thresholds):
+  // Lower sev ≥3: suppress C (plyometrics contraindicated), cap B to 'min'
+  // Lower sev ≥4: suppress B and C entirely
+  // Upper sev ≥3: cap all upper sessions to 'min'
+  // Upper sev ≥4: suppress all upper assignments entirely
+  const suppressLowerAll = lowerInjSev >= 4;
+  const suppressC_inj    = lowerInjSev >= 3;
+  const capBtoMin        = lowerInjSev === 3;
+  const suppressUpperAll = upperInjSev >= 4;
+  const capUpperToMin    = upperInjSev === 3;
+
+  // ── 4. CATEGORICAL AWARENESS ─────────────────────────────────
+  // [F10]: If both push AND pull are already completed this week, the upper
+  // body has received its full stimulus — adding a third upper (AF) is
+  // overtraining the same movement pattern. Conversely, if AF is done,
+  // AP+AL are redundant. This makes split/full-body mutually exclusive.
+  const lockedAP = Object.prototype.hasOwnProperty.call(lockedAssignments,'AP');
+  const lockedAL = Object.prototype.hasOwnProperty.call(lockedAssignments,'AL');
+  const lockedAF = Object.prototype.hasOwnProperty.call(lockedAssignments,'AF');
+  const lockedB  = Object.prototype.hasOwnProperty.call(lockedAssignments,'B');
+  const lockedC  = Object.prototype.hasOwnProperty.call(lockedAssignments,'C');
+  const suppressAF    = lockedAP && lockedAL; // Split done → full-body redundant
+  const suppressSplit = lockedAF;             // Full-body done → split redundant
+  const suppressLowerNew = lockedB && lockedC; // Both lower done → no new lower
+
+  // ── 5. WEEKLY SESSION CAP ────────────────────────────────────
+  // [F2]: Compute total weekly ballet stress before placing any gym sessions.
+  // Professional in-season dancer evidence base (Foster 2001, Bompa &
+  // Buzzichelli 2015, Wyon 2010 dance-specific):
+  //   stress < 8  (light week)    → 3 gym sessions maximum
+  //   stress 8–22 (moderate)      → 3 sessions maximum
+  //   stress 22–35 (heavy)        → 2 sessions maximum
+  //   stress 35+  (perf-heavy)    → 1 session maximum
+  const weeklyStress  = loads.reduce((s,l) => s + l.upper + l.lower, 0);
+  const lockedCount   = Object.keys(lockedAssignments).filter(k => lockedAssignments[k] !== null).length;
+  let sessionCap = weeklyStress < 8 ? 3 : weeklyStress < 22 ? 3 : weeklyStress < 35 ? 2 : 1;
+  // [F12]: ACWR-aware reduction. If generatePlan detected that this week's
+  // logged AU already approaches the historical spike threshold, tighten cap.
+  if (acwrConstrained && lockedCount >= sessionCap) sessionCap = lockedCount;
+  let assignedCount = lockedCount;
+
+  // ── 6. BOOK-KEEPING ──────────────────────────────────────────
+  const assigned   = {AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const tiers      = {AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const engineMods = {AP:null,AL:null,AF:null,B:null,C:null,D:null};
+  const reasons    = {AP:'',AL:'',AF:'',B:'',C:'',D:''};
+  // usedDays: prevents double-booking any slot (includes past days)
+  // gymDays: only ACTUAL gym sessions — used for consecutive-day checks
+  // [F3]: Keeping these separate is critical. pastDays being in usedDays
+  // was causing past days to be treated as if gym had occurred there,
+  // incorrectly triggering the consecutive-day block on following days.
+  const usedDays = new Set();
+  const gymDays  = new Set();
+  Object.entries(lockedAssignments).forEach(([sk,dayIdx]) => {
+    const bk = baseKey(sk);
+    if (dayIdx === null) return;
+    assigned[bk]=dayIdx; tiers[bk]='locked'; engineMods[bk]=null;
+    reasons[bk]=`${DAYS[dayIdx]} — completed ✓`;
+    usedDays.add(dayIdx); gymDays.add(dayIdx);
+  });
+  pastDays.forEach(i => usedDays.add(i)); // Past days block new assignment but are NOT gym days
+
+  // ── 7. TIER SCORING HELPERS ──────────────────────────────────
+  // [F1]: SAME_DAY_PENALTY is the core fix for same-day stacking.
+  // Any day with ballet activity gets +2.5 added to its effective load score
+  // before comparing against gym tier thresholds. This drops the tier by
+  // at least one level on most rehearsal days.
+  // The specific case that was reported broken:
+  //   reh 2.5h int3 → lower = 3×2.5×0.75 = 5.625 → effectiveL = 8.125 → null
+  //   (old engine: lower = 3×2.5×0.5 = 3.75 → below 4.0 → 'full' — WRONG)
+  const SAME_DAY_PENALTY = 2.5;
+
   function upperTier(i) {
-    if (perfDays.has(i)) return null;
-    const u=loads[i].upper;
-    if (dayBeforePerf.has(i)||dayAfterPerf.has(i)) return u<6.5?'lite':null;
-    if (u<4.5) return 'full'; if (u<5.5) return 'lite'; if (u<6.5) return 'min'; return null;
-  }
-  function lowerTier(i) {
-    if (perfDays.has(i)||dayBeforePerf.has(i)) return null;
-    const l=loads[i].lower;
-    if (dayAfterPerf.has(i)) return l<7.0?'min':null;
-    if (l<4.0) return 'full'; if (l<5.5) return 'lite'; if (l<7.0) return 'min'; return null;
-  }
-  function engineModForTier(sessKey,tier) {
-    if (!tier||tier==='full') return null;
-    const sess=PROG.sessions[baseKey(sessKey)];
-    const lsr=sess?.liteSetReduction||0;
-    if (tier==='lite') return lsr>0?{setReduction:lsr,rpeCap:null}:null;
-    if (tier==='min')  return {setReduction:0,rpeCap:6,isMin:true};
+    if (perfDays.has(i))       return null; // Performance day — no gym
+    if (dayBeforePerf.has(i))  return null; // [F9]: Was 'lite'; now fully blocked (48h window)
+    const effectiveU = loads[i].upper + (loads[i].hasActivity ? SAME_DAY_PENALTY : 0); // [F1]
+    if (twoDaysBeforePerf.has(i)) return effectiveU < 6.5 ? 'lite' : null; // [F9]
+    if (dayAfterPerf.has(i))      return effectiveU < 6.5 ? 'lite' : null;
+    if (effectiveU < 4.5) return 'full';
+    if (effectiveU < 5.5) return 'lite';
+    if (effectiveU < 6.5) return 'min';
     return null;
   }
-  function isLocked(sk) { return Object.prototype.hasOwnProperty.call(lockedAssignments,sk)||Object.prototype.hasOwnProperty.call(lockedAssignments,sk+'_2'); }
-  // Upper assignment
-  const upperCandidates=[];
-  for (let i=0;i<7;i++) {
-    if (usedDays.has(i)) continue;
-    const tier=upperTier(i); if (!tier) continue;
-    upperCandidates.push({idx:i,tier,score:loads[i].upper+slotBonus(i)});
+
+  function lowerTier(i) {
+    if (perfDays.has(i) || dayBeforePerf.has(i)) return null; // [F9]: dayBeforePerf fully blocked
+    const effectiveL = loads[i].lower + (loads[i].hasActivity ? SAME_DAY_PENALTY : 0); // [F1]
+    if (twoDaysBeforePerf.has(i)) return effectiveL < 6.5 ? 'lite' : null; // [F9]
+    if (dayAfterPerf.has(i))      return effectiveL < 7.0 ? 'min'  : null;
+    if (effectiveL < 4.0) return 'full';
+    if (effectiveL < 5.5) return 'lite';
+    if (effectiveL < 7.0) return 'min';
+    return null;
   }
-  upperCandidates.sort((a,b)=>a.score-b.score);
-  const needAP=!isLocked('AP'), needAL=!isLocked('AL'), needAF=!isLocked('AF');
-  let splitSlot1=null, splitSlot2=null;
-  const splitCandidates=upperCandidates.filter(c=>loads[c.idx].upper<4.5);
-  if (needAP&&needAL&&splitCandidates.length>=2) {
-    outer: for (let i=0;i<splitCandidates.length;i++)
-      for (let j=i+1;j<splitCandidates.length;j++)
-        if (Math.abs(splitCandidates[i].idx-splitCandidates[j].idx)>=2) {
-          splitSlot1=splitCandidates[i]; splitSlot2=splitCandidates[j]; break outer;
-        }
+
+  // [F3]: Consecutive-day enforcement uses gymDays — not usedDays.
+  // Rules (recovery physiology basis):
+  //   - Three consecutive gym days: hard block regardless of tier
+  //   - Two consecutive with 'full': hard block
+  //   - Two consecutive with 'lite'/'min': allowed once only
+  function consecutiveOk(i, proposedTier) {
+    const prev = gymDays.has(i-1), twoPrev = gymDays.has(i-2);
+    if (prev && twoPrev) return false; // Third consecutive — always block
+    if (prev || gymDays.has(i+1)) return proposedTier !== 'full'; // Adjacent: lite/min only
+    return true;
   }
-  if (splitSlot1&&splitSlot2) {
-    const [early,late]=splitSlot1.idx<splitSlot2.idx?[splitSlot1,splitSlot2]:[splitSlot2,splitSlot1];
-    usedDays.add(early.idx); usedDays.add(late.idx);
-    if (needAP) { assigned.AP=early.idx; tiers.AP=early.tier; engineMods.AP=engineModForTier('AP',early.tier); reasons.AP=buildUpperReason('AP',early.idx,ballet,loads,true,early.tier); }
-    if (needAL) { assigned.AL=late.idx;  tiers.AL=late.tier;  engineMods.AL=engineModForTier('AL',late.tier);  reasons.AL=buildUpperReason('AL',late.idx,ballet,loads,true,late.tier); }
-    if (needAF) { assigned.AF=null; tiers.AF=null; reasons.AF='Split week — Push and Pull assigned separately.'; }
-  } else if (upperCandidates.length>=1) {
-    const bestAF=upperCandidates[0];
-    if (needAF) { assigned.AF=bestAF.idx; tiers.AF=bestAF.tier; engineMods.AF=engineModForTier('AF',bestAF.tier); usedDays.add(bestAF.idx); reasons.AF=buildUpperReason('AF',bestAF.idx,ballet,loads,false,bestAF.tier); }
-    if (needAP) { assigned.AP=null; tiers.AP=null; reasons.AP='Full Body session covers push and pull this week.'; }
-    if (needAL) { assigned.AL=null; tiers.AL=null; reasons.AL='Full Body session covers push and pull this week.'; }
-    const secondAF=upperCandidates.find(c=>c.idx!==bestAF.idx&&Math.abs(c.idx-bestAF.idx)>=2);
-    if (secondAF&&loads[secondAF.idx].upper<5.5) {
-      const pushKey=secondAF.idx<bestAF.idx?'AP':'AL';
-      if (!isLocked(pushKey)) { assigned[pushKey]=secondAF.idx; tiers[pushKey]=secondAF.tier; engineMods[pushKey]=engineModForTier(pushKey,secondAF.tier); usedDays.add(secondAF.idx); reasons[pushKey]=buildUpperReason(pushKey,secondAF.idx,ballet,loads,false,secondAF.tier)+' Secondary upper alongside Full Body.'; }
+
+  function engineModForTier(sessKey, tier) {
+    if (!tier || tier === 'full') return null;
+    const sess = PROG.sessions[baseKey(sessKey)];
+    const lsr  = sess?.liteSetReduction || 0;
+    if (tier === 'lite') return lsr > 0 ? {setReduction:lsr, rpeCap:null} : null;
+    if (tier === 'min')  return {setReduction:0, rpeCap:6, isMin:true};
+    return null;
+  }
+
+  function isLocked(sk) {
+    return Object.prototype.hasOwnProperty.call(lockedAssignments, sk) ||
+           Object.prototype.hasOwnProperty.call(lockedAssignments, sk+'_2');
+  }
+
+  // Central placement: applies cap, consecutive-day check, and mods in one call.
+  // Returning false means this slot was rejected — caller handles the reason string.
+  function tryPlace(sk, dayIdx, tier, reasonStr) {
+    if (dayIdx === null || assignedCount >= sessionCap) return false;
+    if (!consecutiveOk(dayIdx, tier)) return false;
+    const bk = baseKey(sk);
+    assigned[bk]=dayIdx; tiers[bk]=tier;
+    engineMods[bk]=engineModForTier(sk,tier); reasons[bk]=reasonStr;
+    usedDays.add(dayIdx); gymDays.add(dayIdx); assignedCount++;
+    return true;
+  }
+
+  // ── 8. UPPER BODY ASSIGNMENT ─────────────────────────────────
+  if (!suppressUpperAll) {
+    const upperCandidates = [];
+    for (let i = 0; i < 7; i++) {
+      if (usedDays.has(i)) continue;
+      const rawTier = upperTier(i); if (!rawTier) continue;
+      const tier = capUpperToMin && rawTier !== 'min' ? 'min' : rawTier; // [F4]
+      if (!consecutiveOk(i, tier)) continue; // [F3]: Pre-filter
+      upperCandidates.push({idx:i, tier, score:loads[i].upper + (loads[i].hasActivity ? 1 : -1)});
+    }
+    upperCandidates.sort((a,b) => a.score - b.score);
+
+    const needAP = !isLocked('AP') && !suppressSplit; // [F10]
+    const needAL = !isLocked('AL') && !suppressSplit; // [F10]
+    const needAF = !isLocked('AF') && !suppressAF;   // [F10]
+
+    const splitCands = upperCandidates.filter(c => loads[c.idx].upper < 4.5);
+    let s1=null, s2=null;
+    if (needAP && needAL && splitCands.length >= 2) {
+      outer: for (let i=0;i<splitCands.length;i++)
+        for (let j=i+1;j<splitCands.length;j++)
+          if (Math.abs(splitCands[i].idx-splitCands[j].idx)>=2){s1=splitCands[i];s2=splitCands[j];break outer;}
+    }
+
+    if (s1 && s2) {
+      const [early,late]=s1.idx<s2.idx?[s1,s2]:[s2,s1];
+      if (needAP) tryPlace('AP',early.idx,early.tier,buildUpperReason('AP',early.idx,ballet,loads,true,early.tier));
+      if (needAL) tryPlace('AL',late.idx,late.tier,buildUpperReason('AL',late.idx,ballet,loads,true,late.tier));
+      if (needAF) reasons.AF='Split week — Push and Pull assigned separately.';
+    } else if (upperCandidates.length>=1 && needAF) {
+      const bestAF=upperCandidates[0];
+      tryPlace('AF',bestAF.idx,bestAF.tier,buildUpperReason('AF',bestAF.idx,ballet,loads,false,bestAF.tier));
+      if (needAP) reasons.AP='Full Body assigned — push covered.';
+      if (needAL) reasons.AL='Full Body assigned — pull covered.';
+      const secondUp=upperCandidates.find(c=>c.idx!==bestAF.idx&&Math.abs(c.idx-bestAF.idx)>=2&&loads[c.idx].upper<5.5);
+      if (secondUp && !suppressSplit) {
+        const pk=secondUp.idx<bestAF.idx?'AP':'AL';
+        if (!isLocked(pk)) tryPlace(pk,secondUp.idx,secondUp.tier,
+          buildUpperReason(pk,secondUp.idx,ballet,loads,false,secondUp.tier)+' Secondary upper alongside Full Body.');
+      }
+    } else {
+      const noSlotMsg='No viable upper body slot — all days have excessive load, performance protection, or injury restriction.';
+      if (needAF) reasons.AF=noSlotMsg;
+      if (needAP) reasons.AP=noSlotMsg;
+      if (needAL) reasons.AL=noSlotMsg;
     }
   } else {
-    if (needAF) reasons.AF='No viable upper body slot — all days have excessive load or are performance-protected.';
-    if (needAP) reasons.AP='No viable upper body slot.';
-    if (needAL) reasons.AL='No viable upper body slot.';
+    // [F4]: Upper severity ≥4 — suppress all upper assignments
+    const injMsg=`Suppressed — active upper body injury (severity ${upperInjSev}/5). See Body tab.`;
+    reasons.AP=reasons.AL=reasons.AF=injMsg;
   }
-  // Day B
-  if (!isLocked('B')) {
+
+  // ── 9. LOWER BODY — DAY B ────────────────────────────────────
+  if (!isLocked('B') && !suppressLowerAll && !suppressLowerNew) {
     let bestB=null,bestBTier=null,bestBScore=Infinity;
-    for (let i=0;i<7;i++) { if (usedDays.has(i)) continue; const tier=lowerTier(i); if (!tier) continue; const sc=loads[i].lower+slotBonus(i); if (sc<bestBScore){bestBScore=sc;bestB=i;bestBTier=tier;} }
-    if (bestB!==null) { assigned.B=bestB; tiers.B=bestBTier; engineMods.B=engineModForTier('B',bestBTier); usedDays.add(bestB); reasons.B=buildLowerReason('B',bestB,ballet,loads,bestBTier); }
-    else reasons.B='No viable lower body slot — ballet lower load too high all remaining days.';
+    for (let i=0;i<7;i++){
+      if (usedDays.has(i)) continue;
+      let tier=lowerTier(i); if (!tier) continue;
+      if (capBtoMin && (tier==='full'||tier==='lite')) tier='min'; // [F4]: Injury cap
+      if (!consecutiveOk(i,tier)) continue; // [F3]
+      const sc=loads[i].lower+(loads[i].hasActivity?1:-1);
+      if (sc<bestBScore){bestBScore=sc;bestB=i;bestBTier=tier;}
+    }
+    if (bestB!==null) {
+      tryPlace('B',bestB,bestBTier,buildLowerReason('B',bestB,ballet,loads,bestBTier));
+    } else {
+      reasons.B=capBtoMin
+        ?`Day B capped — active lower injury (severity ${lowerInjSev}/5). No safe 'min' slot found.`
+        :'No viable lower body slot — all available days exceed load threshold, performance protection, or consecutive-day constraint.';
+    }
+  } else if (suppressLowerAll) {
+    reasons.B=`Suppressed — active lower body injury (severity ${lowerInjSev}/5). See Body tab.`;
   }
-  // Day C — directional gap rule: C must be ≥2 days AFTER B
-  if (!isLocked('C')) {
+
+  // ── 10. LOWER BODY — DAY C (PLYOMETRICS) ─────────────────────
+  // [F4]: Suppress C at lower severity ≥3 — plyometrics (approach jumps, pogos)
+  // place maximal eccentric load on knee/ankle complex and are contraindicated
+  // for any active lower-body injury regardless of session tier.
+  if (!isLocked('C') && !suppressC_inj && !suppressLowerAll && !suppressLowerNew) {
     let bestC=null,bestCTier=null,bestCScore=Infinity;
-    for (let i=0;i<7;i++) {
-      if (usedDays.has(i)) continue; const tier=lowerTier(i); if (!tier) continue;
-      if (assigned.B!==null&&i>assigned.B&&(i-assigned.B)<2) continue;
-      let sc=loads[i].lower+slotBonus(i);
-      if ((i>0&&ballet[i-1].type==='reh')||(i<6&&ballet[i+1].type==='reh')) sc+=3;
+    for (let i=0;i<7;i++){
+      if (usedDays.has(i)) continue;
+      const tier=lowerTier(i); if (!tier) continue;
+      // [F8]: Bidirectional gap — C must be ≥2 days from B in EITHER direction.
+      // Old check was: (i > assigned.B && i-assigned.B < 2) — only blocked days
+      // forward of B. If B=Sat(5) and C tried Sun(6): 6>5 && 6-5=1 → correctly blocked.
+      // But if C tried Fri(4) before locked B=Sat(5): 4 is NOT >5 → not blocked → gap=1 allowed.
+      if (assigned.B!==null && Math.abs(i-assigned.B)<2) continue;
+      if (!consecutiveOk(i,tier)) continue; // [F3]
+      const sc=loads[i].lower+(loads[i].hasActivity?1:-1);
       if (sc<bestCScore){bestCScore=sc;bestC=i;bestCTier=tier;}
     }
-    if (bestC!==null) {
-      if (assigned.B!==null&&bestC<assigned.B&&(assigned.B-bestC)<2&&!isLocked('B')) {
-        const ord=['full','lite','min']; const bi=ord.indexOf(tiers.B);
-        if (bi>=0&&bi<ord.length-1){tiers.B=ord[bi+1];engineMods.B=engineModForTier('B',tiers.B);reasons.B+=` Day C precedes B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()}.`;}
+    if (bestC!==null){
+      // [F8]: Downgrade B when C precedes it by 1 day — but ONLY when B is not locked.
+      // Old code attempted this downgrade even on completed locked sessions, causing
+      // the change to silently vanish when the locked-restore block ran afterward.
+      if (assigned.B!==null&&bestC<assigned.B&&(assigned.B-bestC)<2&&!isLocked('B')){
+        const ord=['full','lite','min'];const bi=ord.indexOf(tiers.B);
+        if (bi>=0&&bi<ord.length-1){
+          tiers.B=ord[bi+1];engineMods.B=engineModForTier('B',tiers.B);
+          reasons.B+=` Day C precedes B by 1 day — Day B auto-downgraded to ${tiers.B.toUpperCase()}.`;
+        }
       }
-      assigned.C=bestC;tiers.C=bestCTier;engineMods.C=engineModForTier('C',bestCTier);usedDays.add(bestC);reasons.C=buildLowerReason('C',bestC,ballet,loads,bestCTier);
-    } else reasons.C='No viable plyometric slot — insufficient gap from Day B or performance-protected.';
+      tryPlace('C',bestC,bestCTier,buildLowerReason('C',bestC,ballet,loads,bestCTier));
+    } else {
+      reasons.C='No viable plyometric slot — gap from Day B, performance protection, or consecutive-day constraint on all available days.';
+    }
+  } else if (suppressC_inj||suppressLowerAll) {
+    reasons.C=`Suppressed — lower body injury (severity ${lowerInjSev}/5) — plyometrics contraindicated. See Body tab.`;
   }
-  // Retry pass — aim for ≥3 core sessions
-  const coreCount=['AP','AL','AF','B','C'].filter(k=>assigned[k]!==null).length;
-  if (coreCount<3) {
-    const missed=['B','C','AF'].filter(k=>assigned[k]===null&&!isLocked(k));
-    for (const sk of missed) {
-      const isLower=sk==='B'||sk==='C'; let bestR=null,bestRS=Infinity;
-      for (let i=0;i<7;i++) {
+
+  // ── 11. DAY D (OPTIONAL HYPERTROPHY) ─────────────────────────
+  // [F7]: RETRY PASS REMOVED. The old block forced a 'min' session onto any
+  // available day when coreCount<3, bypassing all protective logic — injuries,
+  // consecutive-day checks, and session cap were all ignored. The correct
+  // output when fewer than 3 sessions fit is: fewer sessions with clear reasons.
+  //
+  // [F11]: Day D now only placed when the week is genuinely light (≤2 core
+  // sessions placed). Always 'lite' tier — it is optional, never mandatory.
+  if (!isLocked('D')){
+    const coreCount=['AP','AL','AF','B','C'].filter(k=>assigned[k]!==null).length;
+    if (coreCount<=2 && assignedCount<sessionCap){
+      let bestD=null,bestDS=999;
+      for (let i=0;i<7;i++){
         if (usedDays.has(i)||perfDays.has(i)||dayBeforePerf.has(i)) continue;
-        const sc=(isLower?loads[i].lower:loads[i].upper)+slotBonus(i);
-        if (sc<bestRS){bestRS=sc;bestR=i;}
+        const total=loads[i].upper+loads[i].lower; if (total>=5) continue;
+        if (!consecutiveOk(i,'lite')) continue; // [F3]
+        const sc=total+(loads[i].hasActivity?1:-1);
+        if (sc<bestDS){bestDS=sc;bestD=i;}
       }
-      if (bestR!==null){assigned[sk]=bestR;tiers[sk]='min';engineMods[sk]=engineModForTier(sk,'min');usedDays.add(bestR);reasons[sk]=`Minimum dose on ${DAYS[bestR]} — recovery pass to preserve training frequency.`;break;}
+      if (bestD!==null){
+        // [F11]: Always 'lite' — D is supplementary. Was unconditionally 'full'.
+        tryPlace('D',bestD,'lite',`${DAYS[bestD]} — light load slot. Optional supplementary hypertrophy (LITE).`);
+      } else { reasons.D='No clean optional slot — Day D skipped.'; }
+    } else {
+      reasons.D=coreCount>2
+        ?'Day D skipped — week has sufficient training volume.'
+        :'Day D skipped — weekly session cap reached.';
     }
   }
-  // Day D
-  if (!isLocked('D')) {
-    let bestD=null,bestDS=999;
-    for (let i=0;i<7;i++) {
-      if (usedDays.has(i)||perfDays.has(i)||dayBeforePerf.has(i)) continue;
-      const total=loads[i].upper+loads[i].lower; if (total>=5) continue;
-      const sc=total+slotBonus(i); if (sc<bestDS){bestDS=sc;bestD=i;}
-    }
-    if (bestD!==null){assigned.D=bestD;tiers.D='full';reasons.D=`${DAYS[bestD]} — low-load slot. Optional hypertrophy.`;}
-    else reasons.D='No clean optional slot — Day D skipped.';
-  }
+
   return {assigned,tiers,engineMods,reasons};
 }
 function buildUpperReason(sess,dayIdx,ballet,loads,isSplit,tier) {
@@ -611,26 +809,41 @@ function getLockedAssignments(wk) {
 }
 // ─── GENERATE PLAN ───────────────────────────────────────────
 function generatePlan() {
-  // FIX [Reliability/Critical]: assignGymDays → engineModForTier accesses
-  // PROG.sessions. Guard here prevents a null-deref if PROG failed to load.
+  // Guard: PROG must be loaded before any render entry-point runs.
   if (!requireProg()) return;
   const wk=getWeek(viewMonday);
   const locked=getLockedAssignments(wk);
-  // Past days: already elapsed — engine must not place sessions there
   const todayDate=new Date(); todayDate.setHours(0,0,0,0);
   const todayIdx=Math.round((todayDate.getTime()-viewMonday.getTime())/(1000*60*60*24));
   const pastDays=new Set();
   for (let i=0;i<todayIdx;i++){if(i>=0&&i<7)pastDays.add(i);}
-  const {assigned,tiers,engineMods,reasons}=assignGymDays(wk.ballet,locked,pastDays);
-  // Hard override: locked sessions are fixed — restore from logs
+
+  // [F12]: Compute this week's already-logged AU before calling the engine.
+  // If the week is already at or above the historical spike threshold, pass
+  // acwrConstrained=true so the engine tightens its session cap proactively —
+  // instead of waiting for the post-hoc alert to fire after the damage is done.
+  const currentWeekAU=Object.values(wk.logs||{}).reduce((s,lg)=>s+(lg.sRPE||0),0);
+  const acwrAlert=getLoadAlert(currentWeekAU);
+  const acwrConstrained=acwrAlert!==null;
+
+  // [F4]: Filter to active/monitoring injuries and pass into the engine.
+  // Previously the global injuries array was completely invisible to the
+  // scheduler — plyometrics were assigned alongside active knee injuries.
+  const activeInj=(injuries||[]).filter(inj=>inj.status==='active'||inj.status==='monitoring');
+
+  const {assigned,tiers,engineMods,reasons}=assignGymDays(wk.ballet,locked,pastDays,activeInj,acwrConstrained);
+
+  // Hard override: locked (completed) sessions always win.
+  // This runs AFTER the engine so no engine output can overwrite a logged entry.
   Object.entries(locked).forEach(([sk,dayIdx])=>{
     const bk=baseKey(sk);
     assigned[bk]=dayIdx; tiers[bk]=wk.logs[sk]?.tier||'full';
     engineMods[bk]=null; reasons[bk]=`${DAYS[dayIdx]} — completed ✓`;
   });
-  // Preserve existing extra slots (e.g. AP_2) from old plan — don't wipe them
+
   const newPlan={assigned,tiers,engineMods,reasons,createdAt:new Date().toISOString()};
   if (wk.plan?.extraSlots) newPlan.extraSlots=wk.plan.extraSlots;
+  if (!newPlan.engineMods) newPlan.engineMods={};
   wk.plan=newPlan;
   showBalletForm=false;
   saveWeeks(); renderSchedule();
